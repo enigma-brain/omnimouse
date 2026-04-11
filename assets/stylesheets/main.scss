@@ -587,6 +587,12 @@ div.container.blog {
             padding-bottom: 0;
         }
     }
+
+    &.dark {
+        * {
+            color: white !important;
+        }
+    }
 }
 
 

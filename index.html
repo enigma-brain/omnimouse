@@ -1,0 +1,326 @@
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual-feature selectivity enables bidirectional coding in visual cortical neurons</title>
+    <meta name="description" content="We identify a dual-feature encoding strategy in macaque visual cortex, wherein many neurons in areas V1 and V4 are selectively tuned to two distinct visual features.">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="robots" content="all">
+    <meta content="en_EN" property="og:locale">
+    <meta content="website" property="og:type">
+    <meta content="Dual-feature selectivity" property="og:title">
+    <meta content="Dual-feature selectivity enables bidirectional coding in visual cortical neurons" property="og:description">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:description" content="Dual-feature selectivity enables bidirectional coding in visual cortical neurons">
+    <meta name="twitter:image:src" content="clarity/images/cover.png">
+    
+    <link rel="stylesheet" type="text/css" media="all" href="assets/stylesheets/main_free.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="clarity/clarity.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/foundation.min.css">
+    <link href="assets/fontawesome-free-6.6.0-web/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css"/>
+    <script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+    <script src="assets/scripts/navbar.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            "HTML-CSS": {
+              scale: 95,
+              fonts: ["Gyre-Pagella"],
+              imageFont: null,
+              undefinedFamily: "'Arial Unicode MS', cmbright"
+            },
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                processEscapes: true
+              }
+          });
+    </script>
+    <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- Title Page -->
+    <div class="container blog" id="first-content" style="background-color: #000000;">
+        <div class="blog-title white">
+            <div class="blog-intro">
+                <div>
+                    <h1 class="title">Dual-feature selectivity enables bidirectional coding in visual cortical neurons</h1>
+                    <p class="author">
+                        Katrin Franke<sup>*</sup>, Nikos Karantzas<sup>*</sup>, et al.
+                    </p>
+                    <p class="author" style="padding-top: 0px; font-size: 80%;">
+                        Stanford University
+                    </p>
+                    <p class="abstract">
+                        Many neurons in the visual cortex act not just as monosemantic feature detectors, but instead represent a continuum from suppressing to activating visual features. By combining neural recordings with deep learning models, we demonstrate that this continuous coding scheme is complex yet interpretable, conserved across species, and informative for advancing both neuroscience and AI.
+                    </p>
+
+                    <!-- Using FontAwesome Free -->
+                    <div class="info">
+                        <div>
+                            <a href="https://www.biorxiv.org/content/10.1101/2025.07.16.665209v1" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)"> Paper <i class="fa-solid fa-book-open"></i></a> &nbsp;&nbsp; 
+                            <a href="https://github.com/enigma-brain/dualneuron" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Code <i class="fa-solid fa-code"></i></a>  &nbsp;&nbsp; 
+                            <a href="https://doi.org/10.5061/dryad.q573n5tx3" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Data <i class="fa-solid fa-laptop-code"></i></a> 
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="info">
+                    <p>bioRxiv</p>
+                    <p style="font-size: 65%; opacity: 0.4; text-align: left;">Website by <a href="https://www.vedanglad.com/" style="color: inherit; font-size: inherit;">Vedang Lad</a></p>
+                </div>
+            </div>
+
+            <div class="blog-cover">
+                <img class="foreground" src="clarity/images/cover.png">
+                <img class="background" src="clarity/images/cover.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="container blog main first" id="blog-main" style="background-color: #ffffff;">
+        <h1>Motivation</h1>
+        <p class="text">
+            Traditional views in sensory neuroscience depict cortical neurons as sparse feature detectors that only fire when a stimulus matches their preferred pattern. This perspective has been highly influential but often undervalues the nuanced role of inhibition. Understanding how excitation and suppression interact across the vast array of natural images is crucial for unraveling how visual neurons encode the high dimensional visual input. Here, we address these questions by combining neural recordings with deep learning-based models, enabling unlimited in silico experiments and overcoming experimental constraints.
+        </p>
+
+        <h1>Approach</h1>
+        <p class="text">
+            We recorded from neurons in macaque V4 while animals viewed thousands of natural images. We then trained a convolutional neural network to predict the firing rate of single neurons based on visual input. These functional digital twins accurately replicate stimulus-response behaviors, allowing us to probe neural stimulus selectivity in ways that direct experimentation cannot.
+        </p>
+    </div>
+
+    <div class="container blog main dark" style="background-color: #000000;">
+        <img src="clarity/images/Figure_Overview.jpeg">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            Using gradient-based feature visualization, we created images that maximized or minimized predicted neuron activity, revealing structured features at both extremes. We also screened over one million ImageNet images to find natural images eliciting the strongest and weakest responses.
+        </p>
+    </div>
+
+    <div class="container blog main extra-large dark" style="background-color: #000000;">
+        <img src="clarity/images/Figure_Method.png">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Interactive Neuron Viewer</h1>
+        <p class="text">
+            Explore the dual-feature selectivity of individual V4 neurons. The visualization below shows how a single neuron's predicted activity varies across images sampled along the axis from least-activating to most-activating features. Notice how responses aren't simply binary (on/off) but form a graded continuum—consistent with the neuron encoding relative similarity to both feature poles.
+        </p>
+    </div>
+
+    <div class="container blog extra-large dark" style="background-color: #000000;">
+        <!-- Neuron selector tabs -->
+        <div class="neuron-selector">
+            <ul class="neuron-tabs" id="neuron-menu">
+                <li class="neuron-tab active" data-neuron="4">Neuron 1</li>
+                <li class="neuron-tab" data-neuron="6">Neuron 2</li>
+                <li class="neuron-tab" data-neuron="18">Neuron 3</li>
+                <li class="neuron-tab" data-neuron="26">Neuron 4</li>
+                <li class="neuron-tab" data-neuron="29">Neuron 5</li>
+                <li class="neuron-tab" data-neuron="30">Neuron 6</li>
+            </ul>
+        </div>
+
+        <!-- Neuron content panels: LEI, MEI, Screened (top to bottom) -->
+        <div class="neuron-panel" data-neuron="4" style="display: block;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_4_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_4_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_4_screened.html"></iframe>
+            </div>
+        </div>
+
+        <div class="neuron-panel" data-neuron="6" style="display: none;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_6_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_6_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_6_screened.html"></iframe>
+            </div>
+        </div>
+
+        <div class="neuron-panel" data-neuron="18" style="display: none;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_18_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_18_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_18_screened.html"></iframe>
+            </div>
+        </div>
+
+        <div class="neuron-panel" data-neuron="26" style="display: none;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_26_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_26_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_26_screened.html"></iframe>
+            </div>
+        </div>
+
+        <div class="neuron-panel" data-neuron="29" style="display: none;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_29_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_29_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_29_screened.html"></iframe>
+            </div>
+        </div>
+
+        <div class="neuron-panel" data-neuron="30" style="display: none;">
+            <p class="animation-label">Most Exciting Input (MEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_30_mei.html"></iframe>
+            </div>
+            <p class="animation-label">Least Exciting Input (LEI)</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_30_lei.html"></iframe>
+            </div>
+            <p class="animation-label">Screened Images</p>
+            <div class="iframe-wrapper">
+                <iframe src="clarity/images/animations/neuron_30_screened.html"></iframe>
+            </div>
+        </div>
+
+        <p class="caption">
+            <b>Interactive Demo:</b> Explore how V4 neurons respond to natural images along their selectivity axes. Each neuron shows three views: <b>MEI</b> (optimized most-exciting input), <b>LEI</b> (optimized least-exciting input), and <b>Screened</b> (natural images ranked by response).
+        </p>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Results</h1>
+        <p class="text">
+            We found that many cortical neurons were non-sparse, maintaining high activity for most images. Validation confirmed that the model predictions generalized to real neurons. For those neurons, both the most activating and most suppressing images were characterized by distinct, interpretable visual features. These “poles” were often qualitatively different rather than simple inverses, revealing a rich representational structure.
+        </p>
+        
+        <p class="text">
+            This two-sided structure also appeared across neurons: features that strongly activated one neuron often resembled those that strongly suppressed another, suggesting coordinated relationships at the population level.
+        </p>
+    </div>   
+
+    <div class="container blog max dark" style="background-color: #000000;">
+        <img src="clarity/images/poles.png" style="width: 60%;">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            To understand how these non-sparse neurons encode natural images, we mapped each neuron’s activity onto an image embedding defined by its most activating and suppressive images. We discovered that neural activity varied smoothly in relation to the distance to both poles. In contrast, sparse neurons showed a simpler pattern: their responses depended primarily on how close an image was to the activating pole, in line with the feature detector idea.
+        </p>
+
+    </div>
+
+    <div class="container blog main dark large" style="background-color: #000000;">
+        <img src="clarity/images/Figure_DreamSim.png">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            Finally, these patterns were consistent across visual areas and species. We observed the same dual-feature selectivity in macaque V1, and replicated the phenomenon in mouse V1 and higher visual areas, indicating that this dual-feature coding scheme reflects a conserved strategy across mammals.
+        </p>
+    </div>
+    
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Conclusions</h1>
+        <p class="text">
+            Many cortical neurons operate along a continuum defined by opposing activating and suppressive features. Responses reflect where an image falls along this continuum, not simply whether a single feature is present. This dual-feature code may enhance representational expressivity while maintaining interpretability. Mechanistically, this could be implemented by feature-selective normalization, as suggested by recent anatomical studies. For artificial vision systems, explicitly modeling suppressive features through selective normalization could yield networks that are both more powerful and easier to understand.
+        </p>
+    </div>
+
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Citation</h1>
+        <p class="text">
+            If you find this work useful for your research, please cite our paper:
+        </p>
+<pre><code class="plaintext">@article{frankekarantzas2025dualfeature,
+  title    = "Dual-feature selectivity enables bidirectional coding in visual
+              cortical neurons",
+  author   = "Franke, Katrin and Karantzas, Nikos and Willeke, Konstantin and
+              Diamantaki, Maria and Ramakrishnan, Kandan and Elumalai, Pavithra
+              and Restivo, Kelli and Fahey, Paul and Nealley, Cate and Shinn,
+              Tori and Garcia, Gabrielle and Patel, Saumil and Ecker, Alexander
+              and Walker, Edgar Y and Froudarakis, Emmanouil and Sanborn, Sophia
+              and Sinz, Fabian H and Tolias, Andreas",
+  journal  = "bioRxiv",
+  pages    = "2025.07.16.665209",
+  month    =  jul,
+  year     =  2025,
+  language = "en"
+}
+}</code></pre>
+    </div>
+
+    <!-- Footer Page -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 90%; line-height: 1.6; margin-bottom: 15px;">
+                <b>Authors:</b> Katrin Franke<sup>1-4,*</sup>, Nikos Karantzas<sup>1-3,*</sup>, Konstantin Willeke<sup>1-3</sup>, Maria Diamantaki<sup>5,6</sup>, Kandan Ramakrishnan<sup>7</sup>, Pavithra Elumalai<sup>8</sup>, Kelli Restivo<sup>7</sup>, Paul Fahey<sup>1-3</sup>, Cate Nealley<sup>1-3</sup>, Tori Shinn<sup>11</sup>, Gabrielle Garcia<sup>1-3</sup>, Saumil Patel<sup>1-3</sup>, Alexander Ecker<sup>8-10</sup>, Edgar Y. Walker<sup>12,13</sup>, Emmanouil Froudarakis<sup>5,6</sup>, Sophia Sanborn<sup>1-3</sup>, Fabian H. Sinz<sup>7-9</sup>, and Andreas Tolias<sup>1-3</sup>
+            </p>
+            <p style="font-size: 80%; line-height: 1.5; opacity: 0.85; margin-bottom: 20px;">
+                <sup>1</sup> Dept. of Ophthalmology, Byers Eye Institute, Stanford University School of Medicine &nbsp;
+                <sup>2</sup> Stanford Bio-X, Stanford University &nbsp;
+                <sup>3</sup> Wu Tsai Neurosciences Institute, Stanford University &nbsp;
+                <sup>4</sup> Institute for Ophthalmic Research, Tübingen University &nbsp;
+                <sup>5</sup> IMBB, FORTH, Heraklion, Crete &nbsp;
+                <sup>6</sup> Faculty of Medicine, University of Crete &nbsp;
+                <sup>7</sup> Dept. of Neuroscience & Center for Neuroscience and AI, Baylor College of Medicine &nbsp;
+                <sup>8</sup> University of Göttingen &nbsp;
+                <sup>9</sup> Lower Saxony Center for AI and Causal Methods in Medicine &nbsp;
+                <sup>10</sup> Max Planck Institute for Dynamics and Self-Organization &nbsp;
+                <sup>11</sup> Dept. of Pediatrics, Baylor College of Medicine &nbsp;
+                <sup>12</sup> University of Washington School of Medicine &nbsp;
+                <sup>13</sup> Computational Neuroscience Center, University of Washington<br>
+                <sup>*</sup> Equal contributions
+            </p>
+            <p>
+                This website is built on the <a href="https://shikun.io/projects/clarity">Clarity Template</a>, designed by <a href="https://shikun.io/">Shikun Liu</a>.
+            </p>
+        </div>    
+    </footer>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="clarity/clarity.js"></script>    
+    <script src="assets/scripts/main.js"></script>    
+</body>
+</html>

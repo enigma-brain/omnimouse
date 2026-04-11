@@ -125,4 +125,113 @@
          column-gap: 2vw;
     grid-template-columns: repeat(1, 1fr);
   }
-}/*# sourceMappingURL=clarity.css.map */
+}
+
+/* Neuron Selector Tabs */
+.neuron-selector {
+  margin-bottom: 30px;
+}
+
+.neuron-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.neuron-tab {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.neuron-tab:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.neuron-tab.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Neuron Panels */
+.neuron-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.animation-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 20px 0 10px 0;
+  padding-left: 5px;
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  padding-left: 12px;
+}
+
+.neuron-panel .animation-label:first-child {
+  margin-top: 0;
+}
+
+@media screen and (max-width: 769px) {
+  .neuron-tabs {
+    gap: 8px;
+  }
+  
+  .neuron-tab {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  
+  .animation-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive iframe wrapper */
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.iframe-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media screen and (max-width: 800px) {
+  .iframe-wrapper {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .iframe-wrapper {
+    aspect-ratio: 3 / 5;
+  }
+}
+/*# sourceMappingURL=clarity.css.map */
