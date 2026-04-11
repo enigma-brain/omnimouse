@@ -49,31 +49,27 @@
         <div class="blog-title white">
             <div class="blog-intro">
                 <div>
-                    <h1 class="title">Omnimouse</h1>
+                    <h1 class="title">OmniMouse: Scaling properties of multi-modal, multi-task Brain Models on 150B Neural Tokens</h1>
                     <p class="author">
                         Konstantin Willeke<sup>*</sup>, Polina Turishcheva<sup>*</sup>, Alex Gilbert <sup>*</sup>, et al.
                     </p>
-                    <p class="author" style="padding-top: 0px; font-size: 80%;">
+                    <p class="author" style="padding-top: 10px; font-size: 80%;">
                         Stanford University, University of Göttingen
                     </p>
-                    <p class="abstract">
-                        Many neurons in the visual cortex act not just as monosemantic feature detectors, but instead represent a continuum from suppressing to activating visual features. By combining neural recordings with deep learning models, we demonstrate that this continuous coding scheme is complex yet interpretable, conserved across species, and informative for advancing both neuroscience and AI.
+                    <p class="abstract" style="text-align: justify;">
+                        Scaling data and models has transformed AI. Does the same hold for brain modeling? We train multi-modal, multi-task models on 3.1 million neurons from 73 mice (150B+ neural tokens), flexibly supporting neural prediction, behavioral decoding, and neural forecasting. OmniMouse achieves state-of-the-art performance, outperforming specialized baselines across virtually all regimes. Yet performance scales with more data while gains from larger models saturate &ndash; inverting the standard AI scaling story: brain models remain data-limited even with vast recordings.
                     </p>
 
                     <!-- Using FontAwesome Free -->
                     <div class="info">
                         <div>
-                            <a href="https://www.biorxiv.org/content/10.1101/2025.07.16.665209v1" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)"> Paper <i class="fa-solid fa-book-open"></i></a> &nbsp;&nbsp; 
-                            <a href="https://github.com/enigma-brain/dualneuron" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Code <i class="fa-solid fa-code"></i></a>  &nbsp;&nbsp; 
-                            <a href="https://doi.org/10.5061/dryad.q573n5tx3" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Data <i class="fa-solid fa-laptop-code"></i></a> 
+                            <a href="https://openreview.net/pdf?id=mEw4lhAn0F" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)"> Paper <i class="fa-solid fa-book-open"></i></a> &nbsp;&nbsp; 
+                            <a href="https://github.com/enigma-brain/omnimouse/" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Code <i class="fa-solid fa-code"></i></a>  &nbsp;&nbsp; 
+                            <a href="https://data.sensorium-competition.net/" class="button icon" style="background-color: rgba(255, 255, 255, 0.15)">Data <i class="fa-solid fa-laptop-code"></i></a> 
                         </div>
                     </div>
                 </div>
                
-                <div class="info">
-                    <p>bioRxiv</p>
-                    <p style="font-size: 65%; opacity: 0.4; text-align: left;">Website by <a href="https://www.vedanglad.com/" style="color: inherit; font-size: inherit;">Vedang Lad</a></p>
-                </div>
             </div>
 
             <div class="blog-cover">
@@ -86,12 +82,13 @@
     <div class="container blog main first" id="blog-main" style="background-color: #ffffff;">
         <h1>Motivation</h1>
         <p class="text">
-            Traditional views in sensory neuroscience depict cortical neurons as sparse feature detectors that only fire when a stimulus matches their preferred pattern. This perspective has been highly influential but often undervalues the nuanced role of inhibition. Understanding how excitation and suppression interact across the vast array of natural images is crucial for unraveling how visual neurons encode the high dimensional visual input. Here, we address these questions by combining neural recordings with deep learning-based models, enabling unlimited in silico experiments and overcoming experimental constraints.
+            Scaling data and models has driven the AI revolution. Large language models, vision transformers, and multi-modal systems all follow a simple recipe: more data and more parameters yield better performance. But does the same hold for modeling the brain?
         </p>
-
-        <h1>Approach</h1>
         <p class="text">
-            We recorded from neurons in macaque V4 while animals viewed thousands of natural images. We then trained a convolutional neural network to predict the firing rate of single neurons based on visual input. These functional digital twins accurately replicate stimulus-response behaviors, allowing us to probe neural stimulus selectivity in ways that direct experimentation cannot.
+            The mouse visual cortex offers a natural testbed. Large-scale neural datasets now exist, standardized benchmarks are in place, and the system is well-characterized. Yet compared to internet-scale corpora, neural data remains small, fragmented, and expensive to collect. Prior models have been restricted to single modalities, single tasks, or single sessions &mdash; making it impossible to study scaling systematically.
+        </p>
+        <p class="text">
+            We set out to change this. OmniMouse is the first model to unify neural prediction, behavioral decoding, and neural forecasting in a single architecture &mdash; trained on one of the largest single-neuron datasets ever assembled.
         </p>
     </div>
 
@@ -100,8 +97,18 @@
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
+        <h1>The OmniMouse Model</h1>
         <p class="text">
-            Using gradient-based feature visualization, we created images that maximized or minimized predicted neuron activity, revealing structured features at both extremes. We also screened over one million ImageNet images to find natural images eliciting the strongest and weakest responses.
+            OmniMouse is a multi-modal, multi-task transformer that processes three streams of information simultaneously: single-neuron calcium traces from visual cortex, video stimuli shown to the mouse, and behavioral variables (gaze, pupil size, running speed).
+        </p>
+        <p class="text">
+            Each neuron's activity is tokenized individually via strided 1D convolutions and augmented with learned identity embeddings for neuron, session, and animal. Video frames are encoded with a Hiera vision transformer. Behavioral traces are projected through a shared linear layer with channel-specific embeddings.
+        </p>
+        <p class="text">
+            The architecture follows an encode&ndash;fuse&ndash;decode design. A cross-attention encoder compresses variable-length neural and behavioral tokens into a fixed-length latent sequence. A multi-modal fusion stack integrates these latents with video features via sliding-window and global self-attention layers. A shared cross-attention decoder then reconstructs target neural responses and behavioral traces.
+        </p>
+        <p class="text">
+            The key design choice is flexible masking. We train with 119 structured masking configurations, enabling the model to handle any combination of forecasting, stimulus-conditioned prediction, sub-population prediction, and behavioral decoding &mdash; all within a single model.
         </p>
     </div>
 
@@ -110,131 +117,21 @@
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
-        <h1>Interactive Neuron Viewer</h1>
+        <h1>Dataset</h1>
         <p class="text">
-            Explore the dual-feature selectivity of individual V4 neurons. The visualization below shows how a single neuron's predicted activity varies across images sampled along the axis from least-activating to most-activating features. Notice how responses aren't simply binary (on/off) but form a graded continuum—consistent with the neuron encoding relative similarity to both feature poles.
-        </p>
-    </div>
-
-    <div class="container blog extra-large dark" style="background-color: #000000;">
-        <!-- Neuron selector tabs -->
-        <div class="neuron-selector">
-            <ul class="neuron-tabs" id="neuron-menu">
-                <li class="neuron-tab active" data-neuron="4">Neuron 1</li>
-                <li class="neuron-tab" data-neuron="6">Neuron 2</li>
-                <li class="neuron-tab" data-neuron="18">Neuron 3</li>
-                <li class="neuron-tab" data-neuron="26">Neuron 4</li>
-                <li class="neuron-tab" data-neuron="29">Neuron 5</li>
-                <li class="neuron-tab" data-neuron="30">Neuron 6</li>
-            </ul>
-        </div>
-
-        <!-- Neuron content panels: LEI, MEI, Screened (top to bottom) -->
-        <div class="neuron-panel" data-neuron="4" style="display: block;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_4_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_4_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_4_screened.html"></iframe>
-            </div>
-        </div>
-
-        <div class="neuron-panel" data-neuron="6" style="display: none;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_6_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_6_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_6_screened.html"></iframe>
-            </div>
-        </div>
-
-        <div class="neuron-panel" data-neuron="18" style="display: none;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_18_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_18_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_18_screened.html"></iframe>
-            </div>
-        </div>
-
-        <div class="neuron-panel" data-neuron="26" style="display: none;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_26_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_26_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_26_screened.html"></iframe>
-            </div>
-        </div>
-
-        <div class="neuron-panel" data-neuron="29" style="display: none;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_29_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_29_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_29_screened.html"></iframe>
-            </div>
-        </div>
-
-        <div class="neuron-panel" data-neuron="30" style="display: none;">
-            <p class="animation-label">Most Exciting Input (MEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_30_mei.html"></iframe>
-            </div>
-            <p class="animation-label">Least Exciting Input (LEI)</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_30_lei.html"></iframe>
-            </div>
-            <p class="animation-label">Screened Images</p>
-            <div class="iframe-wrapper">
-                <iframe src="clarity/images/animations/neuron_30_screened.html"></iframe>
-            </div>
-        </div>
-
-        <p class="caption">
-            <b>Interactive Demo:</b> Explore how V4 neurons respond to natural images along their selectivity axes. Each neuron shows three views: <b>MEI</b> (optimized most-exciting input), <b>LEI</b> (optimized least-exciting input), and <b>Screened</b> (natural images ranked by response).
+            We compiled one of the largest single-neuron datasets to date: 3.1 million neurons from the visual cortex of 73 mice across 323 recording sessions, totaling over 150 billion neural tokens. The mice viewed naturalistic movies, ImageNet images, and parametric stimuli (Gabors, random dot kinematograms, pink noise) while running on a wheel. Behavioral variables &mdash; pupil position, pupil dilation, and running speed &mdash; were recorded simultaneously.
         </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Results</h1>
         <p class="text">
-            We found that many cortical neurons were non-sparse, maintaining high activity for most images. Validation confirmed that the model predictions generalized to real neurons. For those neurons, both the most activating and most suppressing images were characterized by distinct, interpretable visual features. These “poles” were often qualitatively different rather than simple inverses, revealing a rich representational structure.
+            <b>State-of-the-art performance.</b> OmniMouse outperforms all specialized baselines across virtually all evaluation regimes &mdash; including neural forecasting, population prediction, stimulus encoding, and behavioral decoding. Crucially, these gains hold even in data-matched comparisons where OmniMouse and baselines train on identical data. The architecture itself provides an advantage, independent of data scale.
         </p>
-        
         <p class="text">
-            This two-sided structure also appeared across neurons: features that strongly activated one neuron often resembled those that strongly suppressed another, suggesting coordinated relationships at the population level.
+            <b>Model scaling saturates.</b> We trained models from 1M to 300M parameters on all 323 sessions. Performance improved up to ~80M parameters, then plateaued. Larger models showed no further gains for neural prediction, indicating that current brain models are not compute- or parameter-limited.
         </p>
-    </div>   
+    </div>
 
     <div class="container blog max dark" style="background-color: #000000;">
         <img src="clarity/images/poles.png" style="width: 60%;">
@@ -242,9 +139,11 @@
 
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            To understand how these non-sparse neurons encode natural images, we mapped each neuron’s activity onto an image embedding defined by its most activating and suppressive images. We discovered that neural activity varied smoothly in relation to the distance to both poles. In contrast, sparse neurons showed a simpler pattern: their responses depended primarily on how close an image was to the activating pole, in line with the feature detector idea.
+            <b>Data scaling works.</b> In contrast, scaling data consistently improves performance. We trained models on nested collections of 8, 16, 32, 64, and 323 sessions. Across all tasks and model sizes, more data meant better predictions &mdash; with no sign of saturation. Larger models benefited disproportionately from additional data, and the performance gap between model sizes widened as datasets grew.
         </p>
-
+        <p class="text">
+            <b>Behavior decoding scales the most.</b> Among all tasks, behavioral decoding showed the most promising scaling dynamics. Performance improved smoothly with both model size and data, reminiscent of classic scaling-law behavior in language models. This task had not yet saturated even at the largest scale tested.
+        </p>
     </div>
 
     <div class="container blog main dark large" style="background-color: #000000;">
@@ -253,39 +152,205 @@
 
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            Finally, these patterns were consistent across visual areas and species. We observed the same dual-feature selectivity in macaque V1, and replicated the phenomenon in mouse V1 and higher visual areas, indicating that this dual-feature coding scheme reflects a conserved strategy across mammals.
+            <b>An inverted scaling story.</b> This inverts the standard AI narrative. In language and vision, massive datasets make parameter scaling the primary driver of progress. In brain modeling &mdash; even in the mouse visual cortex, a relatively simple system &mdash; models remain data-limited despite vast recordings. The bottleneck is not compute. It is data.
         </p>
     </div>
-    
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Conclusions</h1>
         <p class="text">
-            Many cortical neurons operate along a continuum defined by opposing activating and suppressive features. Responses reflect where an image falls along this continuum, not simply whether a single feature is present. This dual-feature code may enhance representational expressivity while maintaining interpretability. Mechanistically, this could be implemented by feature-selective normalization, as suggested by recent anatomical studies. For artificial vision systems, explicitly modeling suppressive features through selective normalization could yield networks that are both more powerful and easier to understand.
+            OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.
+        </p>
+        <p class="text">
+            This finding has practical implications. If brain models are to become foundation models for neuroscience, the field must invest in richer, more diverse experiments &mdash; more stimuli, more tasks, more behavioral paradigms. In language modeling, seemingly small improvements from scaling unlocked phase transitions to qualitatively new capabilities. By analogy, richer neural data may similarly unlock new capabilities in brain models, revealing deeper principles of neural computation.
         </p>
     </div>
 
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Baseline Comparisons</h1>
+        <p class="text">
+            Results in <b>bold</b> indicate the best score per task in either the data-matched condition (8 sessions, top) or when using the full dataset (323 sessions, bottom).
+        </p>
+        <div style="overflow-x: auto; margin: 2vh 0; margin-left: -8vw; margin-right: -8vw;">
+            <table style="width: 100%; max-width: 1200px; margin: 0 auto; border-collapse: collapse; font-size: 90%; font-family: 'Poppins', sans-serif;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #222;">
+                        <th style="padding: 10px 8px;"></th>
+                        <th style="padding: 10px 8px; text-align: left; font-size: 105%;">Model</th>
+                        <th colspan="4" style="padding: 10px 8px; text-align: center; font-size: 105%; border-bottom: 1px solid #ccc;">Neuronal Activity Prediction</th>
+                        <th colspan="4" style="padding: 10px 8px; text-align: center; font-size: 105%; border-bottom: 1px solid #ccc;">Behavior Decoding</th>
+                    </tr>
+                    <tr style="font-size: 85%; color: #555;">
+                        <th style="padding: 4px 8px;"></th>
+                        <th style="padding: 4px 8px; text-align: left; font-style: italic;">Task</th>
+                        <th style="padding: 4px 8px; text-align: center;">Forecasting</th>
+                        <th style="padding: 4px 8px; text-align: center;">Forecast + Stimulus</th>
+                        <th style="padding: 4px 8px; text-align: center;">Population</th>
+                        <th style="padding: 4px 8px; text-align: center;">Pop. + Stimulus</th>
+                        <th style="padding: 4px 8px; text-align: center;">Average</th>
+                        <th style="padding: 4px 8px; text-align: center;">Gaze</th>
+                        <th style="padding: 4px 8px; text-align: center;">Pupil</th>
+                        <th style="padding: 4px 8px; text-align: center;">Running</th>
+                    </tr>
+                    <tr style="font-size: 80%; color: #888;">
+                        <td style="padding: 2px 8px;"></td>
+                        <td style="padding: 2px 8px; font-style: italic;">Neural context</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; past</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; past</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; subset</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; subset</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; all</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; all</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; all</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003; all</td>
+                    </tr>
+                    <tr style="font-size: 80%; color: #888; border-bottom: 1px solid #ddd;">
+                        <td style="padding: 2px 8px;"></td>
+                        <td style="padding: 2px 8px; font-style: italic;">Visual stimulus</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #4caf50;">&#10003;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                        <td style="padding: 2px 8px; text-align: center; color: #e53935; font-size: 120%;">&#10005;</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data-Matched block -->
+                    <tr>
+                        <td rowspan="5" style="padding: 8px; text-align: center; font-weight: bold; font-size: 80%; letter-spacing: 0.05em; writing-mode: vertical-lr; transform: rotate(180deg); vertical-align: middle; border-right: 1px solid #eee;">Data-Matched</td>
+                        <td style="padding: 8px; font-weight: 600;">MtM <a href="https://arxiv.org/abs/2407.14500" style="color: #999; font-size: 75%; font-weight: 400; text-decoration: none; margin-left: 2px;" title="Paper"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+                        <td style="padding: 8px; text-align: center;">0.12</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center;">0.07</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">Latent Model <a href="https://arxiv.org/abs/2501.13918" style="color: #999; font-size: 75%; font-weight: 400; text-decoration: none; margin-left: 2px;" title="Paper"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center;">0.18</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center;">0.16</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">CEBRA <a href="https://arxiv.org/abs/2204.00673" style="color: #999; font-size: 75%; font-weight: 400; text-decoration: none; margin-left: 2px;" title="Paper"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center;">0.53</td>
+                        <td style="padding: 8px; text-align: center;">0.52</td>
+                        <td style="padding: 8px; text-align: center;">0.55</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.51</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">POYO+ <a href="https://arxiv.org/abs/2407.17609" style="color: #999; font-size: 75%; font-weight: 400; text-decoration: none; margin-left: 2px;" title="Paper"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center; color: #bbb; font-size: 120%;">&times;</td>
+                        <td style="padding: 8px; text-align: center;">0.55</td>
+                        <td style="padding: 8px; text-align: center;">0.56</td>
+                        <td style="padding: 8px; text-align: center;">0.63</td>
+                        <td style="padding: 8px; text-align: center;">0.47</td>
+                    </tr>
+                    <tr style="border-bottom: 2px solid #222;">
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-5M</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.18</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.25</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.25</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.27</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.59</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.68</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.66</td>
+                        <td style="padding: 8px; text-align: center;">0.44</td>
+                    </tr>
+                    <!-- Full Dataset block -->
+                    <tr>
+                        <td rowspan="5" style="padding: 8px; text-align: center; font-weight: bold; font-size: 80%; letter-spacing: 0.05em; writing-mode: vertical-lr; transform: rotate(180deg); vertical-align: middle; border-right: 1px solid #eee;">Full Dataset</td>
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-1M</td>
+                        <td style="padding: 8px; text-align: center;">0.18</td>
+                        <td style="padding: 8px; text-align: center;">0.31</td>
+                        <td style="padding: 8px; text-align: center;">0.27</td>
+                        <td style="padding: 8px; text-align: center;">0.35</td>
+                        <td style="padding: 8px; text-align: center;">0.68</td>
+                        <td style="padding: 8px; text-align: center;">0.75</td>
+                        <td style="padding: 8px; text-align: center;">0.73</td>
+                        <td style="padding: 8px; text-align: center;">0.55</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-5M</td>
+                        <td style="padding: 8px; text-align: center;">0.22</td>
+                        <td style="padding: 8px; text-align: center;">0.32</td>
+                        <td style="padding: 8px; text-align: center;">0.28</td>
+                        <td style="padding: 8px; text-align: center;">0.35</td>
+                        <td style="padding: 8px; text-align: center;">0.69</td>
+                        <td style="padding: 8px; text-align: center;">0.76</td>
+                        <td style="padding: 8px; text-align: center;">0.74</td>
+                        <td style="padding: 8px; text-align: center;">0.57</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-20M</td>
+                        <td style="padding: 8px; text-align: center;">0.23</td>
+                        <td style="padding: 8px; text-align: center;">0.33</td>
+                        <td style="padding: 8px; text-align: center;">0.29</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.37</td>
+                        <td style="padding: 8px; text-align: center;">0.75</td>
+                        <td style="padding: 8px; text-align: center;">0.78</td>
+                        <td style="padding: 8px; text-align: center;">0.75</td>
+                        <td style="padding: 8px; text-align: center;">0.73</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-80M</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.25</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.34</td>
+                        <td style="padding: 8px; text-align: center;">0.29</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.37</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.77</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.80</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.76</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.75</td>
+                    </tr>
+                    <tr style="border-bottom: 2px solid #222;">
+                        <td style="padding: 8px; font-weight: 600;">OmniMouse-300M</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.25</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.34</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.30</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.37</td>
+                        <td style="padding: 8px; text-align: center;">0.76</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.80</td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold;">0.76</td>
+                        <td style="padding: 8px; text-align: center;">0.73</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="text-align: center; font-size: 78%; color: #999; margin-top: 8px; font-family: 'Poppins', sans-serif;"><span style="color: #bbb; font-size: 115%;">&times;</span>&ensp;Model does not natively support this task</p>
+        </div>
+    </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Citation</h1>
         <p class="text">
             If you find this work useful for your research, please cite our paper:
         </p>
-<pre><code class="plaintext">@article{frankekarantzas2025dualfeature,
-  title    = "Dual-feature selectivity enables bidirectional coding in visual
-              cortical neurons",
-  author   = "Franke, Katrin and Karantzas, Nikos and Willeke, Konstantin and
-              Diamantaki, Maria and Ramakrishnan, Kandan and Elumalai, Pavithra
-              and Restivo, Kelli and Fahey, Paul and Nealley, Cate and Shinn,
-              Tori and Garcia, Gabrielle and Patel, Saumil and Ecker, Alexander
-              and Walker, Edgar Y and Froudarakis, Emmanouil and Sanborn, Sophia
-              and Sinz, Fabian H and Tolias, Andreas",
-  journal  = "bioRxiv",
-  pages    = "2025.07.16.665209",
-  month    =  jul,
-  year     =  2025,
-  language = "en"
-}
+<pre><code class="plaintext">@inproceedings{
+willeke2026omnimouse,
+title={OmniMouse: Scaling properties of multi-modal, multi-task Brain Models on 150B Neural Tokens},
+author={Konstantin Friedrich Willeke and Polina Turishcheva and Alex Gilbert and Goirik Chakrabarty and Hasan Atakan Bedel and Paul G. Fahey and Yongrong Qiu and Marissa A. Weis and Michaela Vystr{\v{c}}ilov{\'a} and Taliah Muhammad and Lydia Ntanavara and Rachel E Froebe and Kayla Ponder and Zheng Huan Tan and Emin Orhan and Erick Cobos and Sophia Sanborn and Katrin Franke and Fabian H. Sinz and Alexander S. Ecker and Andreas S. Tolias},
+booktitle={The Fourteenth International Conference on Learning Representations},
+year={2026},
+url={https://openreview.net/forum?id=mEw4lhAn0F}
 }</code></pre>
     </div>
 
@@ -293,23 +358,19 @@
     <footer>
         <div class="container">
             <p style="font-size: 90%; line-height: 1.6; margin-bottom: 15px;">
-                <b>Authors:</b> Katrin Franke<sup>1-4,*</sup>, Nikos Karantzas<sup>1-3,*</sup>, Konstantin Willeke<sup>1-3</sup>, Maria Diamantaki<sup>5,6</sup>, Kandan Ramakrishnan<sup>7</sup>, Pavithra Elumalai<sup>8</sup>, Kelli Restivo<sup>7</sup>, Paul Fahey<sup>1-3</sup>, Cate Nealley<sup>1-3</sup>, Tori Shinn<sup>11</sup>, Gabrielle Garcia<sup>1-3</sup>, Saumil Patel<sup>1-3</sup>, Alexander Ecker<sup>8-10</sup>, Edgar Y. Walker<sup>12,13</sup>, Emmanouil Froudarakis<sup>5,6</sup>, Sophia Sanborn<sup>1-3</sup>, Fabian H. Sinz<sup>7-9</sup>, and Andreas Tolias<sup>1-3</sup>
+                <b>Authors:</b> Konstantin F. Willeke<sup>*,&ddagger;,1,2,3,4</sup>, Polina Turishcheva<sup>*,4</sup>, Alex Gilbert<sup>*,1,2,3</sup>, Goirik Chakrabarty<sup>4</sup>, Hasan A. Bedel<sup>1,2,3</sup>, Paul G. Fahey<sup>1,2,3</sup>, Yongrong Qiu<sup>1,2,3</sup>, Marissa A. Weis<sup>4</sup>, Michaela Vystr&ccaron;ilov&aacute;<sup>4</sup>, Taliah Muhammad<sup>1,2,3</sup>, Lydia Ntanavara<sup>1,2,3</sup>, Rachel E Froebe<sup>1,2,3</sup>, Kayla Ponder<sup>1,2,3</sup>, Zheng Huan Tan<sup>1,2,3</sup>, Emin Orhan<sup>6</sup>, Erick Cobos<sup>7,8</sup>, Sophia Sanborn<sup>1,2,3</sup>, Katrin Franke<sup>1,2,3</sup>, Fabian H. Sinz<sup>&dagger;,4</sup>, Alexander S. Ecker<sup>&dagger;,4,5</sup>, and Andreas S. Tolias<sup>&dagger;,1,2,3,7,8,9</sup>
             </p>
             <p style="font-size: 80%; line-height: 1.5; opacity: 0.85; margin-bottom: 20px;">
-                <sup>1</sup> Dept. of Ophthalmology, Byers Eye Institute, Stanford University School of Medicine &nbsp;
+                <sup>1</sup> Department of Ophthalmology, Byers Eye Institute, Stanford University &nbsp;
                 <sup>2</sup> Stanford Bio-X, Stanford University &nbsp;
                 <sup>3</sup> Wu Tsai Neurosciences Institute, Stanford University &nbsp;
-                <sup>4</sup> Institute for Ophthalmic Research, Tübingen University &nbsp;
-                <sup>5</sup> IMBB, FORTH, Heraklion, Crete &nbsp;
-                <sup>6</sup> Faculty of Medicine, University of Crete &nbsp;
-                <sup>7</sup> Dept. of Neuroscience & Center for Neuroscience and AI, Baylor College of Medicine &nbsp;
-                <sup>8</sup> University of Göttingen &nbsp;
-                <sup>9</sup> Lower Saxony Center for AI and Causal Methods in Medicine &nbsp;
-                <sup>10</sup> Max Planck Institute for Dynamics and Self-Organization &nbsp;
-                <sup>11</sup> Dept. of Pediatrics, Baylor College of Medicine &nbsp;
-                <sup>12</sup> University of Washington School of Medicine &nbsp;
-                <sup>13</sup> Computational Neuroscience Center, University of Washington<br>
-                <sup>*</sup> Equal contributions
+                <sup>4</sup> Institute of Computer Science and Campus Institute Data Science, University G&ouml;ttingen &nbsp;
+                <sup>5</sup> Max Planck Institute for Dynamics and Self-Organization, G&ouml;ttingen &nbsp;
+                <sup>6</sup> National Center for Computational Sciences, Oak Ridge National Laboratory &nbsp;
+                <sup>7</sup> Center for Neuroscience and Artificial Intelligence, Baylor College of Medicine &nbsp;
+                <sup>8</sup> Department of Neuroscience, Baylor College of Medicine &nbsp;
+                <sup>9</sup> Department of Electrical Engineering, Stanford University<br>
+                <sup>*,&dagger;</sup> Equal contribution &nbsp; <sup>&ddagger;</sup> Corresponding author: willeke@stanford.edu
             </p>
             <p>
                 This website is built on the <a href="https://shikun.io/projects/clarity">Clarity Template</a>, designed by <a href="https://shikun.io/">Shikun Liu</a>.

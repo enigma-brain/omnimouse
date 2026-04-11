@@ -234,4 +234,7 @@
     aspect-ratio: 3 / 5;
   }
 }
+div.container.blog p.text {
+  text-align: justify;
+}
 /*# sourceMappingURL=clarity.css.map */

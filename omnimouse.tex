@@ -1,0 +1,1243 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{iclr2026_conference,times}
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+\usepackage{newtxtext} %% this line was added by polly as the textbf was not working properly
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx} % additional for images
+\usepackage{booktabs} % additional for tables
+\usepackage{pifont} % ticks and crossed for the tables
+\usepackage{cleveref} % for better Cref
+\usepackage{soul} % for hl
+\usepackage{siunitx}    % For aligning numbers in columns
+\usepackage{xcolor}     % For defining custom colors
+\usepackage{colortbl}   % For coloring table rows/cells
+\usepackage{amssymb}    % For special symbols like \textdiamond
+\usepackage{enumitem} % added by polly for adjustable itemlists
+\usepackage{wrapfig} % for the tables in text
+\usepackage{ulem} % for strike through text, can remove later
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\crefname{appendix}{App.}{Apps.}
+\crefname{figure}{Fig.}{Figs.}
+\crefname{section}{Sec.}{Secs.}
+\crefname{algorithm}{Alg.}{Alg.}
+\crefname{table}{Tab.}{Tabs.}
+
+% \title{Foundational model of the mouse visual cortex}
+
+%NOTE: We do not want to use "scaling laws" as strictly speaking we have not derived any laws and also the model sees non-unique tokens, compared to the classic scaling papers
+% \title{OmniMouse: Scaling multi-modal Multi-task Models of Neuronal Activity}
+% \title{PolyMouse: Scaling Properties of multi-modal Multi-Task Brain Models Trained on 150B Neural Tokens}
+\title{OmniMouse: Scaling properties of multi-modal, multi-task Brain Models on 150B Neural Tokens}
+% \title{Scaling Properties of multi-modal Multi-Task Brain Foundation Models Trained on 150B Neural Tokens}
+% \title{OmniMouse : Behavior- and Image-driven Generalization: A multi-modal Unified Single-neuron Encoder-decoder model at scale}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the \iclrfinalcopy macro remains commented out below.
+% Non-anonymous submissions will be rejected without review.
+\usepackage{authblk}
+\usepackage{fontawesome5}
+
+% Bold author names, small affiliation font
+\renewcommand\Authfont{\bfseries}
+\renewcommand\Affilfont{\small}
+
+% Make both author affiliation markers AND affiliation labels superscript
+\makeatletter
+\renewcommand\AB@authnote[1]{\textsuperscript{#1}}
+\renewcommand\AB@affilnote[1]{\textsuperscript{#1}}
+\makeatother
+
+\renewcommand\Authfont{\bfseries}
+\renewcommand\Affilfont{\small}
+\renewcommand\Authsep{,\hspace{0.65em}}   % space between authors
+\renewcommand\Authand{,\hspace{0.5em}}
+\renewcommand\Authands{,\hspace{0.5em}}
+\setlength{\affilsep}{0.6em}             % space between affiliation rows
+
+\author[1,2,3,4]{Konstantin F. Willeke$^{\star, \ddagger}$}
+\author[4]{Polina Turishcheva$^{\star}$}
+\author[1,2,3]{Alex Gilbert$^{\star}$}
+\author[4]{Goirik Chakrabarty}
+\author[1,2,3]{Hasan A. Bedel}
+\author[1,2,3]{Paul G. Fahey}
+\author[1,2,3]{Yongrong Qiu}
+\author[4]{Marissa A. Weis}
+\author[4]{Michaela Vystrčilová}
+\author[1,2,3]{Taliah Muhammad}
+\author[1,2,3]{Lydia Ntanavara}
+\author[1,2,3]{Rachel E Froebe} 
+\author[1,2,3]{Kayla Ponder}
+\author[1,2,3]{Zheng Huan Tan}
+\author[6]{Emin Orhan}
+\author[7,8]{Erick Cobos}
+\author[1,2,3]{Sophia Sanborn}
+\author[1,2,3]{Katrin Franke}
+\author[4]{Fabian H. Sinz$^{\dagger}$}
+\author[4,5]{Alexander S. Ecker$^{\dagger}$}
+\author[1,2,3,7,8,9]{Andreas S. Tolias$^{\dagger}$}
+
+\affil[1]{Department of Ophthalmology, Byers Eye Institute, Stanford University}
+\affil[2]{Stanford Bio-X, Stanford University}
+\affil[3]{Wu Tsai Neurosciences Institute, Stanford University}
+\affil[4]{Institute of Computer Science and Campus Institute Data Science, University G{\"o}ttingen}
+\affil[5]{Max Planck Institute for Dynamics and Self-Organization, G{\"o}ttingen}
+\affil[6]{National Center for Computational Sciences, Oak Ridge National Laboratory}
+\affil[7]{Center for Neuroscience and Artificial Intelligence, Baylor College of Medicine}
+\affil[8]{Department of Neuroscience, Baylor College of Medicine}
+\affil[9]{Department of Electrical Engineering, Stanford University}
+
+\affil[ ]{\small $^{\star, \dagger}$Equal contribution \quad
+         %$^{\dagger}$Equal supervision \quad
+         $^{\ddagger}$Corresponding author: \texttt{willeke@stanford.edu}}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\iclrfinalcopy % Uncomment for camera-ready version, but NOT for submission.
+\begin{document}
+
+
+% FOR ICLR - At the time of submission, the main text should be 9 pages or fewer. During the discussion/rebuttal phase and for the camera ready, the page limit will be increased to 10 pages to allow for new results/discussions. This limit will be strictly enforced. Papers with main text beyond the page limit will be desk-rejected. 
+
+\maketitle
+\begin{abstract}
+Scaling data and artificial neural networks has transformed AI, driving breakthroughs in language and vision. 
+Whether similar principles apply to modeling brain activity remains unclear.
+Here we leveraged a dataset of 3.1 million neurons from the visual cortex of 73 mice across 323 sessions, totaling more than 150 billion neural tokens recorded during natural movies, images and parametric stimuli, and behavior. 
+We train multi-modal, multi-task models that support three regimes flexibly at test time: neural prediction, behavioral decoding, neural forecasting, or any combination of the three. 
+OmniMouse achieves state-of-the-art performance, outperforming specialized baselines across nearly all evaluation regimes.
+We find that performance scales reliably with more data, but gains from increasing model size saturate. 
+This inverts the standard AI scaling story: in language and computer vision, massive datasets make parameter scaling the primary driver of progress, whereas in brain modeling -- even in the mouse visual cortex, a relatively simple system -- models remain data-limited despite vast recordings. 
+The observation of systematic scaling raises the possibility of phase transitions in neural modeling, where larger and richer datasets might unlock qualitatively new capabilities, paralleling the emergent properties seen in large language models. Code available at \url{https://github.com/enigma-brain/omnimouse}.
+
+\end{abstract}
+
+% \section{Introduction}
+\begin{figure}[h]
+  \vspace{-10pt} 
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/fig1_v3.png}
+  \vspace{-8pt} % Reduces space between figure and caption
+  \caption{
+  \textbf{A.} OmniMouse unifies neural prediction, behavior decoding, and forecasting tasks. 
+  \textbf{B.}  Scaling model size on  150+ billion neural tokens shows performance saturation, unlike language models. %larger models yield minimal gains.
+  \textbf{C.}  In contrast, scaling data consistently improves performance across all model sizes.
+  %In contrast, scaling data delivers consistent improvements across all model sizes, revealing that neural prediction remains fundamentally data-limited despite unprecedented recording scale.
+  % \textbf{A.} OmniMouse idea: single model to encode  neuronal responses, dynamic visual stimuli and behavior variables and decode neuronal activity and behavior traces.
+  % We test OmniMouse scaling across nested datasets from 8 to \hl{323} sessions.
+  % \textbf{B.} Test loss across different model sizes on 323 sessions.
+  % \textbf{C.} Scaling both model and dataset size.
+  % \hl{data summary will have a small sketch to introduce model\&data so that the main idea of the paper is clear. ylabel missing}}
+  }
+  \label{fig:intro}
+  \vspace{-15pt} % Reduces space between figure and caption
+\end{figure}
+
+
+\section{Introduction}
+Scaling models and data has driven recent progress in machine learning, with large language, vision, and multi-modal models showing consistent performance gains and enabling foundation models that unify tasks across domains.
+A natural question is whether models of the brain can also benefit from scaling. 
+The mouse visual cortex, with large-scale neural datasets \citep{microns2021functional,deVries2019,international2025brain} and standardized benchmarks \citep{willeke2022sensorium,sensorium2023}, offers a natural setting to investigate this, yet compared with the internet-scale corpora used in language and vision, available neural datasets are much smaller, more fragmented, and less diverse. 
+The neuroscience community has recently started to work toward foundation models for EEG \citep{chau2024population, chen2024eegformer, cui2024neuro, jiang2024large, kostas2021bendr, yang2023biot, thapa2024sleepfm, li2024neurobolt}, fMRI \citep{caro2023brainlm, dong2024brain, kan2022brain, thomas2022self, d2025tribe}, MEG \citep{csaky2024foundational}, and intracranial signals \citep{zhang2023brant, wang2023brainbert}. 
+Prior work in this direction focused on isolated modalities \citep{ndtv2, azabou2023unified}, a single predictive task \citep{wang2025foundation}, lacked scalability across datasets \citep{ndt1, mi2023learning, neuroformer}, or omitted stimulus \citep{zhang2025neuralencodingdecodingscale} and behavioral information \citep{jiang2025data, mi2023learning}.
+%These models do not capture the multi-modal and multi-task nature of neural computation.
+%Hence, we cannot systematically study if there are benefits of scaling -- a key hallmark of foundational models -- in large-scale, single-neuron recordings.
+
+In this work, we introduce OmniMouse, a multi-modal, multi-task architecture for modeling neuronal activity in the mouse visual cortex. 
+Unlike prior models that are typically restricted to a single modality, OmniMouse combines single-neuron tokenization, video encoding and behavioral decoding into a unified architecture. 
+Our model design enables flexible masking, allowing the model to handle arbitrary combinations of neural forecasting, stimulus-conditioned response prediction, sub-population prediction, and behavioral decoding.
+We train OmniMouse on one of the largest single-neuron datasets to date: 323 recordings from the visual cortex of 73 awake mice viewing naturalistic movies, images, and parametric stimuli, totaling over 150 billion neuronal activity tokens from over 3 million neurons. 
+%This unprecedented size enables a systematic scaling analysis, investigating how model and dataset size impact neuronal encoding and behavioral decoding performance. 
+
+Our main findings and contributions are:
+\begin{itemize}[leftmargin=*, itemsep=0pt, topsep=-3pt]
+    \item \textbf{Systematic scaling analysis}: We find that performance improves systematically with more data, but saturates with model size beyond moderate scales. This suggests that data, not model size, is currently the bottleneck for predictive accuracy in neural modeling.
+    \item \textbf{A multi-modal, multi-task model for visual cortex}: OmniMouse handles both single-modality and multi-modal inputs, supporting any combination of forecasting and stimulus-conditioned prediction across different neurons, stimuli, time points, and animals.
+    \item \textbf{OmniMouse achieves state-of-the-art performance}: When compared to strong specialized baselines,
+    %In data-matched comparisons against strong specialized baselines,
+    OmniMouse outperforms prior specialized methods across nearly all tasks, showing that our architecture is competitive independent of data scale advantages.
+\end{itemize}
+%---------------------------------------------------------------------------------------
+\section{Related work}
+\textbf{Large-scale deep learning models for single-neuron predictions.}
+Deep learning has advanced predictive modeling in neuroscience, particularly in vision~\citep{Cadieu2014,batty2017multilayer,klindt2017neural,McIntosh2016,Cadena2019,Kindel2017,Walker2019-oq,Zhang2018-cs,Ecker2018,sinz2018stimulus,burg2021learning,Cowley2020neurips}. 
+CNN-based approaches introduced shared feature cores with per-neuron readouts~\citep{antolik2016model,klindt2017neural,McIntosh2016,sinz2018stimulus, lurz2020generalization}, culminating in multi-animal ``digital twins'' that capture biological phenomena beyond training data~\citep{ustyuzhaninov2022digital, wang2025foundation}.
+With the shift to transformers, new variants have explored ViT cores~\citep{li2023v1t}, hybrid convolution-attention designs~\citep{lin2024incremental,Pierzchlewicz2023-yi}, and spatial-transformer readouts~\citep{saha2024modeling}, though most still omit video input.
+
+Transformer models were also applied to response-to-response modeling, beginning with NDT~\citep{ndt1}, extended to multiple animals~\citep{ndtv2} and neuronal masking~\citep{universalspiketranslator}.
+STDNT \citep{le2022stndt} extended NDT by explicitly modeling correlations across neurons but it did not consistently outperform NDT.
+While NDT projects all neurons together via linear layers, Quantformer \citep{quantformer}, also a
+transformer-based forecaster, introduced neuron-specific tokens to handle any number of neurons.
+POYO~\citep{azabou2023unified} introduced single-neuron tokenization for behavior decoding, removing the need for time-window binning, and POYO+~\citep{poyov2iclr2025} extended this to discrete classification tasks such as stimulus orientation.
+POCO~\citep{duan2025poco} combined POYO and NDT tokenization to predict neuronal activity from neural history and sub-populations. 
+Representing the most significant scaling of this framework, NEDS~\citep{zhang2025neuralencodingdecodingscale} modeled approximately 30,000 neurons across 74 sessions with a multi-task loss.
+None of these models incorporate visual stimuli.
+
+To study the combined effect of brain state and visual input on neuronal responses, \citet{bashiri2021flow} used a CNN branch for static stimuli with an additional flow-branch for trial-to-trial correlations.
+For dynamic video stimuli, \citet{schmidt2025modelingdynamicneuralactivity} modeled a latent brain state probabilistically, using NDT-based response tokenization.
+Similarly, Neuroformer \citep{neuroformer} used past activity and visual input but is limited to single sessions and cannot flexibly condition on subsets of neurons or response history.
+CEBRA \citep{schneider2023learnable}, a contrastive encoder, also mapped activity to behavior or stimuli, accounting for inter-neuron correlations.
+The closest analog to OmniMouse outside single-cell neuroscience is \citet{d2025tribe}, who predicted fMRI responses from concatenated video, text, and audio embeddings.
+
+
+\textbf{General scaling laws in deep learning.}
+Large-scale models in language and vision exhibit predictable improvements with scale, described by empirical ``scaling laws''. 
+\citet{kaplan2020scaling} first showed that performance follows power-law trends in model size, dataset size, and compute. \citet{hoffmann2022training} refined this with ``Chinchilla scaling'', prescribing proportional growth of model and data size for optimal efficiency. 
+Whether these frameworks extend to scientific domains, where data are multi-modal, complex, noisy, and limited, is less clear. 
+Examples such as AlphaFold3~\citep{abramson2024accurate} suggest that systematic scaling of both models and datasets can drive major advances in AI for science.
+%\citet{generative-mixed-modal-scaling2023} adjusted scaling laws for models with large per-modality pre-trained tokenizers
+%but newer lightweight tokenization (``early-fusion'') approaches \citep{team2024chameleon, mirasol3b, apple2025scaling} achieved stronger performance with fewer parameters. 
+%Hence, no universal framework for multi-modal scaling exists: \citet{apple2025scaling} estimated power-law coefficients for early-fusion models but did not analyze cross-modal interactions.
+%This gap is especially evident in scientific domains, where data are multi-modal, complex, noisy, and limited. 
+%Examples such as AlphaFold3~\citep{abramson2024accurate} suggest that systematic scaling of both models and datasets can drive major advances in AI for science.
+
+\textbf{Scaling neuroscience models.}
+There is no consensus on whether classic machine learning scaling laws apply to single-neuron data. 
+\citet{jiang2025data} questioned their applicability, analyzing the NDT-based model of ~\citet{universalspiketranslator}.
+\citet{jiang2025data} argued that cross-session variability -- and thus implicit data heterogeneity -- is crucial for scaling benefits, though it remains unclear if these results generalize to different mouse tasks or model architectures. 
+Again using an NDT-based model but on motor cortex microelectrode data from monkeys and humans,~\citet{ye2025generalist} reported that scaling is constrained by data variability, which pretraining alone cannot fully overcome. 
+Consistent with this view, POCO~\citep{duan2025poco} used calcium imaging to show that longer recordings improve predictive performance, aligning with earlier results of \citet{lurz2020generalization}. However, POCO included fewer than 90,000 neurons, mostly from zebrafish ($\sim$77,000). 
+Neural saturation has also been observed: \citet{gokce2024scaling} found that behavioral alignment improves with model size, but neural alignment plateaus, with gains concentrated in higher-level visual areas. 
+In contrast, \citet{antonello2023scaling} reported no such saturation when predicting language and audio fMRI responses, suggesting that scaling limits may depend on the modality and data regime. 
+The largest single-cell response-to-behavior prediction model is POYO+ \cite{poyov2iclr2025} with $\sim$100,000 neurons, which did not perform extensive scaling analyses.
+%Together, these findings highlight the need for large, multi-modal, single-neuron datasets to test how scaling laws manifest in systems neuroscience.
+
+%---------------------------------------------------------------------------------------
+
+\section{Dataset}
+% \vspace{-20pt} 
+\begin{figure}[t!]
+  \centering
+  \includegraphics[width=\textwidth]{figures/fig_3_v3.png}
+  \vspace{-12pt} 
+  \caption{\textbf{Data}.
+  \textbf{A}. Data were collected via calcium imaging from head-fixed mice running on a wheel while viewing visual stimuli. 
+  Behavior variables include pupil center $x$ and $y$ positions, pupil dilation and its derivative and running speed.
+  \textbf{B}. Dataset statistics.
+  \textbf{C}. Different visual stimuli were presented across sessions, with stimulus types varying by session. 
+  }
+  \label{fig:data}
+  \vspace{-10pt} 
+\end{figure}
+
+
+\textbf{Neuronal responses.} 
+We compiled a dataset of more than 3 million single-unit neuronal recordings from 73 animals (\cref{fig:data}).
+%-- an order of magnitude larger than the recently published Brain-Wide Map dataset (BWD, 621,733 neurons, $\leq 1 \times 10^6$ neuron-hours) \citep{international2025brain}.  
+The dataset contains excitatory neurons' responses in visual cortex recorded via wide-field two-photon calcium imaging at 6–14\,Hz in awake, head-fixed, behaving mice \citep{sofroniew2016large}, with spiking activity extracted by CAIMAN \citep{giovannucci2019caiman}.
+
+\textbf{Visual stimuli.} 
+The mice were presented with naturalistic images sampled from ImageNet \citep{Russakovsky2015-xi} and videos sampled from cinematic movies and the Sports-1M dataset \citep{Karpathy2014-gu}. 
+In addition, mice were shown parametric stimuli such as static and drifting Gabors \citep{Petkov2007-kv}, directional pink noise, flashing Gaussian dots, random dot kinematograms \citep{Morrone2000-ov}, and model-generated stimuli \citep[similar to][]{Walker2019-oq}. 
+All stimuli were presented at 30--60\,Hz, at varying resolutions with images presented for 500 ms and preceded by a 300–500\,ms blank screen. 
+
+\textbf{Behavior variables.}
+Our dataset contains five behavior variables: running speed, recorded at 50-100 Hz, and four pupil variables: pupil center $x$ and $y$ positions, pupil dilation and its derivative, all recorded at 20 Hz. 
+
+\textbf{Data utilization.} 
+We reconstruct the visual stimulus presented throughout the entire recording, enabling continuous representation of the full experimental timeline including blank periods across all diverse visual paradigms. 
+For model training, we downsample all behaviors to 20 Hz, visual stimuli to 30 Hz, and  linearly upsample all neuronal responses to 30Hz to be comparable to the SENSORIUM 2023 benchmark. All token counts throughout this work refer to the number of samples before upsampling to avoid artificially inflating the dataset size.
+
+
+\section{OmniMouse architecture}
+\label{sec:architecture}
+\subsection{Tokenization}
+
+The input to OmniMouse is a temporal chunk of multi-modal data: neural responses, stimulus frames, and behavioral traces, all time-aligned at their respective sampling rates. This chunk is paired with a \textit{masking configuration} specifying which samples from each modality should be encoded (i.e., unmasked) and which subset of the masked samples should serve as reconstruction targets. After encoding each modality as "token" embeddings, we apply the mask by simply removing masked tokens from the input and constructing query embeddings for the targets. Below we describe this process for each modality.
+
+\textbf{Neuronal responses.} To enable per-neuron, per-sample masking, we adopt the tokenization from \cite{poyov2iclr2025, duan2025poco}. For $P_{i}$ neurons (possibly sampled from a larger recorded population) from a session $i$, we construct a tensor of $S_R$ calcium trace samples and apply a strided 1D convolution (stride $s_R$, window $w_R$) along the temporal dimension: $f_{\text{conv}}: \mathbb{R}^{P_i \times S_R} \to \mathbb{R}^{P_i \times T \times D_{\text{model}}}$, where $X_R = f_{\text{conv}}(R)$, $D_{\text{model}}$ is the model's latent dimension, and $T = \lfloor \frac{S - w_R}{s_R} \rfloor + 1$ is the number of tokens per neuron. $s_R$ and $w_R$ control the size and overlap of the token sample-groups.
+
+\begin{figure}[t!]
+\vspace{-20pt} 
+  \centering
+  \includegraphics[width=\textwidth]{figures/model_schematic_v5.png}
+  \vspace{-11pt} 
+  \caption{\textbf{Model architecture.} OmniMouse introduces a unified framework that handles arbitrary combinations of neural forecasting, sub-population prediction, stimulus encoding, and behavioral decoding through flexible masking. We adopt single-neuron, single-time-chunk tokenization and a cross-attention encoder (following POYO+ \citep{poyov2iclr2025}), along with analogous queries to the multi-modal cross-attention decoder. A step-by-step summary of the training procedure is provided in Appendix~\ref{sec:appendix_algo}.} 
+  \label{fig:model}
+  \vspace{-5pt} 
+\end{figure}
+
+We augment each token with learned identity embeddings for its neuron, session, and animal, similar to \cite{poyov2iclr2025}. To limit the number of per-neuron parameters and decouple it from model size \cite{antolik2016model,klindt2017neural,McIntosh2016}, each embedding table has a fixed dimension $D_{\text{embed}} = 128$ and a corresponding linear projection $W \in \mathbb{R}^{D_{\text{model}} \times D_{\text{embed}}}$ into model space. We flatten the neuron and temporal dimensions and obtain:
+
+\begin{align}
+ID &= W_{u}E_{u}(N_i) + W_{s}E_{s}(i) + W_{a}E_{a}(i) \in \mathbb{R}^{P_i \times D_{\text{model}}} \\
+Z_R &= \text{Flatten}\left(X_R + ID\right) \in \mathbb{R}^{P_iT \times D_{\text{model}}}
+\end{align}
+
+where $N_i \in \mathbb{R}^{P_i}$ contains neuron IDs. The masking configuration for neural activity specifies which tokens to mask and which to reconstruct. These masked and target tokens are removed from $Z_R$ to create the encoder input $\widetilde{Z}_R \in \mathbb{R}^{(P_iT - n_{masked}) \times D_{\text{model}}}$. For target tokens, we construct decoder queries by simply using their identity embeddings,
+% (with no activity embedding from $X_R$)
+yielding $Q_R = ID_{\text{targets}} \in \mathbb{R}^{n_{\text{targets}} \times D_{\text{model}}}$. Each query reconstructs the $s_R$ samples uniquely captured by the corresponding token.
+In addition to its embedding vector, each token or query is assigned a timestamp indicating its relative temporal position within the chunk context. For neuronal response embeddings, we use the timestamp from the first of its $s_R$ samples.
+
+\textbf{Visual stimuli.} Given $S_V$ frames ($\mathbb{R}^{S_V \times H \times W}$) of grayscale video, we use the first ten layers of a randomly-initialized Hiera vision transformer \cite{ryali2023hiera} followed by a linear projection to extract spatiotemporal embeddings $Z_V \in \mathbb{R}^{H'W'S_V' \times D_{\text{model}}}$, where $H'$, $W'$, and $S_V'$ result from Hiera's convolutional patch embedding and hierarchical pooling.
+
+The masking configuration specifies a contiguous unmasked frame range to encode. Because Hiera's early stages use local temporal attention, each output token has a well-defined temporal window, yielding the final encoder input, $\widetilde{Z}_V$. Each video embedding is assigned the timestamp from the first frame within its temporal receptive field.
+
+\textbf{Behavioral traces.} For $S_B$ samples from each of the five behavioral variables, we construct a single behavior tensor ($\mathbb{R}^{5 \times S_B}$), which is either completely masked or completely unmasked. When unmasked, we use a shared linear layer to project the traces along the temporal dimension and add learned channel-specific embeddings (as well as the appropriate session and animal ID embeddings), yielding encoder input sequence $Z_B \in \mathbb{R}^{5 \times D_{\text{model}}}$. When behavior is masked, we instead use it as a target and construct queries with the channel and session/animal ID embeddings $Q_B \in \mathbb{R}^{5 \times D_{\text{model}}}$, which are passed to the shared decoder to reconstruct each channel's full trace.
+Because each behavioral token/query captures the entire context window, we simply assign them to timestamp $0$.
+
+
+\begin{wrapfigure}[11]{r}{0.30\textwidth} 
+\vspace{-13pt}
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/masking_schematic.png}
+  \vspace{-8pt}
+  \caption{ Masking of neuronal responses
+  }
+  \label{fig:masks-intro}
+\end{wrapfigure}
+
+\subsection{Masking}
+We train OmniMouse with 119 structured masking configurations (\cref{tab:masking_configurations}), including our core evaluation tasks (forecasting, population prediction, stimulus encoding, and behavioral decoding) as well as numerous systematic variations that reduce or combine context across modalities.
+
+\textbf{Neural responses.} We define a consistent prediction target used by all masking configurations---the final 1 second (30 samples) of activity from 3072 randomly selected neurons---and vary unmasked context along two axes: \textit{Population context} provides contemporaneous activity from a subset of non-target neurons, while \textit{causal context} provides temporally preceding activity from all neurons. We also combine masking along these axes (i.e., provide a causal context from only a subset of neurons), forcing the model to interpolate along both the population and temporal dimensions. To maintain consistent shapes across sessions, we first randomly sample 4096 neurons (of which 3072 become targets) per session before applying masks. Finally, we enforce a 5-sample buffer gap  \cref{fig:masks-intro} between causal context and prediction target to prevent any upsampling artefacts.
+
+\textbf{Visual stimuli.} As noted above, we define a visible frame range, and vary the start time and duration. Frames preceding the target enable forecasting from video, while contemporaneous frames enable stimulus encoding tasks.
+
+\textbf{Behavior.} We either fully provide behavioral traces as encoder input or fully mask them and use them as decoder reconstruction targets.
+
+\subsection{Model}
+After tokenization, we process the multi-modal embeddings through three stages: (1) an encoder that compresses unmasked neuronal and behavioral tokens into a fixed-length latent sequence, (2) a multi-modal fusion stack that integrates these latents with features of the visual stimulus, and (3) a decoder that reconstructs target neuronal responses and behavioral traces from the fused representation. Full hyperparameter specifications are provided in \cref{sec:appendix_hyperparams}.
+
+\textbf{Encoding.} First, we concatenate the unmasked neuronal response and behavioral embeddings into a single input sequence, $Z_{RB} = \left[\widetilde{Z}_R, Z_B\right]$. Note that depending on the masking configuration, the length of $\tilde{Z}_R$ will vary and $Z_B$ may be absent (when behavior is masked). Following \citet{azabou2023unified, poyov2iclr2025}, we compress this variable-length sequence into a fixed set of latent embeddings via cross-attention with learned queries. We use $M$ unique query embeddings, repeating each $N$ times, for $N$ different timestamps uniformly spaced across the context window, yielding $M \times N$ query embeddings total. To each of the unique embeddings, we also add the session and animal identity embeddings. We use a slightly larger $M$ than in prior work to avoid an information bottleneck with larger neural populations.
+
+Within the cross-attention block, we implement \textit{local sliding-window attention}: each query and input token is assigned a local temporal window (with length determined by its modality), and attention is masked between any pair of features whose windows do not overlap. To retain global information flow and avoid attention sinks, we additionally append $G$ \textit{global register} tokens \citep{darcet2023vision} to the query embeddings, which attend to the entire key sequence. Depending on the masking configuration, we remove query repeats for portions of the context window with no overlapping input features.
+
+\textbf{Multi-modal fusion.} We concatenate the encoded latent sequence with any unmasked video features from the Hiera encoder and pass the result through a stack of $L$ multi-modal transformer layers (\cref{tab:bigmouse_architectures}), consisting of self-attention and a feed-forward network. We interleave layers with \textit{local sliding-window attention} and global layers with no attention masking at a ratio of $5{:}1$. This design allows efficient processing of long sequences while periodically enabling full cross-modal and long-range temporal interaction. All transformer layers throughout the model (including the encoding and decoding cross attention blocks) use 1D-RoPE \citep{su2024roformer} computed from each token's timestamp, to encode relative timing both within and across modalities. 
+
+\textbf{Decoding.} We extend the cross-attention decoder of \citet{poyov2iclr2025} to support neuronal response prediction alongside behavioral decoding. The fused multi-modal features from the final transformer layer serve as keys and values in a shared decoder cross-attention block. As queries, we concatenate the neuronal target queries $Q_R$ and, when behavior is a prediction target, the behavioral queries $Q_B$. No explicit task or modality embeddings are added. This cross-attention also uses local causal sliding-window attention, where each query attends only to latent features within its temporal neighborhood. After cross-attention and a shared feed-forward layer, the outputs are routed to modality-specific linear readouts that project from $d_M$ back to the target dimensionality: $s_R$
+samples per neuronal query and $S_B$ behavioral samples per behavioral query.
+
+
+\subsection{Training}
+We trained our model to predict both neuronal responses and behavioral traces, using Poisson loss (averaged across neurons) for neural encoding and mean squared error (MSE) loss for behavior decoding. To balance the two objectives, the behavioral loss is down-weighted by a factor of 0.1 so that its scale matches the magnitude of the Poisson loss.
+For our scaling experiments, we trained models end-to-end on either the complete dataset of 323 sessions or on constructed collections of 8, 16, 32 or 64 sessions to study data scaling effects. These nested collections were designed so that larger collections always contained all sessions from smaller ones, ensuring consistent evaluation . 
+
+We followed \citet{hu2024minicpm, Wen2024-lk, NEURIPS2024_hagele} and trained our model with warmup followed by a constant learning rate for at least 250k steps, saving checkpoints every 20k steps. This warmup-stable training phase serves a dual purpose: it trains the model to convergence while simultaneously producing a dense series of intermediate checkpoints that span a wide range of compute budgets. To obtain a clean final evaluation point from each checkpoint, we continue training from each saved checkpoint for an additional 10k steps using an inverse-square-root learning rate decay, which anneals the learning rate to near-zero and allows the model to settle into a local optimum. Each such decayed checkpoint then yields one evaluation point in our scaling plots. This procedure allows us to densely populate the compute axis of our scaling curves without training separate models from scratch at each compute budget. See \cref{sec:appendix_compute} for infrastructure details.
+
+
+\begin{figure}[t!]
+\vspace{-20pt} 
+  \centering
+\includegraphics[width=1\textwidth]{figures/fig4_v3.png}\vspace{-6pt}
+\vspace{-10pt} 
+  \caption{\textbf{Task-specific performance gains with model scaling.} 
+  Top row: masking schema. Middle row: Test loss. Bottom row: single-trial correlation. 
+  \textbf{A}.~Forecasting; predicting one second neuronal activity, conditioned only on past neuronal activity 
+  \textbf{B}.~Population prediction; conditioned on a sub-population of $N=1024$ neurons.
+  \textbf{C}.~Stimulus-encoding: Neuronal encoding conditioned on the visual stimulus. 
+  \textbf{D}.~Stimulus-conditioned forecasting: same as forecasting, but also conditioned on the visual stimulus. 
+  \textbf{E}.~Stimulus-conditioned population prediction; same as population prediction ($N=1024$ neurons in population context), with additionally provided context of visual stimulus.
+  }
+  \label{fig:masks-scaling}
+\vspace{-10pt} 
+\end{figure}
+
+
+\section{Unified evaluation framework}
+All scaling experiments use a standardized evaluation protocol on the same mice to ensure fair comparison across models, baselines, and conditions. 
+We chose seven mice (\textit{evaluation mice}) comprised of five publicly available datasets from SENSORIUM 2023 and two test mice from SENSORIUM 2022. For all analyses, we use the held-out set provided by these datasets.
+As in model training, we define a consistent prediction target used by
+all evaluation configurations: the final second (30 samples) of neuronal activity of randomly chosen 3072 neurons in each session are the prediction target.
+We evaluate five response prediction tasks (\cref{fig:masks-scaling}) as well as a behavior decoding task (\cref{fig:behavior-scaling}): 
+
+\begin{table}[b!]
+\vspace{-10pt} 
+\centering
+\caption{\textbf{Baseline comparisons.} 
+Results displayed in \textbf{bold} indicate the highest score per task in either the data-matched condition (top) or when using the full dataset (bottom). Baselines were evaluated for all conditions that they support, with \ding{55} denoting an unsupported condition. 
+Conditions: Forecasting (\textit{Fcst}), forecasting + stimulus (\textit{Fcst+S}), population prediction (\textit{Pop}) with $n = 256$ visible neurons, population prediction + stimulus (\textit{Pop+S}). Behavioral decoding: Average across behaviors (\textit{Avg}), pupil-location (\textit{Gaze}), pupil-size (\textit{Pupil}), and running speed (\textit{Running}).
+}
+\vspace{-8pt}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{cl|cccc|cccc}
+\toprule
+& & \multicolumn{4}{c|}{\textbf{Neuronal Activity Prediction}} & \multicolumn{4}{c}{\textbf{Behavior Decoding}} \\
+& \textbf{Model} & Fcst & Fcst+S & Pop & Pop+S & Avg & Gaze & Pupil & Running \\
+\midrule
+\multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{8 sessions}}}
+& \textbf{MtM} \citep{universalspiketranslator} & 0.12 & \ding{55} & 0.07 & \ding{55} & \ding{55} & \ding{55} & \ding{55} & \ding{55} \\
+& \textbf{Latent Model} \citep{schmidt2025modelingdynamicneuralactivity}  & \ding{55} & 0.18 & \ding{55} & 0.16 & \ding{55} & \ding{55} & \ding{55} & \ding{55} \\
+& \textbf{CEBRA} \citep{schneider2023learnable} & \ding{55} & \ding{55} & \ding{55} & \ding{55} & 0.53 & 0.52 & 0.55 & \textbf{0.51} \\
+& \textbf{POYO+} \citep{poyov2iclr2025} & \ding{55} & \ding{55} & \ding{55} & \ding{55} & 0.55 & 0.56 & 0.63 & 0.47 \\
+& \textbf{OmniMouse-5M} & \textbf{0.18} & \textbf{0.25} & \textbf{0.25} & \textbf{0.27} & \textbf{0.59} & \textbf{0.68} & \textbf{0.66} & 0.44 \\
+\midrule
+\multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{323 sessions}}}
+& \textbf{OmniMouse-1M} & 0.18 & 0.31 & 0.27 & 0.35 & 0.68 & 0.75 & 0.73 & 0.55 \\
+& \textbf{OmniMouse-5M} & 0.22 & 0.32 & 0.28 & 0.35 & 0.69 & 0.76 & 0.74 & 0.57 \\
+& \textbf{OmniMouse-20M} & 0.23 & 0.33 & 0.29 & \textbf{0.37} & 0.75 & 0.78 & 0.75 & 0.73 \\
+& \textbf{OmniMouse-80M} & \textbf{0.25} & \textbf{0.34} & 0.29 & \textbf{0.37} & \textbf{0.77} & \textbf{0.80} & \textbf{0.76} & \textbf{0.75} \\
+& \textbf{OmniMouse-300M} & \textbf{0.25} & \textbf{0.34} & \textbf{0.30} & \textbf{0.37} & 0.76 & \textbf{0.80} & \textbf{0.76} & 0.73 \\
+\bottomrule
+\end{tabular}
+\label{tab:baseline_comparison}
+\end{table}
+
+\noindent\textbf{Forecasting}. Predicting one second of neuronal activity given the previous second (i.e. one second of causal context only).
+We use MtM \citep{universalspiketranslator}, a model that supports causal and population masking, as the baseline.\\
+\noindent\textbf{Population prediction}. Provided with a population context of  unmasked $N=256$ neurons over the full 2-second context window, predict a target population.
+This task assesses how much of the trial-to-trial variability can be explained by simultaneously recorded neurons. As in the forecasting task, we chose MtM \citep{universalspiketranslator} as the baseline model. For the scaling analysis in \cref{fig:masks-scaling}, we provide $N=1024$ neurons as population context. \\
+\noindent\textbf{Stimulus-encoding}. Given the full two seconds of visual stimulus, predict neuronal activity for the final second.
+The neuronal encoding competitions SENSORIUM 2023~\citep{sensorium2023} and SENSORIUM 2022~\citep{willeke2022sensorium} establish strong baselines for this task.\\
+\noindent\textbf{Stimulus-conditioned forecasting}.  This task additionally provides the full two seconds of visual stimulus as context to the forecasting task.
+We use \citet{schmidt2025modelingdynamicneuralactivity} as a baseline model, which also conditions response prediction on neurons and video. \\
+\noindent\textbf{Stimulus-conditioned population prediction}. With the  full two seconds of visual stimulus as context in addition to $N=256$ unmaksed  neurons.
+Again, we use
+\citet{schmidt2025modelingdynamicneuralactivity} as the baseline. \\
+\noindent\textbf{Behavior decoding}. Given the activity of all neurons for the full two seconds, predict all behavioral traces.
+CEBRA \citep{schneider2023learnable} and Poyo+ \citep{poyov2iclr2025} are used as baselines.
+
+\begin{figure}[t!]
+  \centering
+  \vspace{-15pt} 
+  \includegraphics[width=1\textwidth]{figures/fig5_v3.png}
+  \vspace{-18pt} 
+  \caption{
+  \textbf{Behavior decoding scales with model size.} 
+  \textbf{A}. Masking for behavior decoding.
+  \textbf{B}. Decoding loss averaged across all behaviors variables. 
+  \textbf{C-E}. Prediction performance for behavioral decoding.
+  }
+  \label{fig:behavior-scaling}
+  \vspace{-8pt} 
+\end{figure}
+
+For a fair comparison, we train the baselines on the same amount of data as OmniMouse. We use the smallest collection of eight mice from data-scaling experiment (\cref{fig:data-scaling}) as a data-matched comparison.
+Implementation details and hyperparameters for each baseline are provided in \cref{sec:baselines-appendix}.
+For all experiments, consistent with SENSORIUM 2022/2023 competitions, we opt for \textit{single-trial correlation}, i.e. the pearson correlation between ground truth and predicted signal, as the single evaluation metric, without any correction for the noise ceiling. This measure allows for an unbiased comparison of predictivity across all tasks and conditions.
+
+\section{Results: The benefits of scaling}
+\textbf{Current neuronal-predictive models are not compute- or parameter-limited.} 
+Because collecting neuronal data is costly, we first asked if existing models are already limited by compute or parameters, or if more data would still improve performance. 
+To answer this question, we trained models on all 323 sessions while scaling width and depth as in \cref{tab:bigmouse_architectures}. 
+We evaluated five neuronal response masking strategies (\cref{fig:masks-scaling}, top row): two based on response dynamics (forecasting and population context), two analogous variants that additionally condition on video (video-conditioned forecasting and video-conditioned population context), and one stimulus-encoding strategy (video \& behavior). 
+For each strategy, models ranged from 1M to 300M parameters, and we tracked both test loss and single-trial correlation as a function of total compute (model FLOPs, excluding FLOPs of neuron-specific parameters). 
+Performance improved across all neuronal prediction tasks as model size increased up to 80M parameters (\cref{fig:masks-scaling}). 
+Beyond this point, gains were minimal, as loss curves saturated or overfit, indicating that current models are data-limited rather than compute- or parameter-limited.
+
+\textbf{OmniMouse achieves state-of-the-art performance.}
+Our large-scale model outperforms all baselines across six evaluation regimes for both response prediction and behavior decoding (\cref{tab:baseline_comparison}). Crucially, these gains are not simply due to training on more data: in data-matched comparisons, where OmniMouse and baselines are trained and evaluated on identical datasets, our model outperforms strong specialized methods across all tasks except for decoding of running speed. 
+This demonstrates that the architectural and masking design of OmniMouse provides advantages independent of data scale. 
+OmniMouse also sets a new state of the art on the Sensorium 2022 and 2023 competitions (\cref{tab:sensorium_simple}). For the Sensorium 2023 competition, we evaluate our model (1) with a frozen pretrained OmniMouse-80M backbone and only neuron-specific parameters trained, and (2) with full end-to-end training on the same 10-mouse competition dataset (see \cref{tab:sensorium_extended_results} for details), and surpass the prior state of the art in both cases.
+We note that while our data-matched setting uses the same training data, our framework additionally enables training across video boundaries — an information not available for the previous models.
+
+\begin{figure}[b!]
+  \vspace{-15pt} % Adjust value as needed
+  \centering
+  \includegraphics[width=1\textwidth]{figures/fig6_v2.png}
+  \vspace{-15pt} % Adjust value as needed
+  \caption{\textbf{Scaling data improves model performance.} 
+  \textbf{A}. Nested datasets structure.
+  \textbf{B}. Test loss for different model and data sizes, averaged across all response prediction tasks.
+  \textbf{C-K}. Performance improvements for all tasks when scaling dataset from 8 to 323 sessions.
+  }
+  \label{fig:data-scaling}
+  \vspace{-15pt} % Adjust value as needed
+\end{figure}
+
+\begin{table}[t!]
+\vspace{-20pt}
+\centering
+\begin{minipage}[c]{0.3\linewidth}
+\vspace{10pt}
+\captionof{table}{\textbf{Sensorium benchmark results.} 
+Comparison against Sensorium 2022 and 2023 competition winners across both tracks. See table \ref{tab:sensorium_extended_results} for additional comparisons.
+}
+\label{tab:sensorium_simple}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.65\linewidth}
+\vspace{-5pt}
+\centering
+\footnotesize
+\begin{tabular}{@{}l|cc|cc@{}}
+\toprule
+& \multicolumn{2}{c|}{\textbf{Sensorium\ 2022}} & \multicolumn{2}{c}{\textbf{Sensorium\ 2023}} \\
+& Main & Bonus & Main & Bonus \\
+\midrule
+Competition Winner & 0.33 & \textbf{0.45} & 0.29 & 0.22 \\
+OmniMouse-80M & \textbf{0.37} & \textbf{0.45} & \textbf{0.33} & \textbf{0.30} \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\normalsize
+\vspace{-12pt} % Adjust value as needed
+\end{table}
+
+\textbf{Behavior prediction shows the most promising scaling dynamics on the available data.}
+To characterize the scaling of behavior decoding, we used the same models and evaluated their ability to predict pupil location, pupil size, and running speed from neuronal activity only (\cref{fig:behavior-scaling}). 
+Across all three settings, performance improved smoothly with compute budget, reminiscent of classic scaling-law behavior. 
+Larger models consistently achieved higher single-trial correlations, albeit with an indication of saturation at the largest scale tested. 
+%Note that training was stopped to avoid overfitting for the response prediction task.
+The models had not yet fully converged for the behavioral decoding task, and longer training could have improved performance further, even on the largest model.
+These results show that behavioral prediction continues to improve with model scaling and may benefit from further increases in capacity.
+% These results demonstrate that behavioral prediction benefits substantially from model scaling and suggest that further gains may be possible by continuing to increase model capacity.
+
+\textbf{Scaling dataset size improves performance.}
+To study how dataset size affects performance, we trained three model sizes -- 5M, 20M, and 80M -- on nested collections of 8, 16, 32, 64, and 323 sessions, such that the larger collections are supersets of the smaller ones (\cref{fig:data-scaling}A).
+For evaluation, we test the model on the same held-out test set of the same seven mice that were contained in all collections (\cref{fig:data-scaling}C--J). 
+In all cases, performance improved with the number of sessions, exhibiting predictable data-scaling trends.
+Larger models consistently benefited more from additional data.
+The larger models required a minimum size of the training set to outperform the smaller models and the performance gap widened as the dataset increased in size. 
+Behavior decoding benefited the most from data scaling (\cref{fig:data-scaling}C--E), showing no saturation and large performance differences between 5M and 80M models.
+For responses, the strongest gains were observed for tasks that included video input (\cref{fig:data-scaling}C--E), where the 80M models continued to improve even beyond 100 sessions, suggesting that they remained data-limited rather than capacity-limited. 
+The \textit{forecasting} and \textit{population context} tasks showed larger benefits from scaling of both data and model sizes.
+The gaps between 20M and 80M models (\cref{fig:data-scaling}A, B) increased faster compared to the tasks with video input, which could indicate a lack of diversity of the visual stimuli in our dataset. 
+Overall, these results highlight that scaling both model size and data quantity is synergistic and necessary to approach peak predictive performance.
+
+\textbf{OmniMouse enables systematic evaluation of how neuronal context shapes predictive performance.} Lastly, we assessed the model's generalization by testing on masking conditions not seen during training (\cref{fig:qualitative}), varying causal and population context size. Performance scaled smoothly with additional context, demonstrating that OmniMouse learns generalizable representations that enables systematic analyses of contextual contributions to neural variability (see \cref{fig:task-difficulty}, \cref{fig:insilico}, and \cref{sec:results-appendix}). The ability to flexibly control and combine different sources of context within a single model opens an exciting avenue for future study, enabling precise quantification of how each factor shapes neural variability and their interactions across brain areas, stimuli, and behavioral states.
+
+\section{Discussion}
+In this work, we introduce OmniMouse, a multi-modal, multi-task model of mouse visual cortex that jointly integrates neural activity, video stimuli, and behavioral traces across animals within a single unified architecture. Trained on one of the largest single-neuron dataset to date, OmniMouse achieves state-of-the-art performance across tasks, outperforming strong specialized baselines on neural response prediction, activity forecasting, and behavioral decoding. The breadth and scale of both model and dataset enable a systematic study of scaling behavior in single-neuron brain models.
+
+Our motivation for studying scaling laws is practical: if brain models are to become foundation models for neuroscience, it is essential to ask whether current data can sustain scaling. Despite using naturalistic movies and images, we find that performance saturates with model size, suggesting data -- not compute -- as the limiting factor. This is consistent with recent observations that scaling benefits in neural models are constrained by data variability rather than model capacity \citep{jiang2025data, ye2025generalist, gokce2024scaling}. Even in the relatively simple mouse visual system, richer tasks, more varied stimuli, and larger-scale recordings are needed to support continued scaling. At the same time, relatively sparse sampling already yields strong models: with ~60,000 neurons from eight mice, predictive accuracy is high, likely due to redundancy in neural codes \citep{stringer2019spontaneous}. Additional gains from larger datasets appear modest, paralleling language \citep{kaplan2020scaling, hoffmann2022training} -- yet in those domains, small improvements have triggered phase transitions to qualitatively new abilities \citep{Wei2022-fa}. By analogy, richer neuroscience data may similarly unlock new capabilities in brain models, revealing deeper principles of neural computation.
+
+
+
+\textbf{Limitations.} 
+Our work has several limitations. First, OmniMouse parameters scale linearly with the number of neurons, as it learns per-neuron embeddings. 
+This makes training computationally expensive and may limit scaling to larger datasets. 
+Second, large-scale transformers remain difficult to interpret and prone to overparameterization issues, which constrain the biological insights that can be drawn. Lastly, the behavioral data present in our data is limited to spontaneous activity and it is thus unclear if this approach can transfer to more complex behaviors.
+
+\textbf{Future work.} 
+Future work could extend to stimulus decoding \citep{benchetrit2023brain, bauer2024movie, zhu2025multi} and more precise study of training dynamics of modality interactions and multi-task learning to improve the masking recipe. Beyond calcium imaging in mouse visual cortex, models could integrate other data types such as electrophysiological recordings, diverse animal species, and more multi-modal stimuli such as audio. %Alternatively, one could test generalization of the existing model across new tasks, stimuli, and species via (semi) closed-loop in-silico experiments \citep{ustyuzhaninov2022digital, BryanV1tproperties}, potentially finding biological insights about neuronal functional properties as in \citet{Walker2019-oq, BryanV1tproperties}. 
+Finally, jointly modeling visual input, neuronal responses, and behavior enables analysis of spontaneous and evoked activity \citep{stringer2019spontaneous}, revealing how brain state shapes sensory processing and core principles of computation.
+
+\newpage
+\subsubsection*{Reproducibility Statement}
+To ensure the reproducibility of our results, we provide the complete source code for our multi-modal model, including scripts for training, evaluation, fine-tuning, and inference, available at \url{https://github.com/enigma-brain/omnimouse} upon publication. Regarding the dataset, which consists of large-scale neuronal responses from the visual cortex and naturalistic visual stimulation, we have detailed the data acquisition and processing pipeline in Appendix~\ref{sec:data-experimental-details}. While the full dataset is currently undergoing final preparation due to its unprecedented scale, we are committed to releasing it publicly within six months.
+
+\subsection*{Acknowledgements}
+This work was generously supported by The James Fickel Enigma Project Fund. AST acknowledges the support of the National Science Foundation and of DoD OUSD (R\&E) under Cooperative Agreement DBI-2229929 (The NSF AI Institute for Artificial and Natural Intelligence). This work was also supported by the Intelligence Advanced Research Projects Activity (IARPA) via Department of Interior/Interior Business Center (DoI/IBC) contract number D16PC00003. This work was also supported by the German Research Foundation (SFB 1233, Robust Vision: Inference Principles and Neural Mechanisms, project number 276693517; SFB 1528 Cognition of Interaction, project number 454648639; project IDs 432680300 (SFB 1456, project B05) and 515774656, the European Research Council (ERC) under the European Union’s Horizon Europe research and innovation programme (grant agreement numbers 101041669 and 101171526). FHS is further supported by the German Federal Ministry of Education and Research (BMBF) via the Collaborative Research in Computational Neuroscience (CRCNS) (FKZ 01GQ2107). FHS and ASE acknowledge the support of the Ministry of Science and Culture of Lower Saxony through funds from the program zukunft.niedersachsen of the Volkswagen Foundation for the ``CAIMed – Lower Saxony Center for Artificial Intelligence and Causal Methods in Medicine'' project (grant no. ZN4257). This research used resources of the Oak Ridge Leadership Computing Facility at the Oak Ridge National Laboratory, which is supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC05-00OR22725. KFW and AG sincerely thank Craig Kapfer, Kurt Stine, and the whole Marlowe team at Stanford, for the support and early access to the supercomputing cluster. We are also thankful for the support of Zoe Ryan and Bruce McGowan and the NVIDIA support team for guidance during all stages of this project.
+PT, MAW and MV thank the computing time granted by the Resource Allocation Board and provided on the supercomputer Emmy/Grete at NHR-Nord@Göttingen as part of the NHR infrastructure. Additional compute for this work was conducted with computing resources under the projects nim00010 and nim00012.
+We also thank Surya Ganguli, Dan Yamins, and the entire team of the Enigma Project at Stanford for helpful discussions.
+
+
+%%%% PREVIOUS DISCUSSION %%%%
+%Our motivation for studying scaling laws is practical: if such models are to become a foundation for neuroscience, capable of serving as digital twins that reproduce neural activity dynamics and eventually intelligent behavior, it is critical to ask whether current data are sufficient to sustain scaling. We find that, despite using naturalistic movies and images, performance gains saturate with model size, indicating that brain models are currently limited by data rather than compute. This is striking given that the mouse visual system is relatively simple compared to primate vision, yet even here larger datasets and more diverse conditions are needed to support continued scaling. Neuroscience should therefore aim to design experiments with higher entropy—richer tasks, more varied stimuli, and larger-scale recordings—to advance toward brain foundation models.
+
+%A second observation is that relatively sparse sampling already produces strong models. With as few as eight mice and ~60,000 neurons, models achieve high predictive accuracy. This likely reflects redundancy in the neural code: many neurons carry overlapping information, so partial recordings can still approximate full-population responses. We also find that additional gains from larger datasets appear modest—mirroring trends seen in language and vision models. Importantly, however, in large language models such seemingly small improvements from scaling data and parameters have enabled phase transitions, where scaling suddenly unlocks qualitatively new capabilities (e.g., reasoning, in-context learning, coding). By analogy, as neuroscience collects richer data across more diverse conditions and tasks, brain models may undergo analogous transitions, acquiring qualitatively new capabilities—such as improved vision, more generalizable representations, or flexible behaviors—that reveal deeper principles of neural computation.
+
+%Here we introduce OmniMouse, a large-scale multi-task multi-modal model that achieves state-of-the-art performance for predicting neural activity in the visual cortex and even improves it on tasks like neuronal forecasting or behavior decoding.
+%Moreover, OmniMouse performance continues to grow with larger datasets. 
+%Overall, this work provides a foundation for scalable multi-modal modeling of the mouse visual cortex, opens up a lot of possibilities for in silico-experiments and supports the development of general-purpose models that capture the complex dynamics of brain activity.
+%Future modeling extensions could include stimulus decoding \citep{benchetrit2023brain, bauer2024movie, zhu2025multi} and a deeper analysis of training dynamics, particularly of the interplay between modalities and the role of multi-task learning in boosting performance.
+%While this work focused on calcium imaging in mouse visual cortex, future studies could incorporate other data types (e.g., spikes) and test generalization to new tasks, stimuli, or species (e.g., rats or primates). 
+%Investigating specific biological phenomena -- such as receptive field properties, population coding dynamics, non-linear responses behavior or generalization to out-of-distribution data via \textit{(semi) closed loop in-silico experiments} \citep{ustyuzhaninov2022digital, BryanV1tproperties} -- could uncover novel insights. 
+%Evaluating the model’s few-shot learning capabilities may enhance closed-loop experiments \citep{Walker2019-oq} and reduce data collection requirements.
+%Finally, by modeling visual input, neuronal responses, and behavior together, our model enables the study of interactions between high-dimensional spontaneous \citep{stringer2019spontaneous} and stimulus-evoked activity. 
+%Conditioning on subsets of neurons or behavioral states allows us to examine how the brain state influences sensory processing and may help reveal core principles of neural computation. 
+\newpage
+\bibliography{iclr2026_conference}
+\bibliographystyle{iclr2026_conference}
+\newpage
+\appendix
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{table}{0}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\section{Implementation Details}
+\label{sec:results-appendix}
+
+We provide a complete specification of the hyperparameters, masking configurations, and training procedure used for OmniMouse.
+
+
+% Comprehensive hyperparameter table for OmniMouse appendix
+% Usage: \input{hyperparameters_table.tex}
+% Comprehensive hyperparameter table for OmniMouse appendix
+% Usage: \input{hyperparameters_table.tex}
+% Requires: booktabs, subcaption, pifont, amsmath, array
+
+% Comprehensive hyperparameter table for OmniMouse appendix
+% Usage: \input{hyperparameters_table.tex}
+% Requires: booktabs, pifont, amsmath, array
+
+\subsection{Hyperparameters}
+\label{sec:appendix_hyperparams}
+
+Tables~\ref{tab:hparams_tokenization}--\ref{tab:hparams_training} summarize the full set of hyperparameters for the final OmniMouse model. We organize them into four groups: data and tokenization (\cref{tab:hparams_tokenization}), which specifies how each modality is sampled, chunked, and converted into token embeddings; encoder latent queries (\cref{tab:hparams_latents}), which defines the learned bottleneck between the variable-length input and the fixed-length neuronal and behavioral latent sequence; transformer architecture (\cref{tab:hparams_architecture}), which covers the shared configuration of the encoder, fusion, and decoder stages; and training (\cref{tab:hparams_training}), which lists the loss functions, optimizer settings, and learning rate schedule.
+
+
+% OmniMouse hyperparameter tables for appendix
+% Usage: \input{hyperparameters_table.tex}
+% Requires: booktabs, pifont, amsmath, array
+
+% ===================== DATA & TOKENIZATION =====================
+\begin{table}[H]
+\centering
+\caption{\textbf{Data \& tokenization hyperparameters.}}
+\label{tab:hparams_tokenization}
+\vspace{4pt}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{llc}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} \\
+\midrule
+\multicolumn{3}{l}{\textit{\textbf{Neural responses}}} \\
+\quad Sampling rate & & 30\,Hz \\
+\quad $S_R$ & Samples per context window & 60 \\
+\quad $w_R$ & Conv.\ kernel size (samples) & 10 \\
+\quad $s_R$ & Conv.\ stride (samples) & 5 \\
+\quad local-attention window size & Attention mask local sliding-window size & $.333 \text{ s}$ \\
+\quad $P_i$ & Neurons sampled per batch & 4096 \\
+\quad Interpolation buffer & Gap between context and targets (samples) & 5 \\
+\quad Num.\ reconstructed neurons & Size of masked sub-population to be reconstructed & 3072 \\
+\quad Num.\ reconstructed samples & Duration of reconstruction target (samples) & 30 \\
+\midrule
+\multicolumn{3}{l}{\textit{\textbf{Visual stimuli}}} \\
+\quad Frame rate & Video frame rate & 30\,fps \\
+\quad $S_V$ & Frames per context window & 60 \\
+\quad local-attention window size & Attention mask local sliding-window size & $.2 \text{ s}$ \\
+\quad $C \times H \times V$ & Spatial resolution & $1 \times 36 \times 64$ \\
+\multicolumn{3}{l}{\quad \textit{Hiera encoder}} \\
+\quad\quad Layers per stage & Hierarchical stage depths & (2, 8) \\
+\quad\quad Embedding dimension & Output dimension of patch embedding & 128 \\
+\quad\quad Num.\ attention heads & & 2 \\
+\quad\quad MLP ratio & FFN hidden dim / embed dim & 2.67 \\
+\quad\quad Patch kernel ($t, h, w$) & Convolutional patch embedding & $(6, 7, 7)$ \\
+\quad\quad Patch stride ($t, h, w$) & Patch embedding stride & $(2, 2, 2)$ \\
+\quad\quad Patch padding ($t, h, w$) & Patch embedding padding & $(2, 1, 3)$ \\
+\quad\quad Query stride ($t, h, w$) & Pooling stride per stage & $(1, 2, 2)$ \\
+\quad\quad Mask unit size ($t, h, w$) & Local attention window & $(1, 8, 8)$ \\
+\quad\quad $(T' \times H' \times W' \times D')$ & Output feature shape (pre-projection) & (30, 8, 16, 768) \\
+\quad\quad Drop path rate & & 0.25 \\
+\midrule
+\multicolumn{3}{l}{\textit{\textbf{Behavioral traces}}} \\
+\quad Sampling rate & Behavior sampling rate & 20\,Hz \\
+\quad $S_B$ & Samples per context window & 40 \\
+\quad Channels & Eye tracker (4) + treadmill (1) & 5 \\
+\quad local-attention window size & Attention mask local sliding-window size & $2 \text{ s}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===================== ENCODER LATENTS =====================
+\begin{table}[H]
+\centering
+\caption{\textbf{Encoder latent query hyperparameters.}}
+\label{tab:hparams_latents}
+\vspace{4pt}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{llc}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} \\
+\midrule
+$M$ & Unique latent query groups & 640 \\
+$N$ & Repeats per group (covers context window) & 6 \\
+$G$ & Global register tokens & 256 \\
+Total latents & $M \times N + G$ & 4096 \\
+local-attention window size & Attention mask local sliding-window size (excluding globals) & $.333  \text{ s}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===================== TRANSFORMER ARCHITECTURE =====================
+\begin{table}[H]
+\centering
+\caption{\textbf{Transformer architecture hyperparameters.} Values of hyperaparameters that vary with scaling are indicated with ? (see table \cref{tab:bigmouse_architectures}).}
+\label{tab:hparams_architecture}
+\vspace{4pt}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{llc}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} \\
+\midrule
+$d_{\text{e}}$ & Identity embedding dimension & 256 \\
+$d_{\text{m}}$ & Model / latent dimension & ? \\
+$L$ & Multi-modal transformer layers & ? \\
+$h$ & Number of attention heads (all stages) & ? \\
+$d_h$ & Attention head dimension & $d_m / h$ \\
+Normalization type &  & RMSNorm \\
+Norm $\epsilon$ & & $10^{-5}$ \\
+Pre-norm & Normalization applied before attention/FFN & \checkmark \\
+QK-normalization & Normalization applied to Q and K projections & \checkmark \\
+Drop path rate & Stochastic depth & 0.0 \\
+FFN hidden multiplier & FFN hidden dim / $d_{\text{m}}$ & 2.67 \\
+FFN activation & Gated activation function & SiLU (SwiGLU) \\
+Local:global ratio & Interleaving ratio of \textit{local sliding-window attention} layers & 5:1 \\
+Response output activation & Activation on neural predictions & Softplus($\beta{=}0.1$) \\
+Behavior output activation & Activation on behavior predictions & None (identity) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===================== TRAINING =====================
+\begin{table}[H]
+\centering
+\caption{\textbf{Training hyperparameters.}}
+\label{tab:hparams_training}
+\vspace{4pt}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{llc}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} \\
+\midrule
+\multicolumn{3}{l}{\textit{Loss}} \\
+\quad Neural loss type &  & Poisson negative log-likelihood \\
+\quad Behavior loss & & Mean squared error \\
+\quad $\lambda_B$ & Behavior loss down-weighting factor & 0.1 \\
+\midrule
+\multicolumn{3}{l}{\textit{Optimization}} \\
+\quad Optimizer & & AdamW \\
+\quad Learning rate &  & $7 \times 10^{-4}$ \\
+\quad Warmup steps & Linear warmup duration & 20\,000 \\
+\quad Learning rate decay type &  & Inverse square root (10k steps) \\
+\quad Learning rate decay steps &  & 10k steps \\
+\quad $\beta_1, \beta_2$ & Adam momentum parameters & 0.9,\; 0.98 \\
+\quad Weight decay & L2 regularization & 0.1 \\
+\quad Gradient clipping type &  & Norm \\
+\quad Gradient clipping value & & 1.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{12pt}
+
+% \newpage
+% ===================== Model scaling =====================
+\subsection{Model scaling}
+\label{sec:appendix_scaling_variants}
+
+\cref{tab:bigmouse_architectures} summarizes the five model scales used in our scaling experiments, ranging from $\sim 1\text{M}$ to $\sim 300\text{M}$ parameters. We scale along two primary axes: model width ($d_m$) and depth ($L$, the number of transformer layers in the multi-modal fusion stack). Importantly, because we decouple the identity embedding dimension $d_e$ from the model width via learned linear projections (as described in \cref{sec:architecture}), the number of neuron-, session-, and animal-specific parameters ($p_N$) remains fixed across all scales.
+
+
+
+\begin{table}[H]
+% \vspace{-15pt} 
+\centering
+\caption{\textbf{Scaling variants of OmniMouse.}
+% Model architectures and scaling laws for OmniMouse variants. 
+\textit{L}: multi-modal transformer layers; $d_m$: model dimension; $h$: number of attention heads; $d_e$: dimensions of all embeddings; $p_L$: multi-modal transformer layer parameters; $p_M$: model parameters (excluding neuronal embeddings); $p_N$: all neuronal, session, and animal parameters; $p_T$: total parameters; \textit{S}: sequence length. 
+%Note that we kept the sequence length, as well as the embedding dimension for all neuron-, animal-, and session specific embedding constant across all model sizes.
+}
+\vspace{8pt}
+\small % Reduces font size
+% Use tabular* to set a specific width and fill extra space
+\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}rrrrrrrrr@{}}
+\toprule
+\textbf{Model} & \textbf{$L$} & \textbf{$d_m$} & \textbf{$h$} & \textbf{$d_e$} & \textbf{$p_L$} & \textbf{$p_M$} & \textbf{$p_N$} & \textbf{$p_T$} & \textbf{$S$} \\
+\midrule
+OmniMouse-1M   & 2  & 256  & 4   & 256  & 1.7M  & 6M  & 779M  & 885M  & 4096 \\
+OmniMouse-5M   & 6  & 256  & 8   & 256  & 5.1M  & 10.4M  & 779M  & 891M  & 4096 \\
+OmniMouse-20M  & 6  & 512  & 8   & 256  & 19.1M & 29.1M & 779M  & 810M & 4096 \\
+OmniMouse-80M  & 12 & 768  & 12  & 256  & 88M & 115M & 779M & 894M & 4096 \\
+OmniMouse-300M & 24 & 1024 & 16  & 256 & 308M & 348M & 779M & 1.1B & 4096 \\
+\bottomrule
+\end{tabular*}
+\label{tab:bigmouse_architectures}
+\end{table}
+
+
+\subsection{Masking Configurations}
+
+\cref{tab:masking_configurations} enumerates all 119 structured masking configurations used during training. All configurations share a fixed prediction target: the final 30 samples (1\,s) of activity from up to 3072 randomly selected neurons. Rows enumerate the systematic variations over population context, causal context, video context, and behavior encoding/decoding. Entries in brackets denote multiple configurations swept over the listed values.
+
+\begin{table}[h!]
+\centering
+\caption{\textbf{Masking configurations.}}
+\label{tab:masking_configurations}
+\vspace{4pt}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{>{\raggedright}p{1.0cm} c c p{2.8cm} p{1.8cm} p{2.2cm} p{1.5cm}}
+\toprule
+\textbf{Mask} & \textbf{Behavior} & \textbf{Video (last } & \textbf{Visible} & \textbf{Pop.\ Context} & \textbf{Causal Context} & \textbf{Predicted} \\
+\textbf{} & \textbf{} & \textbf{frames visible)} & \textbf{Neurons} & \textbf{(from $\to$ to)} & \textbf{(from $\to$ to)} & \textbf{Behavior} \\
+\midrule
+1--3    & \ding{51} & 0  & [64, 256, 1024] & 0 $\to$ 60 & --- &  \\
+4       & \ding{55} & 0 & 4096 & 0 $\to$ 60 & --- & \ding{51} \\
+5--7    & \ding{55} & 0  & [64, 256, 1024] & 0 $\to$ 60 & ---  & \ding{51} \\
+8--19   & \ding{51} & 0  & [64, 256, 1024, 4096] & --- & [0, 10, 15] $\to$ 25 &  \\
+20--28  & \ding{51} & 0  & [64, 256, 1024] & 25 $\to$ 60 & [0, 10, 15] $\to$ 25 &  \\
+29--37  & \ding{55} & 0  & [64, 256, 1024] & 25 $\to$ 60 & [0, 10, 15] $\to$ 25 & \ding{51} \\
+38--40  & \ding{51} & 10 & [64, 256, 1024] & 10 $\to$ 60 & --- & \\
+41--52  & \ding{51} & 10 & [64, 256, 1024, 4096] & --- & [0, 10, 15] $\to$ 25 &  \\
+53--58  & \ding{51} & 10 & [64, 256, 1024, 4096] & 25 $\to$ 60 & [10, 15] $\to$ 25 &  \\
+59--61  & \ding{51} & 20 & [64, 256, 1024] & 20 $\to$ 60 & --- &  \\
+62--73  & \ding{51} & 20 & [64, 256, 1024, 4096] & --- & [0, 10, 15] $\to$ 25 &  \\
+74--79  & \ding{51} & 20 & [64, 256, 1024] & 25 $\to$ 50 & [10, 15] $\to$ 25 &  \\
+80--82  & \ding{51} & 20 & [64, 256, 1024] & 30 $\to$ 60 & --- &  \\
+83--94  & \ding{51} & 30 & [64, 256, 1024, 4096] & --- & [0, 10, 15] $\to$ 25 &  \\
+95--100 & \ding{51} & 30 & [64, 256, 1024] & 25 $\to$ 40 & [10, 15] $\to$ 25 & \\
+101--103& \ding{51} & 40 & [64, 256, 1024] & 30 $\to$ 50 & --- &  \\
+104--111& \ding{51} & 40 & [64, 256, 1024, 4096] & --- & [10, 15] $\to$ 25 &  \\
+112--114& \ding{51} & 50 & [64, 256, 1024] & 30 $\to$ 40 & --- &  \\
+115--118& \ding{51} & 50 & [64, 256, 1024, 4096] & --- & 10 $\to$ 20 &  \\
+119     & \ding{51} & 60 & --- & --- & --- &  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{OmniMouse Training Algorithm}\label{sec:appendix_algo}
+
+Algorithm \cref{alg:omnimouse_algo} provides a concise summary of the full OmniMouse training loop, from tokenization through loss computation. At each training step, a single masking configuration is sampled uniformly along with a batch of multi-modal data \textit{chunks} from a single session.
+
+
+\begin{algorithm}
+\label{alg:omnimouse_algo}
+\caption{Train OmniMouse}
+\small
+\begin{algorithmic}
+
+\State \textbf{Input:} neural responses $R$, video frames $V$, behavioral traces $B$, masking set $\mathcal{M}$, loss weight \alpha
+\State Sample masking configuration $m \sim \mathcal{M}$ uniformly
+
+\State \textit{// Tokenization}
+\State Tokenize $R$ via strided 1D convolution; add neuron, session, and animal identity embeddings $\to Z_R$
+\State Tokenize $V$ via Hiera encoder and linear projection $\to Z_V$
+\State Tokenize $B$ via linear projection; add channel, session, and animal identity embeddings $\to Z_B$
+
+\State \textit{// Masking}
+\State Remove masked tokens from $Z_R$ $\to$ encoder input $\widetilde{Z}_R$ 
+\State build decoder queries from target identity embeddings $\to Q_R$
+\State Remove out-of-range tokens from $Z_V$ $\to$ encoder input $\widetilde{Z}_V$
+\State \textbf{if} behavior unmasked \textbf{then} include $Z_B$ in encoder input 
+\State \textbf{else} build decoder queries from channel/session/animal embeddings $\to Q_B$
+
+\State \textit{// Encoding}
+\State Compress $[\widetilde{Z}_R, Z_B]$ into $M{\times}N$ latents via cross-attention with learned queries and $G$ global registers
+
+\State \textit{// Multi-modal Fusion}
+\State Concatenate latents with $\widetilde{Z}_V$
+\State pass through $L$ transformer layers $\to \mathcal{F}$
+
+\State \textit{// Decoding}
+\State Decode $[Q_R, Q_B]$ via local causal cross-attention over $\mathcal{F}$ 
+\State apply modality-specific linear readouts $\to \hat{R}_{\text{targets}},\, \hat{B}$
+
+\State \textit{// Loss and Update}
+\State Compute $\mathcal{L}(\theta) = \text{PoissonLoss}(\hat{R}_{\text{targets}}, R_{\text{targets}}) + \alpha\cdot\text{MSE}(\hat{B}, B)$
+\State Update $f_\theta$ via gradient descent on $\mathcal{L}(\theta)$
+
+\end{algorithmic}
+\end{algorithm}
+
+% ==================== TRAINING TABLE (standalone) ====================
+
+\subsection{Compute Infrastructure and Training Procedures}
+\label{sec:appendix_compute}
+
+All models were trained on Marlowe \citep{Marlowe}, Stanford's NVIDIA DGX H100 SuperPOD cluster. We scaled training from a single node (8 GPUs per node) for smaller models up to 10 nodes for OmniMouse-300M.
+
+\textbf{Distributed training.}
+Because each batch is sampled from a single session, we are able to significantly streamline memory and distributed communication overhead by allocating groups of data sessions across ranks. This allows us to partition parameters into \textit{shared} weights (the transformer backbone) and \textit{rank-specific} weights (i.e. identity embeddings for the sessions on each of the ranks). Accordingly, we implement a custom DDP-style training loop in which only the shared parameters are synchronized across ranks. Gradients for shared parameters are packed into flat, pre-allocated buckets and reduced asynchronously via \texttt{all\_reduce}. While the collective is in flight, each rank independently clips and steps the rank-specific optimizer on its local embedding parameters, effectively overlapping communication with computation. Once the reduction completes, the averaged shared gradients are unpacked, clipped, and stepped with a second optimizer. This bucketed, communication-overlapped scheme keeps GPU utilization high even at large node counts.  Our distributed training strategy achieved record \#22 on the nanoGPT speedrun \citep{modded_nanogpt_2024} competition  leaderboard\footnote{\url{https://github.com/KellerJordan/modded-nanogpt}}, demonstrating its competitiveness beyond neuroscience applications.
+
+\textbf{Compilation and kernel selection.}
+We compile the model with \texttt{torch.compile} using the \texttt{max-autotune} mode. The structured sparsity of our local sliding-window and causal attention masks is implemented via PyTorch's FlexAttention API, which compiles the block-sparse mask patterns into fused Triton kernels and avoids materializing the full attention matrix. Moreover, we specifically design the tokenization strides and local-attention window sizes for each modality to align with FlexAttention's block-size boundary of 128 tokens, ensuring that the sparse block structure incurs no wasted computation from partially occupied blocks. Similarly, we design all masking configurations to produce a fixed input sequence length of 4096 tokens for the multi-modal fusion transformer. This fixed shape eliminates recompilation across masking configurations and enables \texttt{torch.compile} to cache a single optimized sub-graph for the entire training run. To further minimize overhead, we are careful to cache compiled FlexAttention masks associated with each unique masking configuration. 
+
+\textbf{Numerical precision.}
+All training uses automatic mixed precision with BF16 for forward and backward passes, while maintaining full FP32 precision for master weights and optimizer states. We disable BF16 reduced-precision accumulation to ensure numerical stability during training.
+
+\newpage 
+
+\section{Baselines}
+\label{sec:baselines-appendix}
+To establish baseline comparisons while managing computational costs, we train state-of-the-art baseline models on the smallest nested dataset containing eight mice (the seven evaluation mice plus one additional training mouse). This approach ensures that all methods are compared under identical conditions while keeping baseline training tractable. 
+We train all baselines on 8 recordings from 8 unique mice -- 5 fully released mice from the sensorium 2023 competition (keeping the original train-validation-test splits), 2 mice from the sensorium 2022 competition that were used for the test split and one session from the MiCRONs collection, which was used for training only.
+The same 8 mice were used in the smallest scaling experiment from \cref{fig:data-scaling}.
+
+\subsection{CEBRA}
+\textbf{CEBRA explanation:}
+CEBRA performs dimensionality reduction on neural activity using InfoNCE contrastive learning, where positive and negative pairs are defined by auxiliary variables such as time or behavior. 
+When the auxiliary variable is discrete, for example a left or right wheel turn, it selects positives uniformly from all samples with the same label. 
+When the variable is continuous, such as running speed or pupil direction, it chooses a random point within a time window around the sample and then find the closest match in the dataset using either Euclidean or cosine distance; this sample becomes the positive pair, which adds diversity and prevents repeatedly selecting the same example. 
+Negative pairs are sampled randomly. 
+For decoding, CEBRA encode neural responses, find the nearest latent vectors for responses in the training set, and returns their associated behavioral variables as predictions.
+
+\textbf{Model hyperparameters:} 
+We trained a joint model for 8 mice, using a batch size of 512 and learning rate of $3\cdot 10^{-4}$. 
+% We did a hyperparameter search 
+The network contained 256 hidden units and produced 128-dimensional outputs (both doubled relative to the Allen example \url{https://cebra.ai/docs/demo_notebooks/Demo_Allen.html}). Training ran for up to 50,000 iterations with cosine distance as the loss metric. The model used a temperature of 1, time-delta conditioning to enable behavior mode, and time offsets of 5.
+As CEBRA requires same frequencies between responses and behavior, both were resamples to 20 Hz, in order to compute correlation on the same predictions as for the OmniMouse. 
+Please note that downsampling from 30 Hz responses is not reducing any information as responses were upsampled from 6-16 Hz to 30 Hz and the upsampling is done with nearest-neighbor interpolation.
+
+
+\subsection{Universal Spike Translator}
+\textbf{Universal Spike Translator explanation:} The Universal Spike Translator~\cite{universalspiketranslator} performs a self-supervised modeling approach called multi-task-masking (MtM). The model alternates between masking out and reconstructing neural activity across different time steps and neurons. It uses a learnable token that provides the model with context about the specific masking scheme that is being applied during training, allowing for "mode switching" at test time for different downstream tasks.
+During training, the masking schemes are sampled randomly which are: 
+\textbf{(1)  Neuron masking:} Randomly masks individual neurons and reconstructs their activity using the unmasked neurons as context.
+\textbf{(2) Causal masking:} Masks future time steps and predicts them using the past steps as context.
+
+\textbf{Model hyperparameters:}  
+We started with  the default hyperparameters from ``ndt1\_stitching\_prompting'' and ``ssl\_session\_trainer'' configs from \url{https://github.com/colehurwitz/IBL_MtM_model} and performed a Bayesian hyperparameter search using weights \& biases, \url{https://docs.wandb.ai/models/sweeps}. The sweep configs are available at \url{https://github.com/sensorium-competition/IBL_MtM_model/tree/wandb_sweep}. 
+Please note that compared to our forecasting settings, IBL does not take behavior as model input.
+
+\subsection{Latent dynamic model}
+\textbf{Latent dynamic model explanation:} This is a probabilistic model that predicts the joint distribution of neuronal responses from naturalistic video stimuli and stimulus-independent latent factors. Specifically, the model predicts time-varying neuronal response using a Zero-Inflated-Gamma (ZIG) distribution to model the distribution of neuronal responses conditioned on the stimulus and the latent factor. This is a modification of the deterministic factorized 3D convolutional core and a Gaussian readout, where we have an additional encoder that takes a subset of neurons as input to derive a latent variable. This latent variable is then combined with the transformed visual input to predict the activity of other neurons in the session. The model is trained by maximizing the Evidence Lower Bound (ELBO) of $p_{ZIG}(y|x)$ via variational inference.
+
+\textbf{Model hyperparameters:} For both SENSORIUM 2023 baseline and \citet{schmidt2025modelingdynamicneuralactivity} baseline we used the default hyperparameters from \citet{schmidt2025modelingdynamicneuralactivity}: 3 layer core with both spatial and temporal kernel = 11 in the first layer and 5 on the layer two and three.
+For more details see App.C from \citet{schmidt2025modelingdynamicneuralactivity}.
+All data modalities were upsampled to 30 Hz as both SENSORIUM 2023 baseline and \citet{schmidt2025modelingdynamicneuralactivity} latent model require all modalities to have the same frequencies.
+Both SENSORIUM 2023 baseline and \citet{schmidt2025modelingdynamicneuralactivity} latent model predict 42 samples from a 60-frame video input, we always used only last 30 frames for evaluation, to make it consistent with OmniMouse, who was trained to predict 30 samples.
+Please note that OmniMouse supports flexible size of predictions, while  SENSORIUM 2023 baseline and \citet{schmidt2025modelingdynamicneuralactivity} latent model has a `burn period`, e.g. cannot predict responses for the first few frames of the given video.
+
+\subsection{POYO+}
+
+\textbf{POYO+ explanation:} 
+POYO+ \citep{poyov2iclr2025} performs multi-task neural decoding by tokenizing neural activity.
+The tokeization follows POYO \citep{azabou2023unified} and encodes raw data into unit-level embeddings and spike times.
+As POYO+ is working with calcium imaging and not spikes, it also encodes the amplitude of a neuronal response not just unit-level embeddings. 
+Its encoder uses cross-attention to keep the number of tokens fix despite potentially non-fixed input size.
+For flexible decoding, the model constructs query tokens by summing a learned task embedding, a session-specific embedding, and an output timestamp.
+It is trained end-to-end on a mixture of classification, regression, and segmentation tasks, using a weighted sum of cross-entropy and mean-squared error losses.
+To generate predictions, a multi-modal decoder queries the latent space via cross-attention and passes the resulting tokens through task-specific linear layers to reach the target dimensionality.
+
+\textbf{Model hyperparameters:} We ran an extensive hyperparameter search (>100 runs) on POYO+. We used a Bayesian sweep via Weights \& Biases for hyperparameter optimization; the code and sweep settings are available at \url{https://github.com/pollytur/torch_brain/tree/eight_mice_benchmark/examples/poyo_plus}. 
+
+\section{Supplemental results}
+\label{sec:results-appendix}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/fig_s1_quali_behavior.png}
+  \caption{
+  \textbf{Example predictions of neuronal activity and behavioral variables}. \textbf{A}. Here we show three example neurons and their ground truth neuronal activity for 4 seconds (black). We also show the model prediction of OmniMouse for three evaluation conditions: \textit{population context of 64 neurons} (orange), \textit{stimulus-encoding} (blue), \textit{stimulus + behavior + neuron context} (green). The predictive performance, shown as pearson correlation  \textit{r} is increasing with more information provided to the model. Our model is designed to disentangle the relative contributions of sensory input, behavior, and population dynamics to individual neurons' activity. \textbf{B}. Ground truth and predictions for behavioral variables.
+  }
+  \label{fig:qualitative}
+\end{figure}
+
+
+
+
+\textbf{OmniMouse enables systematic evaluation of how neuronal context shapes predictive performance.}
+We evaluated OmniMouse on conditions not seen during training, systematically varying neuronal history duration (10-25 samples) and population context size (16-2048 neurons) for population context tasks. Performance scaled smoothly with context availability across all conditions \cref{fig:task-difficulty}. When video was available, performance plateaued more quickly for forecasting but continued to improve for population context, suggesting that nearby neurons carry complementary information beyond visual input. These systematic evaluations demonstrate that OmniMouse has learned  generalizable representations of neural variability, enabling quantitative assessment of how different sources of context—temporal history contribute to explaining variability in neural responses.
+
+Furthermore, we hypothesized that harder tasks might benefit more from scaling, as shown for large language models \citep{minaee2024large, naveed2025comprehensive}. 
+To test this, we varied the causal context $\in [10, 15, 20, 25]$) for the forecasting tasks and population context size (\textit{context}  $\in [16, 32, ..., 1024, 2048]$), with smaller contexts being more challenging prediction tasks. 
+We also compared performance with and without 2 seconds of video input. \cref{fig:task-difficulty} confirms our hypothesis: performance improves consistently as context grows, hence, bigger context indicates an easier task. Non-video conditioned regimes scale more steeply. However, contrary to LLMs, in our case scaling model size does not preferentially benefit harder tasks: across all tasks, results for different model sizes do not meaningfully change for harder tasks. 
+
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/fig7_v3.png}
+  \caption{
+  \textbf{Using the models capabilities to investigate context lengths for forecasting and population context tasks.}
+  \textbf{A}. Forecasting with a change of causal context, i.e. how many samples of neuronal activity are unmasked. A causal context length of 10 corresponds to one third of a second of neuronal activity.
+  \textbf{B}. Same change of forecasting context as \textbf{A}, but with video.
+  \textbf{C}. Performance improvements in addition to video with population context. 
+  \# neurons in context = 0 means that all neurons are masked, and the model conditions its prediction purely on the visual stimulus. In all panels, the stimulus-encoding performance is denoted by the gray box for ease of comparison. Remarkably, as seen in panel A, forecasting a whole second of neuronal activity given the past second yields a comparable predictive performance as showing the entire two seconds of the visual stimulus.
+  \textbf{D}. Population context only, 16 - 2048 neurons
+  }
+  \label{fig:task-difficulty}
+\end{figure}
+
+\begin{figure}[]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/insilico.png}
+  \caption{
+  \textbf{Systematic evaluation across mask configurations}. We evaluate the neuronal prediction and behavior decoding performance of OmniMouse-80M by systematically varying the model inputs via masking. Only masks using N = [64, 256, 1024] have been seen during training. OmniMouse generalizes to unseen conditions, and allows to systematically study the contribution of visual stimulus, behavioral variables, and neuronal (sub)-population activity. \textbf{A}. Neuronal activity predictions given different amounts of visible neurons in context. \textbf{B}. Behavioral decoding.
+  }
+  \label{fig:insilico}
+\end{figure}
+
+
+
+\section{Sensorium Competition Evaluation}
+
+We evaluate our model on the SENSORIUM 2023 competition test set, which allows direct comparison against the state of the art model of predicting mouse visual cortex responses from video stimuli. 
+We use OmniMouse-80M, freeze the entire model, and train only the neuron and animal embeddings using the released training data of five mice provided by the competition.
+For SENSORIUM 2022, we report the results of OmniMouse-80M trained on the largest dataset collection, which included the training set of the two animals used in SENSORIUM 2022.
+
+\begin{table}[]
+\centering
+\caption{\textbf{Sensorium 2023 benchmark results.} 
+Models with $\Sigma$ suffix denote ensemble predictions. We use n=5 models in the OmniMouse ensemble, from different random seeds, which determines model initialization and ordering of training batches. $\uparrow$ indicates higher is better. We either run the full multi-modal training, or only train the model with a single masking condition( \textit{Unimodal}) -- predicting neuronal responses conditioned on behavior and visual stimulus -- comparable to all other models of the competition.
+}
+\vspace{3pt}
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Model} & \textbf{Training} & \textbf{Main track $\uparrow$} & \textbf{OOD track $\uparrow$} \\
+\midrule
+DwiseNeuro-$\Sigma$ \citep{sensorium2023} & end-to-end & 0.291 & 0.221 \\
+\midrule
+OmniMouse-5M-Unimodal & end-to-end & 0.288 $\pm$ .003 & 0.256 $\pm$ .002 \\
+OmniMouse-5M-Unimodal-$\Sigma$ & end-to-end & 0.332 & 0.296 \\
+OmniMouse-5M & end-to-end & 0.295 $\pm$ .005 & 0.263 $\pm$ .003 \\
+OmniMouse-5M-$\Sigma$ & end-to-end & 0.327 & 0.293 \\
+OmniMouse-80M & frozen & 0.313 $\pm$ .001 & 0.274 $\pm$ .001 \\
+OmniMouse-80M-$\Sigma$ & frozen & 0.327 & 0.288 \\
+\bottomrule
+\end{tabular}
+\label{tab:sensorium_extended_results}
+\end{table}
+
+% \section{Relation to other neuroscience scaling.}
+% This is the first study to systematically scale both model and data size using only neuro-data, yet our findings align with prior neuro-scaling work. Consistent with \citet{gokce2024scaling}, behavior decoding improves with larger models, and the greater gains from joint model–data scaling on non-video tasks (\cref{fig:data-scaling}A,B) support claims from \citet{jiang2025data, ye2025generalist} that data heterogeneity limits scaling: our visual stimuli include many repeats, while neural responses vary with latent brain state and noise even when the visual stimuli is same.
+
+\subsection{Distribution of sessions per mouse}
+
+\begin{figure}[]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/sessions_distributions.pdf}
+  \caption{\textbf{Distribution of 316 sessions across 69 mice.} 
+  More than 100 sessions come from first 10 mice.
+  }
+  \label{fig:sessions-distribution}
+\end{figure}
+
+\newpage 
+\section{Dataset details}
+
+\subsubsection{Nested scaling dataset construction}
+
+The nested dataset was constructed such that for the 7 mice we conducted evaluation on - 3 mice we had repeated sessions, such that the number of repeats grew proportionally to the dataset growth, and 4 other mice had a single session. 
+As session-per-mice distribution is highly skewed, the other sessions were samples randomly. 
+\subsection{Neurophysiological experiments}
+\label{sec:data-experimental-details}
+Model evaluation was performed on neurophysiological data from Sensorium 2022 (\citep{willeke2022sensorium}, Mouse 1 and 2, evaluation animals for Sensorium and Sensorium Plus tracks) and Sensorium 2023 (\citep{sensorium2023}, all animals).  
+Model training was performed on historical data, including data from \citet{MICrONS-Consortium2025-ru}, \cite{wang2025foundation}, \citet{ding2025functional}, \citet{Ding2023dei}, \citet{fahey2019global}, \citet{willeke2022sensorium},\citet{sensorium2023}, but also included data not previously published.  
+
+All procedures were approved by the Institutional Animal Care and Use Committee of Baylor College of Medicine. 
+Seventy-eight mice (Mus musculus, 32 females, 46 males, P50--155 on day of first scan) expressing GCaMP6s in excitatory neurons via Slc17a7-Cre and Ai162 transgenic lines (recommended and generously shared by Hongkui Zeng at Allen Institute for Brain Science; Jackson Labs stock 023527 and 031562, respectively) were anesthetized and a 4 mm craniotomy was made over the visual cortex of the right hemisphere as described previously \citep{reimer2014pupil, Froudarakis2014-oz}. 
+In two of the seventy-three animals, GCaMP6s was additionally expressed in inhibitory neurons via DLX5-CreER (Jackson Labs stock 010705), following treatment with tamoxifen (orogastric gavage of tamoxifen (Sigma Aldritch T5648) dissolved in corn oil (Sigma Aldritch C8267) at 15 mg/mL, 200 mg/kg body weight, two doses two days apart, second dose >= 13 days before the first included scan).
+
+Mice were head-mounted above a cylindrical treadmill and calcium imaging was performed using Chameleon Ti-Sapphire laser (Coherent) tuned to 920\,nm and a large field of view mesoscope \citep{sofroniew2016large} equipped with a custom objective (excitation NA 0.6, collection NA 1.0,  21\,mm focal length). 
+Laser power after the objective was increased exponentially as a function of depth from the surface according to:
+
+\begin{equation}
+    P = P_0 \times e^{(z/L_z)}
+\end{equation}
+
+Here P is the laser power used at target depth z, P0 is the power used at the surface (typically not exceeding 25\,mW), and $L_z$ is the depth constant (160-220\,μm).  
+The greatest laser output of ca. 112\,mW was used at approximately 400-500\,μm from the surface.   
+
+The craniotomy window was leveled with regards to the objective with six degrees of freedom.  
+Pixel-wise responses from an ROI spanning the cortical window (1.7-4 mm diameter FOV, >0.2\,px/μm, superficial cortex, >2.47\,Hz) to drifting bar stimuli were used to generate a sign map for delineating visual areas \citep{Garrett2014-yn}.  
+In some but not all cases where the imaging field of view spanned multiple areas, area boundaries on the sign map were manually annotated.  
+Imaging FOV of varying dimensions were targeted to lie within the boundaries of visual cortex, and may span between primary visual cortex and surrounding higher visual areas depending on the scan design.  
+% Our target imaging site was a 630 $\times$ 630\,µm ROI within the boundaries of primary visual cortex (VISp, Supp.~\cref{fig:imaging_site_selection}).  
+
+Scan dimensions typically fell into one of three categories. 
+Local field of view scans contained multiple imaging planes at different depths (10-13 planes, most commonly with 5 μm z spacing but ranging between 3 and 45 μm z spacing), with each plane spanning 600-630 $\times$ 600-630 μm (240-252 $\times$ 240-252 pixels, 0.4\,px/μm resolution ), acquired most commonly at 7.98 Hz (range 4.34-8.31 Hz). 
+Large field of view scans contained single imaging planes at a single depth, with each plane scanning 1.5 - 3 mm diameter (0.33 - 0.4 \,px/um resolution), acquired at between 6.5 - 12.4 Hz. 
+In between are scans containing multiple imaging planes at different depths (2-5 planes, with variable interplane spacing between 5 and 150 μm), with each plane spanning approximately 0.8-1.2 mm diameter (0.4-0.6 \,px/μm resolution), acquired at between 6.3 and 9.6 Hz.
+Scans with multiple planes, especially at high sampling densities (ex. 5 μm z spacing), have a high likelihood of multiple segmented traces emerging from multiple planes intersecting with the soma of a single neuron in a single scan. 
+Multiple scans were also often collected from the same animal, and as a result single biological neurons may be recorded across multiple scans. 
+
+Movie of the animal's eye and face was captured throughout the experiment.  
+A hot mirror (Thorlabs FM02) positioned between the animal's left eye and the stimulus monitor was used to reflect an IR image onto a camera (Genie Nano C1920M, Teledyne Dalsa) without obscuring the visual stimulus.  
+The position of the mirror and camera were manually calibrated per session and focused on the pupil.  
+Field of view was manually cropped for each session to contain the left eye in its entirety, although across different experiments the field of view may have additionally contained more or less of the face, centered or not centered on the eye, or characterized the pupil at different resolutions.  
+Video was captured at ca. 20\,Hz.
+% Field of view was manually cropped for each session to contain the left eye in its entirety, ranging from 214--308 pixels height $\times$ 250--331 pixels width at ca. 20\,Hz.
+Frame times were time stamped in the behavioral clock for alignment to the stimulus and scan frame times. 
+Video was compressed using Labview’s MJPEG codec with quality constant of 600 and stored in an AVI file.
+
+Light diffusing from the laser during scanning through the pupil was used to capture pupil diameter and eye movements.  
+A DeepLabCut model \citep{Mathis2018-qj} was trained as previously described \citep{sensorium2023} on 17 manually labeled samples from 11 animals to label each frame of the compressed eye video (intraframe only H.264 compression, CRF:17) with 8 eyelid points and 8 pupil points at cardinal and intercardinal positions.  
+Pupil points with likelihood >0.9 were fit with the smallest enclosing circle, and the radius and center of this circle was extracted.  
+% Pupil points with likelihood >0.9 (all 8 in 55-99\% of frames) were fit with the smallest enclosing circle, and the radius and center of this circle was extracted.  
+Frames with < 3 pupil points with likelihood >0.9, or producing a circle fit with outlier > 5.5 standard deviations from the mean in any of the three parameters (center x, center y, radius) were discarded.  
+% Frames with < 3 pupil points with likelihood >0.9 (<0.9\% frames per scan), or producing a circle fit with outlier > 5.5 standard deviations from the mean in any of the three parameters (center x, center y, radius, <0.3\% frames per scan) were discarded (total <0.9\% frames per scan).  
+Gaps in behavior were replaced by linear interpolations over the whole session, if there were more than 2 frames with gaps, then the video is removed. 
+% Gaps in behavior were replaced by linear interpolations over the whole session, if there were more than 2 frames with gaps, then the video is removed. 
+% (We removed  $\sim$2\% of the videos, 155 out of  7280, where one video was rejected due to signal synchronization issues during resampling). 
+% % \hl{Gaps of <= 1 discarded frames were replaced by linear interpolation (<0.2\% frames per scan).  Trials affected by remaining gaps were discarded (<50 trials per scan, <0.9\%)}.  
+
+The mouse was head-restrained during imaging but could walk on a treadmill. 
+Rostro-caudal treadmill movement was measured using a rotary optical encoder (Accu-Coder 15T-01SF-2000NV1ROC-F03-S1) with a resolution of 8000 pulses per revolution, and was recorded at approx. 50-100 Hz in order to extract locomotion velocity. 
+
+% \subsection*{Visual stimulation} 
+
+Visual stimuli were presented with Psychtoolbox 3 in MATLAB \citep{Brainard1997-ed, Kleiner2007-ik, Pelli1997-vv} to the left eye with a 31.8 $\times$ 56.5\,cm (height $\times$ width) monitor (ASUS PB258Q) with a resolution of 1080$\times$1920 pixels positioned 15\,cm away from the eye.  
+When the monitor is centered on and perpendicular to the surface of the eye at the closest point, this corresponds to a visual angle of 3.8\,°/cm at the nearest point and 0.7\,°/cm at the most remote corner of the monitor.  
+As the craniotomy coverslip placement during surgery and the resulting mouse positioning relative to the objective is optimized for imaging quality and stability, uncontrolled variance in animal skull position relative to the washer used for head-mounting was compensated with tailored monitor positioning on a six dimensional monitor arm. 
+The pitch of the monitor was kept in the vertical position for all animals, while the roll was visually matched to the roll of the animal’s head beneath the headbar by the experimenter. 
+In order to optimize the translational monitor position for centered visual cortex stimulation with respect to the imaging field of view, we used a dot stimulus with a bright background (maximum pixel intensity) and a single dark square dot (minimum pixel intensity). 
+Dot locations were randomly ordered from a grid tiling a portion of the screen, either a 10 $\times$ 10 grid tiling a central square (approx. 90° width and height, 10 repeats per location, 200-300 ms presentation at each location), or a 5 $\times$ 8 grid tiling the majority of the monitor (approx. 93° height and 119° width, 20 repeats per location, 200 ms presentation at each location). 
+% Dot locations were randomly ordered from a 10 $\times$ 10 grid tiling a central square (approx. 90° width and height) with 10 repetitions of 200 ms presentation at each location.  
+The final monitor position for each animal was chosen in order to center the population receptive field of the scan field ROI on the monitor, with the yaw of the monitor visually matched to be perpendicular to and 15 cm from the nearest surface of the eye at that position.  
+
+
+% \underline{\textit{Natural Movies}}: 
+% Natural movies from the ``cinematic'' and ``Sports-1M'' \citep{Karpathy2014-gu} classes were drawn from the library described in \citep{microns2021functional}.  
+% Each scan contained 360 movies shown one time and 18 movies shown ten times, in both cases drawn equally from the cinematic and Sports-1M classes. 
+% Five sets of natural movies were prepared, with each movie unique to its respective set, and each set of movies shown in two scans.
+% % Briefly, cinematic movies from the following sources -- Mad Max: Fury Road (2015), Star Wars: Episode VII - The Force Awakens (2015), The Matrix (1999), The Matrix Reloaded (2003), The Matrix Revolutions (2003), Koyaanisqatsi: Life Out of Balance (1982), Powaqqatsi: Life in Transformation (1988), Naqoyqatsi: Life as War (2002).  Sports-1M movies were drawn from the Sports-1M dataset \citep{Karpathy2014-gu} with the following keywords: cycling, mountain unicycling, bicycle, bmx, cyclo-cross, cross-country cycling, road bicycle racing, downhill mountain biking, freeride, dirt jumping, slopestyle, skiing, skijoring, alpine skiing, freestyle skiing, greco-roman wrestling, luge, canyoning, adventure racing, streetluge, riverboarding, snowboarding, mountainboarding, aggressive inline skating, carting, freestyle motocross, f1 powerboat racing, basketball, base jumping.  All natural movies were temporally resampled to 30 fps, and were converted to grayscale with 256 x 144 pixel resolution with FFmpeg (ibx264 at YUV4:2:0 8bit). Stimuli were automatically filtered for upper 50th percentile Lucas-Kanade optical flow and temporal contrast of the central region of each clip.  All natural movies included in these experiments were further manually screened for unsuitable characteristics (ex. fragments of rendered videos in which the first person perspective would enter a corner and become "trapped" or follow an unnatural camera trajectory,  or  fragments  of  cinematic  or  Sports-1M  containing  screen  text  or  other post-processing editing).
+
+% \underline{\textit{Spatiotemporal Gabors}}: 
+% Spatiotemporal gabor movies were presented as described in \citep{Petkov2007-kv,Wang2023.03.21.533548}, but with different parameters as described below.
+% For six scans containing spatiotemporal gabors, 72 movies (8 directions $\times$ 3 spatial frequencies $\times$ 3 temporal frequencies) were shown ten times per scan.
+% Gabor spatial frequencies corresponded to wavelengths of 0.05, 0.1, and 0.2 (fraction of monitor width).
+% Gabor temporal frequencies corresponded to gabor velocities of 0.1, 0.2, and 0.3 (fraction of monitor width per second), in the direction perpendicular to the gabor orientation.  
+% Gabor spatial envelope was located in the center of the monitor, with a standard deviation of 0.08 (fraction monitor width, approx. 17 degrees). 
+% Each gabor movie was 833 ms in duration, and movies were randomly assorted into 6 sequences of 12 conditions each, for a total of 10 seconds per sequence. 
+% Because the stimulus was parametrically constructed, the same movies are shown in each of the six scans.  
+% Three sets of gabor movies that differ in sequence membership and order were prepared, and each set of movies was shown in two scans. 
+
+% \underline{\textit{Directional Pink Noise}}:  Directional pink noise was generated as described in \citep{microns2021functional}.  
+% For six scans with directional pink noise stimuli, six movie sequences were shown time times per scan.
+% Each movie sequence was generated from a unique random seed, which determined the underlying pink noise pattern and also the order of 12 equally spaced directional subtrials, with a spatial orientation bias perpendicular to the direction of motion.  
+% Each directional subtrial lasted 900 ms, for a total of 10.8 seconds per sequence.
+% Three sets of directional pink noise movie sequences were prepared, with each sequence unique to its respective set, and each set of sequences shown in two scans.
+% % Each directional pink noise movie sequence was unique to its respective scan.
+% % This stimulus was designed to probe neuronal tuning to orientation and direction of motion, using smoothened Gaussian noise with coherent orientation and motion. 
+% % Briefly, an independently identically distributed (i.i.d.) Gaussian noise movie was passed through a temporal low-pass Hamming filter ($\SI{4}{\hertz}$) and a 2-d Gaussian filter ($\sigma = \ang{3.0}$ at the nearest point on the monitor to the mouse).  
+% % Each 15 second block consisted of 16 equally distributed and randomly ordered unique directions of motion between 0-360 degrees with a velocity of 42 degrees/s at the nearest point on the monitor.  
+% %  where  is the polar angle coordinate and  is the movement direction θ. Then:ω=φ−θ φ θ
+% % The movie was spatial filtered to introduce a spatial orientation bias perpendicular to the direction of movement by applying a bandpass Hanning filter $G(\oOmni; c)$ in the polar coordinates in the frequency domain for $\oOmni = \phi - \theta$ where $\phi$ is the polar angle coordinate and $\theta$ is the movement direction.  Then:  
+% % \begin{equation}
+% % 	G(\oOmni ; c)=\sqrt{c} H(c \oOmni)
+% %     % G(\oOmni; c) = H(\frac{\oOmni}{c})
+% % \end{equation}
+% % \begin{equation}
+% %     H(\oOmni) = \begin{cases} \frac{1}{2} + \frac{1}{2} \cos \oOmni \quad & \text{if } |\oOmni| < \pi,\\
+% %     \ 0 \quad & \text{otherwise}\end{cases}
+% % \end{equation}
+% % \noindent Here, $c=2.5$ is an orientation selectivity coefficient.  The resulting kernel is $\ang{72}$ full width at half maximum.
+
+% \underline{\textit{Random Dot Kinematogram}}: 
+% Random dot kinematograms (RDK) movies were presented as described in \citep{Morrone2000-ov,Wang2023.03.21.533548}, but with different parameters as described below.  
+% For six scans containing RDK movies, 32 movies (8 flow trajectories $\times$ 2 velocities $\times$ 2 coherencies) were shown ten times per scan.
+% RDK movie optical flow corresponded to a translational (up/down/left/right), radial (inward / outward w/r/t monitor center), or rotational (clockwise / anticlockwise w/r/t monitor center) trajectory.
+% RDK movie dots had a velocity of either 0.3 or 0.5 (fraction monitor width / second), and coherency of either 50\% or 100\% with respect to the global optical flow trajectory.
+% Each dot had a diameter of 1/32 (fraction monitor width, approx. 6.7 degrees at the nearest point) and a lifetime of 1 second.
+% Each RDK movie was 2 seconds in duration, and movies were randomly assorted into 8 sequences of 4 movies each, for a total of 8 seconds per sequence.  
+% Three sets of RDK movies were prepared, with each movie unique to its respective set, and each set of RDK movies shown in two scans.
+% % Each RDK movie was unique to its respective scan.
+
+% \underline{\textit{Natural Images}}:  Natural image from ImageNet were presented as in \citep{Walker2019-oq, Wang2023.03.21.533548}.  
+% For six scans containing natural images, 60 images were shown ten times per scan. 
+% Randomly selected images were center-cropped to 9:16 aspect ratio and converted to gray scale.  
+% Images were presented for 500 ms, preceded by a 400-600 ms blank gray screen (pixel value 127/255).  
+% Images were randomly assorted into 6 sequences of 10 images each, for approx. 10 seconds per sequence.
+% Three sets of natural images were prepared, with each natural image unique to its respective set, and each set of natural images shown in two scans.
+
+% \underline{\textit{Gaussian Dots}}: Gaussian dots were presented as in \citep{Wang2023.03.21.533548}, but with different parameters as detailed below.  
+% For six scans containing gaussian dots, 210 dot presentations (105 positions $\times$ 2 dot intensities) were shown ten times per scan.
+% Dot positions were drawn from a grid of 15 horizontal (-0.35 to 0.35) by 7 vertical (-0.267 to 0.267) positions, where all positions are reported as fraction of monitor width and 0 is the center of the monitor.  
+% Dots were presented as either white (pixel value 255 out of 255) or black (pixel value 0) on a gray background (pixel value 127).
+% Dot standard deviation was 0.07 (fraction monitor width, $ \approx 15  \degree$ at the closest point).
+% Dot presentations were 300 ms in duration, and were randomly assorted into 6 sequences of 35 dots each, for a total of 10.5 seconds per sequence. 
+% Because the stimulus was parametrically constructed, the same dots are shown in each of the six scans.
+% Three sets of gaussian dots that differ in sequence membership and order were prepared, and each set of dots was shown in two scans. 
+
+
+A photodiode (TAOS TSL253) was sealed to the top left corner of the monitor, and the voltage was recorded at 10 kHz and timestamped on the behavior clock (MasterClock PCIe-OSC-HSO-2 card).  
+Simultaneous measurement with a luminance meter (LS-100 Konica Minolta) perpendicular to and targeting the center of the monitor was used to generate a lookup table for linear interpolation between photodiode voltage and monitor luminance in cd/m\textsuperscript{2} for 16 equidistant values from 0-255, and one baseline value with the monitor unpowered.
+
+At the beginning of each experimental session, we collected photodiode voltage for 52 full-screen pixel values from 0 to 255 for one second trials.  
+The mean photodiode voltage for each trial $V_{pd}$ was fit as a function of the pixel intensity $V_{in}$:
+
+\begin{equation}
+     V_{pd} = B + A \times V_{in}^{\gamma}
+ \end{equation}
+
+in order to estimate the $\gamma$ value of the monitor ($ \approx 1.50-1.76$).  All stimuli were shown with no $\gamma$ correction.  
+
+During the stimulus presentation, sequence information was encoded in a 3 level signal according to the binary encoding of the flip number assigned in-order.  
+This signal underwent a sine convolution, allowing for local peak detection to recover the binary signal.  
+% The encoded binary signal was reconstructed for >99\% of the flips.  
+A linear fit was applied to the trial timestamps in the behavioral and stimulus clocks, and the offset of that fit was applied to the data to align the two clocks, allowing linear interpolation between them. 
+The mean photodiode voltage of the sequence encoding signal at pixel values 0 and 255 was used to estimate the luminance range of the monitor during the stimulus, with typical maximum values of approx. 10-12 cd/m\textsuperscript{2}.
+% with minimum values between 0.001 and 0.65 cd/m\textsuperscript{2} and maximum values between 8.7 and 11.3 cd/m\textsuperscript{2} in the released scans.  
+% Define a light gray color for the sub-header row
+\definecolor{lightgray}{gray}{0.9}
+
+% A custom command for the small, italicized text under the source names
+% Usage: \source{StarCoder}{\smallcomment{filtered version from OLMoE Mix}}
+\newcommand{\source}[2]{#1\\{\small\itshape #2}}
+
+
+% \section{Preliminary experiments for hyperparameters choice}
+% \subsection{Neuronal Embedding Size}
+% \textbf{Scaling the dimensionality of the neuronal embedding improves performance but saturates}
+
+% \hl{I think this results were before we switched train-val-test distribution back. Do we want to keep this section? - if yes, we probably need to retrain these runs}
+
+% The size of per-neuron embedding is one of the most influential parameters on the total parameter count in our architecture.
+% \hl{(Some connection to prev work? Do we actually need it?)}
+% Hence, we test how changing the size of the embedding (\hl{keeping all of the other model parameters fixed ? - is that true}) influence the performance.
+% On some tasks (population masking, forecasting with video and behavior given) we see a big improvement ($+n \%$ \hl{fill in final number}) when increasing the neurons embedding dimensionality from $64$ to $256$, however, further increasing does not help much.
+% Hence, for all of our further experiments, we decide to use $neuron\_embedding\_dim=256$.
+% All of the experiments here were done on a dataset from 32 mice.
+
+% \begin{figure}[!]
+%   \centering
+%   \includegraphics[width=0.8\textwidth]{figures/testing\_different\_neuron\_emb\_sizes\_placeholder.png}
+%   \caption{I think for the main text we would rather have a table here but I wanted a visual reference to the plots we discussed here for now \hl{Polly - Ask Alex \& Konsti for these checkpoints to fill in the table}}
+% \end{figure}
+
+% \begin{table}[!]
+%     \centering
+%     \begin{tabular}{c|c|c|c|c|c|c|c}
+%     neuron & Video \& & Response-to & Population &Video & Pupil & Pupil & Running \\
+%     embedding & behavior & -response & masking &-conditioned & center & size & speed\\
+%     dim & only & forecasting & (n? neurons) &forecasting & prediction & prediction & prediction \\
+%     \hline
+%          & & & & & & & \\
+%          & & & & & & & \\
+%     \end{tabular}
+%     \caption{Results from plot 6 here}
+%     \label{tab:placeholder}
+% \end{table}
+
+% \begin{table}
+%   \caption{
+%   \textbf{Data split statistics.} 
+%   While some neurons might be recorded in several sessions, we kept them independent in the following statistics as our model considers them independent.
+%   Trippy stimuli is the only one not presented in the test dataset.
+%   % I also counted 'blank' as stimuli type here.
+%   }
+%   \label{data-table}
+%   \centering
+%   \begin{tabular}{lll}
+%     \toprule
+%       & Train  & Test \\
+%     \midrule
+%      Num of mice & 73 & 7 \\
+%      Num of sessions & 333 & 7 \\
+%      Total neuron-hours & 4.2 $\cdot 10^6$ & 1.2 $\cdot 10^5$ \\
+%      & ($\sim$ 478 years) & ($\sim$ 13 years) \\
+%      Avg neuron-hours & 1.80 $\pm$ 0.56 & 2.10 $\pm$ 0.02\\
+%      Avg min-per-session & 102 $\pm$ 35 & 126 $\pm$ 1.5\\
+%      Avg neuron-per-session & 7018 $\pm$ 1573 & 7907 $\pm$ 220\\
+%      Total stimuli types & 8 & 7 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=\textwidth]{figures/regimes\_draft.png}
+%   \caption{Masking strategies.
+%   \textbf{A.} Video and behavior only. 
+%   \textbf{B.} Video-conditioned forecasting.
+%   \textbf{C.} Population masking.
+%   }
+%   \label{fig:masks}
+% \end{figure}
+% Population masking answers the question : how much of the trial-to-trial variability can be accounted for by shared latent variables? 
+
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=0.4\textwidth]{figures/pop\_masking\_neur\_perc.png}
+%   \caption{Fixed amount of neurons is taken for eval and numbers are reported on them only and the rest of pop is added.}
+% \end{figure}
+
+\end{document}
