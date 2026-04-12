@@ -245,8 +245,8 @@ div.container.blog#first-content::before {
   background-image: url("../microns-layers-brightened.png");
   background-size: cover;
   background-position: left center;
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 75%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 75%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 57%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 57%);
   pointer-events: none;
   z-index: 0;
 }
@@ -258,7 +258,7 @@ div.container.blog#first-content > * {
 
 @media screen and (min-width: 769px) {
   div.container.blog#first-content div.blog-title {
-    grid-template-columns: 1fr 1.2fr !important;
+    grid-template-columns: 0.8fr 1fr !important;
   }
 }
 
@@ -266,24 +266,27 @@ div.container.blog#first-content div.blog-title > h1.title {
   grid-column: 1 / -1;
 }
 
+div.container.blog#first-content div.blog-title .blog-intro {
+  min-height: 0;
+}
+
 div.container.blog#first-content div.blog-title .blog-cover {
-  align-items: stretch;
+  position: relative;
   width: 100% !important;
   margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0;
+  overflow: hidden;
 }
 
-div.container.blog#first-content div.blog-title .blog-cover img.foreground {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-}
-
-div.container.blog#first-content div.blog-title .blog-cover img.background {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
+div.container.blog#first-content div.blog-title .blog-cover img.foreground,
+div.container.blog#first-content div.blog-title .blog-cover video.foreground {
+  position: absolute;
+  top: 5%;
+  left: 0;
+  height: 90%;
+  width: auto;
+  max-width: none;
 }
 
 div.container.blog p.text {
