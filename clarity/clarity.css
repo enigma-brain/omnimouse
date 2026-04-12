@@ -234,6 +234,58 @@
     aspect-ratio: 3 / 5;
   }
 }
+div.container.blog#first-content {
+  position: relative;
+}
+
+div.container.blog#first-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../microns-layers-brightened.png");
+  background-size: cover;
+  background-position: left center;
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 75%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+div.container.blog#first-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media screen and (min-width: 769px) {
+  div.container.blog#first-content div.blog-title {
+    grid-template-columns: 1fr 1.2fr !important;
+  }
+}
+
+div.container.blog#first-content div.blog-title > h1.title {
+  grid-column: 1 / -1;
+}
+
+div.container.blog#first-content div.blog-title .blog-cover {
+  align-items: stretch;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+div.container.blog#first-content div.blog-title .blog-cover img.foreground {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+div.container.blog#first-content div.blog-title .blog-cover img.background {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 div.container.blog p.text {
   text-align: justify;
 }
