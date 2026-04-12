@@ -289,6 +289,10 @@ div.container.blog#first-content div.blog-title .blog-cover video.foreground {
   max-width: none;
 }
 
+table tbody tr:nth-child(2n+1) {
+  background-color: #ffffff !important;
+}
+
 div.container.blog p.text {
   text-align: justify;
 }
