@@ -245,8 +245,8 @@ div.container.blog#first-content::before {
   background-image: url("../microns-layers-brightened.png");
   background-size: cover;
   background-position: left center;
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 57%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 57%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 53%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 53%);
   pointer-events: none;
   z-index: 0;
 }
@@ -291,6 +291,67 @@ div.container.blog#first-content div.blog-title .blog-cover video.foreground {
 
 table tbody tr:nth-child(2n+1) {
   background-color: #ffffff !important;
+}
+
+/* Masking overview tabs */
+.masking-selector {
+  margin-bottom: 20px;
+}
+
+.masking-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.masking-tab {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.masking-tab:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.masking-tab.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.masking-panels {
+  position: relative;
+}
+
+.masking-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.masking-panel.active {
+  position: relative;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 div.container.blog p.text {

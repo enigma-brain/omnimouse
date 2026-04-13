@@ -94,7 +94,20 @@
     </div>
 
     <div class="container blog main dark" style="background-color: #000000;">
-        <img src="clarity/images/Figure_Overview.jpeg">
+        <div class="masking-selector">
+            <ul class="masking-tabs">
+                <li class="masking-tab active" data-target="overview">Overview</li>
+                <li class="masking-tab" data-target="response">Neural Response Masking</li>
+                <li class="masking-tab" data-target="behavior">Behavior Masking</li>
+                <li class="masking-tab" data-target="visual">Visual Stimulus Masking</li>
+            </ul>
+        </div>
+        <div class="masking-panels">
+            <img class="masking-panel active" data-panel="overview" src="clarity/images/model_overview/0_overview.png">
+            <img class="masking-panel" data-panel="response" src="clarity/images/model_overview/1_response_masking.png">
+            <img class="masking-panel" data-panel="behavior" src="clarity/images/model_overview/2_behavior_masking.png">
+            <img class="masking-panel" data-panel="visual" src="clarity/images/model_overview/3_stimulus_masking.png">
+        </div>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
@@ -380,6 +393,17 @@ url={https://openreview.net/forum?id=mEw4lhAn0F}
     </footer>
     
 
+    <script>
+    document.querySelectorAll('.masking-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            var target = this.getAttribute('data-target');
+            document.querySelectorAll('.masking-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.masking-panel').forEach(function(p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            document.querySelector('.masking-panel[data-panel="' + target + '"]').classList.add('active');
+        });
+    });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="clarity/clarity.js"></script>    
