@@ -264,6 +264,7 @@ div.container.blog#first-content > * {
 
 div.container.blog#first-content div.blog-title > h1.title {
   grid-column: 1 / -1;
+  text-align: left;
 }
 
 div.container.blog#first-content div.blog-title .blog-intro {
@@ -283,7 +284,8 @@ div.container.blog#first-content div.blog-title .blog-cover img.foreground,
 div.container.blog#first-content div.blog-title .blog-cover video.foreground {
   position: absolute;
   top: 5%;
-  left: 0;
+  left: 35%;
+  transform: translateX(-50%);
   height: 90%;
   width: auto;
   max-width: none;
@@ -361,35 +363,44 @@ div.container.blog p.text {
   font-size: 0.92em;
 }
 
-/* Widen main text column by ~10% on each side */
+/* Narrower main text column than original */
 @media screen and (min-width: 769px) {
   div.container.blog.main {
-    padding-left: 7.5vw !important;
-    padding-right: calc(7.5vw - (100vw - 100%)) !important;
+    padding-left: 10vw !important;
+    padding-right: calc(10vw - (100vw - 100%)) !important;
   }
 }
 @media screen and (min-width: 992px) {
   div.container.blog.main {
-    padding-left: 10.5vw !important;
-    padding-right: calc(10.5vw - (100vw - 100%)) !important;
+    padding-left: 14vw !important;
+    padding-right: calc(14vw - (100vw - 100%)) !important;
   }
 }
 @media screen and (min-width: 1200px) {
   div.container.blog.main {
-    padding-left: 13.5vw !important;
-    padding-right: calc(13.5vw - (100vw - 100%)) !important;
+    padding-left: 17vw !important;
+    padding-right: calc(17vw - (100vw - 100%)) !important;
   }
 }
 @media screen and (min-width: 1600px) {
   div.container.blog.main {
-    padding-left: 16vw !important;
-    padding-right: calc(16vw - (100vw - 100%)) !important;
+    padding-left: 20vw !important;
+    padding-right: calc(20vw - (100vw - 100%)) !important;
   }
 }
 @media screen and (min-width: 2000px) {
   div.container.blog.main {
-    padding-left: 20vw !important;
-    padding-right: calc(20vw - (100vw - 100%)) !important;
+    padding-left: 24vw !important;
+    padding-right: calc(24vw - (100vw - 100%)) !important;
+  }
+}
+
+/* Pin the side navigation on-screen (overrides navbar.js inline transform) */
+@media (min-width: 768px) {
+  .nav-container {
+    left: 20px !important;
+    top: 20px !important;
+    transform: none !important;
   }
 }
 /*# sourceMappingURL=clarity.css.map */
