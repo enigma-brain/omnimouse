@@ -93,21 +93,8 @@
         </p>
     </div>
 
-    <div class="container blog main dark" style="background-color: #000000;">
-        <div class="masking-selector">
-            <ul class="masking-tabs">
-                <li class="masking-tab active" data-target="overview">Overview</li>
-                <li class="masking-tab" data-target="response">Neural Response Masking</li>
-                <li class="masking-tab" data-target="behavior">Behavior Masking</li>
-                <li class="masking-tab" data-target="visual">Visual Stimulus Masking</li>
-            </ul>
-        </div>
-        <div class="masking-panels">
-            <img class="masking-panel active" data-panel="overview" src="clarity/images/model_overview/0_overview.png">
-            <img class="masking-panel" data-panel="response" src="clarity/images/model_overview/1_response_masking.png">
-            <img class="masking-panel" data-panel="behavior" src="clarity/images/model_overview/2_behavior_masking.png">
-            <img class="masking-panel" data-panel="visual" src="clarity/images/model_overview/3_stimulus_masking.png">
-        </div>
+    <div class="container blog main extra-large" style="background-color: #ffffff;">
+        <img src="clarity/images/1_summary/fig1_overview.png">
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
@@ -126,8 +113,21 @@
         </p>
     </div>
 
-    <div class="container blog main extra-large dark" style="background-color: #000000;">
-        <img src="clarity/images/Figure_Method.png">
+    <div class="container blog main extra-large" style="background-color: #ffffff;">
+        <div class="masking-selector">
+            <ul class="masking-tabs">
+                <li class="masking-tab active" data-target="overview">Overview</li>
+                <li class="masking-tab" data-target="response">Neural Response Masking</li>
+                <li class="masking-tab" data-target="behavior">Behavior Masking</li>
+                <li class="masking-tab" data-target="visual">Visual Stimulus Masking</li>
+            </ul>
+        </div>
+        <div class="masking-panels">
+            <img class="masking-panel active" data-panel="overview" src="clarity/images/2_model_schema/0_overview.png">
+            <img class="masking-panel" data-panel="response" src="clarity/images/2_model_schema/1_response_masking.png">
+            <img class="masking-panel" data-panel="behavior" src="clarity/images/2_model_schema/2_behavior_masking.png">
+            <img class="masking-panel" data-panel="visual" src="clarity/images/2_model_schema/3_stimulus_masking.png">
+        </div>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
@@ -140,49 +140,45 @@
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Results</h1>
         <p class="text">
-            <b>State-of-the-art performance.</b> OmniMouse outperforms all specialized baselines across virtually all evaluation regimes &mdash; including neural forecasting, population prediction, stimulus encoding, and behavioral decoding. Crucially, these gains hold even in data-matched comparisons where OmniMouse and baselines train on identical data. The architecture itself provides an advantage, independent of data scale.
+            <b>State-of-the-art performance.</b> OmniMouse outperforms all specialized baselines across virtually all evaluation regimes &mdash; including neural forecasting, population prediction, stimulus-conditioned encoding, and behavioral decoding. Crucially, these advantages hold even in strict data-matched comparisons where OmniMouse and the baselines are trained on identical sessions, ruling out dataset size as a confound. The architecture itself &mdash; unified tokenization, flexible masking, and joint multi-task training &mdash; provides a consistent edge, independent of how much data is available.
         </p>
         <p class="text">
-            <b>Model scaling saturates.</b> We trained models from 1M to 300M parameters on all 323 sessions. Performance improved up to ~80M parameters, then plateaued. Larger models showed no further gains for neural prediction, indicating that current brain models are not compute- or parameter-limited.
+            <b>Model scaling saturates.</b> We trained OmniMouse at five parameter counts &mdash; 1M, 5M, 20M, 80M, and 300M &mdash; on the full corpus of 323 sessions. Neural prediction performance improved steadily up to roughly 80M parameters and then plateaued: scaling from 80M to 300M produced no measurable gain on forecasting or stimulus-conditioned population prediction, and this held across both data-matched and full-data regimes. The lack of further improvement, despite a near-4&times; increase in capacity, indicates that brain models at this data scale are not bottlenecked by parameters or compute &mdash; the architecture already has sufficient capacity to absorb the signal present in the recordings.
         </p>
     </div>
 
-    <div class="container blog max dark" style="background-color: #000000;">
-        <img src="clarity/images/poles.png" style="width: 60%;">
-    </div>
-
-    <div class="container blog main" style="background-color: #ffffff;">
-        <p class="text">
-            <b>Data scaling works.</b> In contrast, scaling data consistently improves performance. We trained models on nested collections of 8, 16, 32, 64, and 323 sessions. Across all tasks and model sizes, more data meant better predictions &mdash; with no sign of saturation. Larger models benefited disproportionately from additional data, and the performance gap between model sizes widened as datasets grew.
-        </p>
-        <p class="text">
-            <b>Behavior decoding scales the most.</b> Among all tasks, behavioral decoding showed the most promising scaling dynamics. Performance improved smoothly with both model size and data, reminiscent of classic scaling-law behavior in language models. This task had not yet saturated even at the largest scale tested.
-        </p>
-    </div>
-
-    <div class="container blog main dark large" style="background-color: #000000;">
-        <img src="clarity/images/Figure_DreamSim.png">
+    <div class="container blog main large" style="background-color: #ffffff;">
+        <img src="clarity/images/3_scaling_responses/response_scaling.png">
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            <b>An inverted scaling story.</b> This inverts the standard AI narrative. In language and vision, massive datasets make parameter scaling the primary driver of progress. In brain modeling &mdash; even in the mouse visual cortex, a relatively simple system &mdash; models remain data-limited despite vast recordings. The bottleneck is not compute. It is data.
+            <b>Data scaling works.</b> Scaling the dataset tells the opposite story. We trained models on nested subsets of 8, 16, 32, 64, and 323 sessions, holding architecture and compute otherwise fixed. Across every task and every model size, additional sessions produced monotonic gains, with no sign of saturation at the largest scales we could reach. The gains are disproportionately larger for bigger models: the performance gap between small and large networks widens as the dataset grows &mdash; a signature of a system that is data-limited rather than capacity-limited. Extrapolating the observed trends, current recordings still fall well short of the regime where further parameter scaling would pay off.
+        </p>
+    </div>
+
+    <div class="container blog main large" style="background-color: #ffffff;">
+        <img src="clarity/images/4_scaling_data/data_Scaling.png">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            <b>Behavior decoding scales the most.</b> Among the tasks we studied, behavioral decoding exhibited the cleanest scaling dynamics. Unlike neural prediction, decoding of gaze position, pupil dilation, and running speed improved smoothly along both axes: larger models and larger datasets each yielded consistent gains, together resembling the power-law behavior familiar from language and vision models. Neither axis saturated at the largest scales we tested, suggesting that behavior decoding carries a richer and more structured signal than single-neuron prediction &mdash; and that the same architecture, trained on more data with more parameters, would continue to improve well beyond the range we explored.
+        </p>
+    </div>
+
+    <div class="container blog main large" style="background-color: #ffffff;">
+        <img src="clarity/images/5_scaling_behavior/behavior_scaling.png">
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            <b>An inverted scaling story.</b> Taken together, these results invert the standard AI narrative. In language and vision, massive datasets have made parameter scaling the primary driver of progress. In brain modeling &mdash; even for the mouse visual cortex, a comparatively simple and well-characterized system &mdash; models remain data-limited despite vast recordings. The bottleneck is not compute. It is data.
         </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
-        <h1>Conclusions</h1>
-        <p class="text">
-            OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.
-        </p>
-        <p class="text">
-            This finding has practical implications. If brain models are to become foundation models for neuroscience, the field must invest in richer, more diverse experiments &mdash; more stimuli, more tasks, more behavioral paradigms. In language modeling, seemingly small improvements from scaling unlocked phase transitions to qualitatively new capabilities. By analogy, richer neural data may similarly unlock new capabilities in brain models, revealing deeper principles of neural computation.
-        </p>
-    </div>
-
-
-    <div class="container blog main" style="background-color: #ffffff;">
-        <h1>Baseline Comparisons</h1>
+        <h1>Benchmarks</h1>
         <p class="text">
             Results in <b>bold</b> indicate the best score per task in either the data-matched condition (8 sessions, top) or when using the full dataset (323 sessions, bottom).
         </p>
@@ -351,6 +347,16 @@
             </table>
             <p style="text-align: center; font-size: 78%; color: #999; margin-top: 8px; font-family: 'Poppins', sans-serif;"><span style="color: #bbb; font-size: 115%;">&times;</span>&ensp;Model does not natively support this task</p>
         </div>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Conclusions</h1>
+        <p class="text">
+            OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.
+        </p>
+        <p class="text">
+            This finding has practical implications. If brain models are to become foundation models for neuroscience, the field must invest in richer, more diverse experiments &mdash; more stimuli, more tasks, more behavioral paradigms. In language modeling, seemingly small improvements from scaling unlocked phase transitions to qualitatively new capabilities. By analogy, richer neural data may similarly unlock new capabilities in brain models, revealing deeper principles of neural computation.
+        </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">

@@ -309,29 +309,31 @@ table tbody tr:nth-child(2n+1) {
 }
 
 .masking-tab {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #ececec;
+  border: 1px solid #d0d0d0;
   border-radius: 8px;
-  padding: 10px 20px;
-  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 22px;
+  color: #444;
   font-family: 'Poppins', sans-serif;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .masking-tab:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
+  background: #dedede;
+  color: #222;
+  border-color: #b8b8b8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .masking-tab.active {
-  background: rgba(255, 255, 255, 0.25);
+  background: #444;
   color: #fff;
-  border-color: #fff;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  border-color: #444;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .masking-panels {
@@ -356,5 +358,38 @@ table tbody tr:nth-child(2n+1) {
 
 div.container.blog p.text {
   text-align: justify;
+  font-size: 0.92em;
+}
+
+/* Widen main text column by ~10% on each side */
+@media screen and (min-width: 769px) {
+  div.container.blog.main {
+    padding-left: 7.5vw !important;
+    padding-right: calc(7.5vw - (100vw - 100%)) !important;
+  }
+}
+@media screen and (min-width: 992px) {
+  div.container.blog.main {
+    padding-left: 10.5vw !important;
+    padding-right: calc(10.5vw - (100vw - 100%)) !important;
+  }
+}
+@media screen and (min-width: 1200px) {
+  div.container.blog.main {
+    padding-left: 13.5vw !important;
+    padding-right: calc(13.5vw - (100vw - 100%)) !important;
+  }
+}
+@media screen and (min-width: 1600px) {
+  div.container.blog.main {
+    padding-left: 16vw !important;
+    padding-right: calc(16vw - (100vw - 100%)) !important;
+  }
+}
+@media screen and (min-width: 2000px) {
+  div.container.blog.main {
+    padding-left: 20vw !important;
+    padding-right: calc(20vw - (100vw - 100%)) !important;
+  }
 }
 /*# sourceMappingURL=clarity.css.map */
