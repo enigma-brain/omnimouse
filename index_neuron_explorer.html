@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OmniMouse Dataset Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  overflow: hidden;
+  height: 100vh;
+  user-select: none;
+}
+#app { display: flex; flex-direction: column; height: 100vh; }
+#loading {
+  position: fixed; inset: 0; background: #0a0a0a;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; font-size: 14px; color: #888;
+}
+#toolbar {
+  display: flex; align-items: center; gap: 12px; padding: 8px 14px;
+  background: #141414; border-bottom: 1px solid #2a2a2a;
+  flex-shrink: 0; flex-wrap: wrap;
+}
+#toolbar label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+#toolbar select { background: #1e1e1e; border: 1px solid #333; color: #e0e0e0; padding: 3px 6px; font-family: inherit; font-size: 12px; border-radius: 3px; min-width: 70px; }
+#toolbar button { background: #2a2a2a; border: 1px solid #444; color: #e0e0e0; padding: 4px 10px; font-family: inherit; font-size: 11px; border-radius: 3px; cursor: pointer; white-space: nowrap; }
+#toolbar button:hover { background: #3a3a3a; }
+.ctrl { display: flex; align-items: center; gap: 4px; }
+.sep { width: 1px; height: 22px; background: #333; flex-shrink: 0; }
+#node-count { font-size: 10px; color: #555; margin-left: auto; }
+#canvas-wrap { flex: 1; position: relative; overflow: hidden; background: #0a0a0a; }
+#mainCanvas { display: block; width: 100%; height: 100%; }
+#scale-bar { position: absolute; bottom: 16px; right: 20px; color: rgba(255,255,255,0.85); font-size: 11px; pointer-events: none; text-align: center; opacity: 0; transition: opacity 0.4s; }
+#scale-bar.visible { opacity: 1; }
+#scale-bar-line { height: 2px; background: rgba(255,255,255,0.85); margin-top: 3px; box-shadow: 0 0 4px rgba(0,0,0,0.8); }
+#scale-bar-label { text-shadow: 0 1px 3px #000; }
+#info-box { position: absolute; top: 10px; right: 12px; background: rgba(14,14,14,0.88); border: 1px solid #2a2a2a; padding: 7px 11px; border-radius: 4px; font-size: 11px; line-height: 1.55; pointer-events: none; min-width: 180px; }
+#info-box .lbl { color: #666; }
+#zoom-bar { display: flex; align-items: center; gap: 10px; padding: 6px 14px; background: #141414; border-top: 1px solid #2a2a2a; flex-shrink: 0; }
+#zoom-bar label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+#zoom-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 4px; background: #333; border-radius: 2px; outline: none; }
+#zoom-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: #888; border-radius: 50%; cursor: pointer; }
+#zoom-slider::-moz-range-thumb { width: 14px; height: 14px; background: #888; border-radius: 50%; cursor: pointer; border: none; }
+#zoom-lbl { font-size: 11px; color: #888; min-width: 55px; text-align: right; }
+#zoom-mark { font-size: 10px; color: #444; }
+</style>
+</head>
+<body>
+<div id="loading">Loading manifest...</div>
+<div id="app">
+  <div id="toolbar">
+    <div class="ctrl"><label>Animal</label><select id="sel-animal"></select></div>
+    <div class="ctrl"><label>Session</label><select id="sel-session"></select></div>
+    <div class="ctrl"><label>Scan</label><select id="sel-scan"></select></div>
+    <div class="ctrl"><label>Depth</label><select id="sel-depth"></select></div>
+    <div class="sep"></div>
+    <div class="ctrl"><label>Arrange</label>
+      <select id="sel-arrange">
+        <option value="random">Random</option>
+        <option value="animal">By Animal</option>
+        <option value="scan">By Scan</option>
+        <option value="depth">By Depth</option>
+      </select>
+    </div>
+    <div class="ctrl"><label>Image</label>
+      <select id="sel-imgtype">
+        <option value="average">Average</option>
+        <option value="correlation" selected>Correlation</option>
+        <option value="mask">Masks</option>
+      </select>
+    </div>
+    <div class="sep"></div>
+    <button id="btn-random" title="Space">Random Scan</button>
+    <button id="btn-fit" title="F">Fit All</button>
+    <span id="node-count"></span>
+  </div>
+  <div id="canvas-wrap">
+    <canvas id="mainCanvas"></canvas>
+    <div id="scale-bar">
+      <span id="scale-bar-label">100 &mu;m</span>
+      <div id="scale-bar-line" style="width:80px"></div>
+    </div>
+    <div id="info-box">Click a scan or use controls to explore</div>
+  </div>
+  <div id="zoom-bar">
+    <label>Zoom</label>
+    <span id="zoom-mark" style="min-width:38px">Cloud</span>
+    <input type="range" id="zoom-slider" min="0" max="100" value="0" step="0.1">
+    <span id="zoom-lbl">0.03x</span>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+"use strict";
+
+const CFG = {
+  NODE_SIZE: 18,
+  SIM_RADIUS: 550,
+  COLLISION_PAD: 3,
+  VELOCITY_DECAY: 0.62,
+  ALPHA_DECAY: 0.1,
+  ZOOM_K_MIN: 0.4,
+  ZOOM_K_MAX: 600,
+  DATA_BASE: 'web_data/',
+};
+
+// =============================================================
+//  SEEDED PRNG
+// =============================================================
+function mulberry32(a) {
+  return () => {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
+  return Math.abs(h);
+}
+
+// =============================================================
+//  LOAD DATA
+// =============================================================
+async function loadData() {
+  const resp = await fetch(CFG.DATA_BASE + 'manifest.json');
+  const manifest = await resp.json();
+  const nodes = [];
+  const maxDim = Math.max(...manifest.nodes.map(n => Math.max(n.um_width, n.um_height)));
+
+  for (const n of manifest.nodes) {
+    const scale = CFG.NODE_SIZE / maxDim;
+    const rng = mulberry32(hashStr(n.node_id + '_p'));
+    const ang = rng() * Math.PI * 2;
+    const r = Math.sqrt(rng()) * CFG.SIM_RADIUS * 0.8;
+    nodes.push({
+      node_id: n.node_id, animal_id: n.animal_id, session: n.session,
+      scan_idx: n.scan_idx, depth_um: n.depth_um,
+      scan_key: n.animal_id + '_' + n.session + '_' + n.scan_idx,
+      width_um: n.um_width, height_um: n.um_height,
+      width_px: n.px_width, height_px: n.px_height,
+      num_units: n.num_units, brain_area: n.brain_area || 'unknown',
+      stimulus_detail: n.stimulus_detail, is_stitched: n.is_stitched,
+      fields: n.fields, fps: n.fps, nframes: n.nframes,
+      spike_method: n.spike_method,
+      x: Math.cos(ang) * r, y: Math.sin(ang) * r,
+      vx: 0, vy: 0, fx: null, fy: null,
+      dw: n.um_width * scale, dh: n.um_height * scale, color: '#888',
+    });
+  }
+  return nodes;
+}
+
+// =============================================================
+//  HIERARCHY (animal > session > scan_idx > depth_um)
+// =============================================================
+function buildHierarchy(nodes) {
+  const h = {}, map = {};
+  nodes.forEach(n => {
+    const a = String(n.animal_id), s = String(n.session);
+    const sc = String(n.scan_idx), d = String(n.depth_um);
+    (h[a] ??= {})[s] ??= {};
+    (h[a][s][sc] ??= []);
+    if (!h[a][s][sc].includes(d)) h[a][s][sc].push(d);
+    h[a][s][sc].sort((x, y) => parseFloat(x) - parseFloat(y));
+    map[n.node_id] = n;
+  });
+  return { h, map };
+}
+
+// =============================================================
+//  THUMBNAIL LOADING
+// =============================================================
+const thumbCache = new Map();
+
+function thumbPath(nodeId, imgType, tier) {
+  // Derive path from node_id: thumbs/{node_id}_{avg|corr|mask}_{64|256|full}.webp
+  const short = imgType === 'average' ? 'avg' : imgType === 'correlation' ? 'corr' : 'mask';
+  return CFG.DATA_BASE + 'thumbs/' + nodeId + '_' + short + '_' + tier + '.webp';
+}
+
+function getThumb(node, imgType, screenW) {
+  const tier = screenW > 500 ? 'full' : screenW > 160 ? '256' : '64';
+  const key = node.node_id + '_' + imgType + '_' + tier;
+  if (thumbCache.has(key)) {
+    const e = thumbCache.get(key);
+    return e.loaded ? e.img : null;
+  }
+  const img = new window.Image();
+  const entry = { img, loaded: false };
+  thumbCache.set(key, entry);
+  img.onload = () => { entry.loaded = true; };
+  img.src = thumbPath(node.node_id, imgType, tier);
+  return null;
+}
+
+// Offscreen canvas for color-tinting thumbnails
+const tintCV = document.createElement('canvas');
+const tintCX = tintCV.getContext('2d');
+
+function drawTinted(mainCtx, thumb, x, y, w, h, color) {
+  const tw = thumb.naturalWidth || thumb.width || 64;
+  const th = thumb.naturalHeight || thumb.height || 64;
+  if (tintCV.width !== tw || tintCV.height !== th) {
+    tintCV.width = tw; tintCV.height = th;
+  }
+  tintCX.globalCompositeOperation = 'source-over';
+  tintCX.drawImage(thumb, 0, 0, tw, th);
+  tintCX.globalCompositeOperation = 'color';
+  tintCX.fillStyle = color;
+  tintCX.fillRect(0, 0, tw, th);
+  tintCX.globalCompositeOperation = 'source-over';
+  mainCtx.drawImage(tintCV, x, y, w, h);
+}
+
+// =============================================================
+//  COLOUR SCHEMES
+// =============================================================
+let colorMaps = {};
+
+function buildColorScales(nodes) {
+  const palette = d3.schemeTableau10.concat(d3.schemePastel1, d3.schemePastel2, d3.schemeSet3);
+
+  // Animal colors
+  const animals = [...new Set(nodes.map(n => n.animal_id))].sort((a, b) => a - b);
+  const animalMap = {};
+  animals.forEach((a, i) => { animalMap[a] = palette[i % palette.length]; });
+  colorMaps.animal = n => animalMap[n.animal_id];
+
+  // Scan colors (hash-based for variety across 328 scans)
+  const scanKeys = [...new Set(nodes.map(n => n.scan_key))].sort();
+  const scanMap = {};
+  scanKeys.forEach((k, i) => { scanMap[k] = d3.interpolateRainbow(i / scanKeys.length); });
+  colorMaps.scan = n => scanMap[n.scan_key];
+
+  // Area colors
+  const areas = [...new Set(nodes.map(n => n.brain_area))].sort();
+  const areaMap = {};
+  areas.forEach((a, i) => { areaMap[a] = palette[i % palette.length]; });
+  colorMaps.area = n => areaMap[n.brain_area];
+
+  // Depth colors
+  const [dMin, dMax] = d3.extent(nodes, n => n.depth_um);
+  const depthScale = d3.scaleSequential(d3.interpolateViridis).domain([dMin, dMax]);
+  colorMaps.depth = n => depthScale(n.depth_um);
+}
+
+function applyColors(nodes, mode) {
+  const fn = colorMaps[mode] || colorMaps.animal;
+  nodes.forEach(n => { n.color = fn(n); });
+}
+
+// =============================================================
+//  STATE
+// =============================================================
+let allNodes, hier, nodeMap;
+let selectedNode = null, hoveredNode = null;
+let simulation = null;
+let currentArrange = 'random';
+let currentImgType = 'correlation';
+let currentTransform = d3.zoomIdentity;
+let canvas, ctx, cw, ch;
+let zoomBehavior;
+let K_1X = 60;
+let suppressClick = false;
+
+// =============================================================
+//  CLUSTER LAYOUT — compute grid positions for cluster centers
+// =============================================================
+function computeClusterCenters(nodes, keyFn) {
+  // Count nodes per cluster
+  const groups = {};
+  nodes.forEach(n => {
+    const k = keyFn(n);
+    if (!groups[k]) groups[k] = 0;
+    groups[k]++;
+  });
+
+  const keys = Object.keys(groups).sort();
+  const nClusters = keys.length;
+  if (nClusters === 0) return {};
+
+  // Compute spacing based on cluster count and average size
+  const avgSize = nodes.length / nClusters;
+  const clusterRadius = Math.sqrt(avgSize) * CFG.NODE_SIZE * 0.7;
+  const spacing = clusterRadius * 2.5;
+  const cols = Math.ceil(Math.sqrt(nClusters * 1.3)); // slightly wider than tall
+  const rows = Math.ceil(nClusters / cols);
+
+  const centers = {};
+  keys.forEach((k, i) => {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    centers[k] = {
+      x: (col - (cols - 1) / 2) * spacing,
+      y: (row - (rows - 1) / 2) * spacing,
+    };
+  });
+  return centers;
+}
+
+// =============================================================
+//  POSITION RESET — place nodes near targets for new mode
+// =============================================================
+function resetPositions(nodes, mode) {
+  // Unpin all
+  nodes.forEach(n => { n.fx = null; n.fy = null; n.vx = 0; n.vy = 0; });
+
+  if (mode === 'random') {
+    nodes.forEach(n => {
+      const rng = mulberry32(hashStr(n.node_id + '_r'));
+      const ang = rng() * Math.PI * 2;
+      const r = Math.sqrt(rng()) * CFG.SIM_RADIUS * 0.8;
+      n.x = Math.cos(ang) * r;
+      n.y = Math.sin(ang) * r;
+    });
+
+  } else if (mode === 'animal' || mode === 'scan' || mode === 'area') {
+    const keyFn = mode === 'animal' ? (n => n.animal_id)
+               : mode === 'scan'   ? (n => n.scan_key)
+               :                      (n => n.brain_area);
+    const centers = computeClusterCenters(nodes, keyFn);
+
+    // Shift so selected node's cluster is at origin
+    if (selectedNode) {
+      const selKey = keyFn(selectedNode);
+      const selCenter = centers[selKey];
+      if (selCenter) {
+        const ox = selCenter.x, oy = selCenter.y;
+        for (const k in centers) { centers[k].x -= ox; centers[k].y -= oy; }
+      }
+    }
+
+    // Place nodes near their cluster center
+    nodes.forEach(n => {
+      const k = keyFn(n);
+      const c = centers[k] || { x: 0, y: 0 };
+      const rng = mulberry32(hashStr(n.node_id + '_c'));
+      n.x = c.x + (rng() - 0.5) * 60;
+      n.y = c.y + (rng() - 0.5) * 60;
+    });
+
+    // Store centers for force targets
+    nodes._clusterCenters = centers;
+    nodes._clusterKeyFn = keyFn;
+
+  } else if (mode === 'depth') {
+    const [dMin, dMax] = d3.extent(nodes, n => n.depth_um);
+    const depthScale = d3.scaleLinear().domain([dMin, dMax])
+      .range([-CFG.SIM_RADIUS * 0.75, CFG.SIM_RADIUS * 0.75]);
+    const offset = selectedNode ? depthScale(selectedNode.depth_um) : 0;
+    nodes.forEach(n => {
+      const rng = mulberry32(hashStr(n.node_id + '_d'));
+      n.x = depthScale(n.depth_um) - offset;
+      n.y = (rng() - 0.5) * CFG.SIM_RADIUS;
+    });
+  }
+
+}
+
+// =============================================================
+//  FORCE SIMULATION
+// =============================================================
+function makeSimulation(nodes, mode) {
+  if (simulation) simulation.stop();
+  currentArrange = mode;
+
+  // Color mode matches arrangement
+  const colorMode = (mode === 'random') ? 'animal' : mode;
+  applyColors(nodes, colorMode);
+
+  // Reset positions to near-target layout
+  resetPositions(nodes, mode);
+
+  simulation = d3.forceSimulation(nodes)
+    .velocityDecay(CFG.VELOCITY_DECAY)
+    .alphaDecay(CFG.ALPHA_DECAY);
+
+  const colR = n => Math.max(n.dw, n.dh) / 2 + CFG.COLLISION_PAD;
+  simulation.force('collide', d3.forceCollide(colR).strength(1).iterations(3));
+
+  if (mode === 'random') {
+    simulation.force('charge', d3.forceManyBody().strength(-3).distanceMax(50));
+    simulation.force('x', d3.forceX(0).strength(0.02));
+    simulation.force('y', d3.forceY(0).strength(0.02));
+
+  } else if (mode === 'animal' || mode === 'scan' || mode === 'area') {
+    const centers = nodes._clusterCenters;
+    const keyFn = nodes._clusterKeyFn;
+    simulation.force('x', d3.forceX(n => {
+      const c = centers[keyFn(n)]; return c ? c.x : 0;
+    }).strength(0.3));
+    simulation.force('y', d3.forceY(n => {
+      const c = centers[keyFn(n)]; return c ? c.y : 0;
+    }).strength(0.3));
+    simulation.force('charge', null);
+
+  } else if (mode === 'depth') {
+    const [dMin, dMax] = d3.extent(nodes, n => n.depth_um);
+    const mid = selectedNode ? selectedNode.depth_um : (dMin + dMax) / 2;
+    const sc = d3.scaleLinear().domain([dMin, dMax])
+      .range([-CFG.SIM_RADIUS * 0.75, CFG.SIM_RADIUS * 0.75]);
+    const offset = selectedNode ? sc(mid) : 0;
+    simulation.force('x', d3.forceX(n => sc(n.depth_um) - offset).strength(0.18));
+    simulation.force('y', d3.forceY(0).strength(0.008));
+    simulation.force('charge', d3.forceManyBody().strength(-3).distanceMax(50));
+  }
+
+  simulation.alpha(1).restart();
+}
+
+// =============================================================
+//  ZOOM HELPERS
+// =============================================================
+function getUserZoom() { return currentTransform.k / K_1X; }
+function sliderToK(v) {
+  if (v <= 50) return CFG.ZOOM_K_MIN * Math.pow(K_1X / CFG.ZOOM_K_MIN, v / 50);
+  return K_1X * Math.pow(CFG.ZOOM_K_MAX / K_1X, (v - 50) / 50);
+}
+function kToSlider(k) {
+  if (k <= K_1X) return Math.max(0, Math.min(50, 50 * Math.log(k / CFG.ZOOM_K_MIN) / Math.log(K_1X / CFG.ZOOM_K_MIN)));
+  return 50 + Math.max(0, Math.min(50, 50 * Math.log(k / K_1X) / Math.log(CFG.ZOOM_K_MAX / K_1X)));
+}
+function zoomLabel(uz) {
+  if (uz < 0.01) return (uz * 1000).toFixed(0) + '\u2030';
+  if (uz < 1) return uz.toFixed(2) + 'x';
+  return uz.toFixed(1) + 'x';
+}
+
+// =============================================================
+//  SELECTION
+// =============================================================
+function selectNode(node, animate) {
+  if (!node) return;
+  selectedNode = node;
+
+  // Pan the view to center on the node — layout stays still
+  const t = d3.zoomIdentity.translate(cw / 2, ch / 2)
+    .scale(currentTransform.k).translate(-node.x, -node.y);
+  if (animate !== false) {
+    d3.select(canvas).transition().duration(300).call(zoomBehavior.transform, t);
+  } else {
+    d3.select(canvas).call(zoomBehavior.transform, t);
+  }
+
+  syncDropdowns(node);
+  updateInfo(node);
+}
+
+// =============================================================
+//  RENDERING
+// =============================================================
+function render() {
+  const t = currentTransform;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+
+  const vl = -t.x / t.k, vt2 = -t.y / t.k;
+  const vr = (cw - t.x) / t.k, vb = (ch - t.y) / t.k;
+  ctx.setTransform(t.k, 0, 0, t.k, t.x, t.y);
+
+  for (let i = 0; i < allNodes.length; i++) {
+    const n = allNodes[i];
+    const hw = n.dw / 2, hh = n.dh / 2;
+    if (n.x + hw < vl || n.x - hw > vr || n.y + hh < vt2 || n.y - hh > vb) continue;
+
+    const screenW = n.dw * t.k;
+
+    if (screenW < 3) {
+      ctx.fillStyle = n.color;
+      const ps = 1.5 / t.k;
+      ctx.fillRect(n.x - ps / 2, n.y - ps / 2, ps, ps);
+
+    } else if (screenW < 30) {
+      ctx.fillStyle = n.color;
+      ctx.fillRect(n.x - hw, n.y - hh, n.dw, n.dh);
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 0.5 / t.k;
+      ctx.strokeRect(n.x - hw, n.y - hh, n.dw, n.dh);
+
+    } else {
+      const thumb = getThumb(n, currentImgType, screenW);
+      if (thumb) {
+        // Draw tinted thumbnail using 'color' blend mode
+        drawTinted(ctx, thumb, n.x - hw, n.y - hh, n.dw, n.dh, n.color);
+      } else {
+        ctx.fillStyle = n.color;
+        ctx.globalAlpha = 0.4;
+        ctx.fillRect(n.x - hw, n.y - hh, n.dw, n.dh);
+        ctx.globalAlpha = 1;
+      }
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.lineWidth = 0.4 / t.k;
+      ctx.strokeRect(n.x - hw, n.y - hh, n.dw, n.dh);
+    }
+
+    if (n === selectedNode) {
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2 / t.k;
+      const pad = 1.5 / t.k;
+      ctx.strokeRect(n.x - hw - pad, n.y - hh - pad, n.dw + 2 * pad, n.dh + 2 * pad);
+    }
+    if (n === hoveredNode && n !== selectedNode) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.lineWidth = 1.2 / t.k;
+      ctx.strokeRect(n.x - hw, n.y - hh, n.dw, n.dh);
+    }
+  }
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  drawScaleBar(getUserZoom());
+  requestAnimationFrame(render);
+}
+
+// =============================================================
+//  SCALE BAR
+// =============================================================
+function drawScaleBar(uz) {
+  const el = document.getElementById('scale-bar');
+  if (uz < 0.35 || !selectedNode) { el.classList.remove('visible'); return; }
+  el.classList.add('visible');
+  const n = selectedNode;
+  const umPerPx = n.width_um / (n.dw * currentTransform.k);
+  const targetUm = umPerPx * 90;
+  const nice = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+  const barUm = nice.reduce((p, c) => Math.abs(c - targetUm) < Math.abs(p - targetUm) ? c : p);
+  document.getElementById('scale-bar-label').textContent = barUm + ' \u03BCm';
+  document.getElementById('scale-bar-line').style.width = (barUm / umPerPx) + 'px';
+}
+
+// =============================================================
+//  INFO OVERLAY
+// =============================================================
+function updateInfo(node) {
+  const el = document.getElementById('info-box');
+  if (!node) { el.innerHTML = 'Click a scan or use controls to explore'; return; }
+  const n = node;
+  const stimParts = [];
+  if (n.stimulus_detail) {
+    for (const [k, v] of Object.entries(n.stimulus_detail))
+      stimParts.push(k + ':' + v.n_trials + 't');
+  }
+  el.innerHTML =
+    '<span class="lbl">Animal</span> ' + n.animal_id + ' &nbsp;' +
+    '<span class="lbl">Sess</span> ' + n.session + ' &nbsp;' +
+    '<span class="lbl">Scan</span> ' + n.scan_idx + ' &nbsp;' +
+    '<span class="lbl">Depth</span> ' + n.depth_um + '&mu;m<br>' +
+    '<span class="lbl">Units</span> ' + n.num_units.toLocaleString() + ' &nbsp;' +
+    '<span class="lbl">Stim</span> ' + (stimParts.join(', ') || 'none') + '<br>' +
+    '<span class="lbl">FOV</span> ' + n.width_um + '&times;' + n.height_um + ' &mu;m ' +
+    '(' + n.width_px + '&times;' + n.height_px + ' px)';
+}
+
+// =============================================================
+//  DROPDOWNS
+// =============================================================
+function populateSelect(id, items, sel) {
+  const el = document.getElementById(id);
+  const prev = el.value;
+  el.innerHTML = '';
+  items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; el.appendChild(o); });
+  if (sel != null && items.includes(String(sel))) el.value = String(sel);
+  else if (items.includes(prev)) el.value = prev;
+  else el.value = items[0];
+  return el.value;
+}
+
+function syncDropdowns(node) {
+  if (!node) return;
+  const H = hier;
+  const a = String(node.animal_id), s = String(node.session);
+  const sc = String(node.scan_idx), d = String(node.depth_um);
+  populateSelect('sel-animal', Object.keys(H).sort((a, b) => a - b), a);
+  populateSelect('sel-session', Object.keys(H[a]).sort((a, b) => a - b), s);
+  populateSelect('sel-scan', Object.keys(H[a][s]).sort((a, b) => a - b), sc);
+  populateSelect('sel-depth', H[a][s][sc], d);
+}
+
+function nodeFromDropdowns() {
+  const a = document.getElementById('sel-animal').value;
+  const s = document.getElementById('sel-session').value;
+  const sc = document.getElementById('sel-scan').value;
+  const d = document.getElementById('sel-depth').value;
+  return allNodes.find(n =>
+    String(n.animal_id) === a && String(n.session) === s &&
+    String(n.scan_idx) === sc && String(n.depth_um) === d
+  ) || null;
+}
+
+function cascadeFrom(level) {
+  const H = hier;
+  const a = document.getElementById('sel-animal').value;
+  if (level <= 0) populateSelect('sel-session', Object.keys(H[a] || {}).sort((a, b) => a - b));
+  const s = document.getElementById('sel-session').value;
+  if (level <= 1) populateSelect('sel-scan', Object.keys((H[a] || {})[s] || {}).sort((a, b) => a - b));
+  const sc = document.getElementById('sel-scan').value;
+  if (level <= 2) populateSelect('sel-depth', ((H[a] || {})[s] || {})[sc] || []);
+  const node = nodeFromDropdowns();
+  if (node) selectNode(node);
+}
+
+// =============================================================
+//  HIT TESTING
+// =============================================================
+function nodeAtScreen(sx, sy) {
+  const t = currentTransform;
+  const simX = (sx - t.x) / t.k, simY = (sy - t.y) / t.k;
+  let best = null, bestD = Infinity;
+  for (const n of allNodes) {
+    const hw = n.dw / 2, hh = n.dh / 2;
+    if (simX >= n.x - hw && simX <= n.x + hw && simY >= n.y - hh && simY <= n.y + hh) {
+      const d = Math.hypot(simX - n.x, simY - n.y);
+      if (d < bestD) { bestD = d; best = n; }
+    }
+  }
+  return best;
+}
+
+// =============================================================
+//  ZOOM
+// =============================================================
+function setupZoom() {
+  zoomBehavior = d3.zoom()
+    .scaleExtent([CFG.ZOOM_K_MIN, CFG.ZOOM_K_MAX])
+    .on('zoom', e => {
+      currentTransform = e.transform;
+      document.getElementById('zoom-slider').value = kToSlider(e.transform.k);
+      const uz = getUserZoom();
+      document.getElementById('zoom-lbl').textContent = zoomLabel(uz);
+      document.getElementById('zoom-mark').textContent =
+        uz < 0.15 ? 'Cloud' : uz < 0.8 ? 'Region' : uz < 2 ? '~1x' : 'Detail';
+    });
+  d3.select(canvas).call(zoomBehavior);
+  d3.select(canvas).on('dblclick.zoom', null);
+}
+
+function fitAll(animate) {
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  allNodes.forEach(n => {
+    minX = Math.min(minX, n.x - n.dw / 2); maxX = Math.max(maxX, n.x + n.dw / 2);
+    minY = Math.min(minY, n.y - n.dh / 2); maxY = Math.max(maxY, n.y + n.dh / 2);
+  });
+  const pad = 40, dx = maxX - minX + pad * 2, dy = maxY - minY + pad * 2;
+  const k = Math.min(cw / dx, ch / dy, K_1X * 0.5);
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  const t = d3.zoomIdentity.translate(cw / 2, ch / 2).scale(k).translate(-cx, -cy);
+  if (animate) d3.select(canvas).transition().duration(600).call(zoomBehavior.transform, t);
+  else d3.select(canvas).call(zoomBehavior.transform, t);
+}
+
+// =============================================================
+//  CANVAS EVENTS
+// =============================================================
+function setupCanvasEvents() {
+  let downPos = null;
+  canvas.addEventListener('pointerdown', e => { downPos = { x: e.clientX, y: e.clientY }; suppressClick = false; });
+  canvas.addEventListener('pointermove', e => {
+    if (downPos && Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) > 4) suppressClick = true;
+    const rect = canvas.getBoundingClientRect();
+    const sx = (e.clientX - rect.left) * (cw / rect.width);
+    const sy = (e.clientY - rect.top) * (ch / rect.height);
+    const prev = hoveredNode;
+    hoveredNode = nodeAtScreen(sx, sy);
+    canvas.style.cursor = hoveredNode ? 'pointer' : 'grab';
+    if (hoveredNode !== prev) updateInfo(hoveredNode || selectedNode);
+  });
+  canvas.addEventListener('click', e => {
+    if (suppressClick) return;
+    const rect = canvas.getBoundingClientRect();
+    const sx = (e.clientX - rect.left) * (cw / rect.width);
+    const sy = (e.clientY - rect.top) * (ch / rect.height);
+    const hit = nodeAtScreen(sx, sy);
+    if (hit) selectNode(hit);
+  });
+  canvas.addEventListener('pointerleave', () => { hoveredNode = null; canvas.style.cursor = 'grab'; updateInfo(selectedNode); });
+}
+
+// =============================================================
+//  TOOLBAR
+// =============================================================
+function setupToolbar() {
+  document.getElementById('sel-animal').addEventListener('change', () => cascadeFrom(0));
+  document.getElementById('sel-session').addEventListener('change', () => cascadeFrom(1));
+  document.getElementById('sel-scan').addEventListener('change', () => cascadeFrom(2));
+  document.getElementById('sel-depth').addEventListener('change', () => cascadeFrom(3));
+
+  document.getElementById('sel-arrange').addEventListener('change', e => {
+    makeSimulation(allNodes, e.target.value);
+    // Re-fit after positions reset
+    setTimeout(() => fitAll(true), 120);
+  });
+
+  document.getElementById('sel-imgtype').addEventListener('change', e => {
+    currentImgType = e.target.value;
+  });
+
+  document.getElementById('btn-random').addEventListener('click', () => {
+    selectNode(allNodes[Math.floor(Math.random() * allNodes.length)]);
+  });
+  document.getElementById('btn-fit').addEventListener('click', () => fitAll(true));
+
+  document.getElementById('zoom-slider').addEventListener('input', e => {
+    const newK = sliderToK(parseFloat(e.target.value));
+    const t = currentTransform, cx = cw / 2, cy = ch / 2;
+    const ratio = newK / t.k;
+    d3.select(canvas).call(zoomBehavior.transform,
+      d3.zoomIdentity.translate(cx - (cx - t.x) * ratio, cy - (cy - t.y) * ratio).scale(newK));
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space') { e.preventDefault(); document.getElementById('btn-random').click(); }
+    if (e.code === 'KeyF') fitAll(true);
+  });
+}
+
+// =============================================================
+//  RESIZE
+// =============================================================
+function resize() {
+  const wrap = document.getElementById('canvas-wrap');
+  cw = wrap.clientWidth; ch = wrap.clientHeight;
+  canvas.width = cw; canvas.height = ch;
+  K_1X = Math.min(cw, ch) / (CFG.NODE_SIZE * 1.2);
+}
+
+// =============================================================
+//  INIT
+// =============================================================
+async function init() {
+  canvas = document.getElementById('mainCanvas');
+  ctx = canvas.getContext('2d');
+  resize();
+  window.addEventListener('resize', () => { resize(); fitAll(false); });
+
+  allNodes = await loadData();
+  const hData = buildHierarchy(allNodes);
+  hier = hData.h; nodeMap = hData.map;
+  buildColorScales(allNodes);
+
+  document.getElementById('node-count').textContent = allNodes.length.toLocaleString() + ' scans';
+
+  setupZoom();
+  setupCanvasEvents();
+  setupToolbar();
+
+  makeSimulation(allNodes, 'random');
+
+  const startNode = allNodes[Math.floor(Math.random() * allNodes.length)];
+  syncDropdowns(startNode);
+  selectedNode = startNode;
+  startNode.fx = 0; startNode.fy = 0;
+  updateInfo(startNode);
+
+  document.getElementById('loading').style.display = 'none';
+  setTimeout(() => fitAll(false), 80);
+  requestAnimationFrame(render);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "files.exclude": {
+    "web_data/thumbs": true
+  },
+  "search.exclude": {
+    "web_data/thumbs": true
+  },
+  "files.watcherExclude": {
+    "web_data/thumbs/**": true
+  }
+}
