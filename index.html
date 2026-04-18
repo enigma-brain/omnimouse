@@ -87,11 +87,14 @@
         </p>
     </div>
 
-    <div class="container blog main extra-large" style="background-color: #0a0a0a; padding-top: 0; padding-bottom: 0;">
+    <div class="container blog main extra-large" style="background-color: #ffffff; padding-top: 0; padding-bottom: 0;">
         <iframe src="index_neuron_explorer.html"
                 style="width: 100%; height: 80vh; border: none; border-radius: 10px; display: block;"
                 loading="lazy"
                 title="OmniMouse Dataset Explorer"></iframe>
+        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
+            Each tile is one scanning plane from the dataset. Use <b>Image</b> to toggle between average images, correlation maps, and segmentation masks. Use <b>Arrange</b> to cluster tiles by animal, scan, or cortical depth. Zoom in to inspect a single field of view, or fit all 2,282 planes at once.
+        </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
@@ -364,6 +367,97 @@
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Interactive result viewer</h1>
+        <p class="text">
+            Explore how OmniMouse&rsquo;s neural prediction changes with the inputs it receives. Toggle whether the model sees the visual stimulus and/or behavior, and use the slider to vary how many other neurons from the same population are provided as context. The highlighted curve and point show the selected configuration; the remaining conditions stay in view for comparison.
+        </p>
+    </div>
+
+    <div class="container blog main large" style="background-color: #ffffff;">
+        <div class="insilico-viewer" id="insilico-viewer">
+            <div class="insilico-controls">
+                <button type="button" class="insilico-toggle video-toggle" aria-pressed="false">
+                    <span class="toggle-dot"></span>
+                    <span class="toggle-label">Video</span>
+                </button>
+                <button type="button" class="insilico-toggle behavior-toggle" aria-pressed="false">
+                    <span class="toggle-dot"></span>
+                    <span class="toggle-label">Behavior</span>
+                </button>
+                <div class="insilico-slider">
+                    <div class="insilico-slider-label">Neurons in context: <span class="insilico-slider-value">0</span></div>
+                    <input type="range" min="0" max="8" step="1" value="0" aria-label="Number of neurons in context">
+                    <div class="insilico-slider-ticks">
+                        <span>0</span><span>16</span><span>32</span><span>64</span><span>128</span><span>256</span><span>512</span><span>1024</span><span>2048</span>
+                    </div>
+                </div>
+            </div>
+            <div class="insilico-figures">
+                <div class="insilico-schematic-wrap">
+                    <svg class="insilico-schematic" viewBox="0 0 340 420" preserveAspectRatio="xMidYMid meet" aria-label="Model input masking schematic">
+                        <defs>
+                            <pattern id="schem-hatch" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)">
+                                <rect width="9" height="9" fill="#ececec"/>
+                                <line x1="0" y1="0" x2="0" y2="9" stroke="#9a9a9a" stroke-width="1.1"/>
+                                <line x1="4.5" y1="0" x2="4.5" y2="9" stroke="#9a9a9a" stroke-width="1.1"/>
+                            </pattern>
+                        </defs>
+
+                        <!-- Y axis label -->
+                        <text x="-231" y="16" transform="rotate(-90)" text-anchor="middle"
+                              font-family="Poppins, sans-serif" font-size="12" fill="#333">Neuronal population</text>
+
+                        <!-- Behavior bar -->
+                        <rect id="schem-beh-bar" x="40" y="14" width="286" height="28" rx="8" fill="#d8d8d8"/>
+                        <text id="schem-beh-text" x="183" y="33" text-anchor="middle"
+                              font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#777">Behavior</text>
+
+                        <!-- Visual Stimulus bar -->
+                        <rect id="schem-vis-bar" x="40" y="50" width="286" height="28" rx="8" fill="#d8d8d8"/>
+                        <text id="schem-vis-text" x="183" y="69" text-anchor="middle"
+                              font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#777">Visual Stimulus</text>
+
+                        <!-- Population block (hatched background) -->
+                        <rect x="40" y="90" width="286" height="282" rx="10" fill="url(#schem-hatch)"/>
+                        <rect x="40" y="90" width="286" height="282" rx="10" fill="none" stroke="#bfbfbf" stroke-width="1"/>
+
+                        <!-- Vertical divider at 1.0s -->
+                        <line x1="183" y1="90" x2="183" y2="372" stroke="#777" stroke-width="1"/>
+
+                        <!-- Prediction target (right upper) -->
+                        <rect x="188" y="95" width="133" height="130" rx="10" fill="#F59E0B"/>
+                        <text x="254.5" y="155" text-anchor="middle" font-family="Poppins, sans-serif"
+                              font-size="13" font-weight="600" fill="#2a1d00">Prediction</text>
+                        <text x="254.5" y="173" text-anchor="middle" font-family="Poppins, sans-serif"
+                              font-size="13" font-weight="600" fill="#2a1d00">target</text>
+
+                        <!-- Population context (right lower, dynamic height) -->
+                        <rect id="schem-ctx-rect" x="188" y="367" width="133" height="0" rx="10" fill="#FCD5A5"/>
+                        <text id="schem-ctx-text" x="254.5" y="325" text-anchor="middle"
+                              font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b4a12" opacity="0">Population</text>
+                        <text id="schem-ctx-text2" x="254.5" y="343" text-anchor="middle"
+                              font-family="Poppins, sans-serif" font-size="13" font-weight="600" fill="#6b4a12" opacity="0">context</text>
+
+                        <!-- Time axis labels -->
+                        <text x="40" y="392" text-anchor="middle" font-family="Poppins, sans-serif"
+                              font-size="11" fill="#555">0.0s</text>
+                        <text x="183" y="392" text-anchor="middle" font-family="Poppins, sans-serif"
+                              font-size="11" fill="#555">1.0s</text>
+                        <text x="326" y="392" text-anchor="middle" font-family="Poppins, sans-serif"
+                              font-size="11" fill="#555">2.0s</text>
+                    </svg>
+                </div>
+                <div class="insilico-chart-wrap">
+                    <svg class="insilico-svg" viewBox="0 0 760 440" preserveAspectRatio="xMidYMid meet" aria-label="Correlation vs number of neurons in context"></svg>
+                </div>
+            </div>
+            <p class="insilico-caption">
+                Left: the model input masking that defines each condition. Right: correlation between predicted and measured neural responses as a function of population context size, for the four combinations of available model inputs.
+            </p>
+        </div>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
         <h1>Conclusions</h1>
         <p class="text">
             OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.
@@ -423,6 +517,355 @@ url={https://openreview.net/forum?id=mEw4lhAn0F}
             document.querySelector('.masking-panel[data-panel="' + target + '"]').classList.add('active');
         });
     });
+    </script>
+
+    <script>
+    (function () {
+        var viewer = document.getElementById('insilico-viewer');
+        if (!viewer) return;
+        var svg = viewer.querySelector('.insilico-svg');
+        var videoBtn = viewer.querySelector('.video-toggle');
+        var behaviorBtn = viewer.querySelector('.behavior-toggle');
+        var slider = viewer.querySelector('input[type="range"]');
+        var sliderValueLabel = viewer.querySelector('.insilico-slider-value');
+
+        var NS = 'http://www.w3.org/2000/svg';
+        // n = 4 is shown as "0" on the log x-axis (the zero-neurons condition)
+        var xValues = [4, 16, 32, 64, 128, 256, 512, 1024, 2048];
+        var xLabels = ['0', '16', '32', '64', '128', '256', '512', '1024', '2048'];
+
+        // Data (null = condition has no measurement at that context size)
+        var series = {
+            base: {
+                label: 'Response only',
+                color: '#808080',
+                y: [null, 0.09466043252992304, 0.13619311289103475, 0.18225740879068422,
+                        0.23435409677399344, 0.29461065980936463, 0.351948648899652,
+                        0.39517218934261006, 0.42871834012327664]
+            },
+            behavior: {
+                label: 'Response + Behavior',
+                color: '#8B5CF6',
+                y: [null, 0.12267717317379409, 0.15716316086930265, 0.1955381026350763,
+                        0.2413053911867276, 0.2971746470876906, 0.35339628977004717,
+                        0.3950550647855608, 0.42790812108180987]
+            },
+            video: {
+                label: 'Response + Video',
+                color: '#2A9D8F',
+                y: [0.27497944692053056, 0.27895556157508394, 0.2966517721423097,
+                        0.3137887077476029, 0.3317008855080749, 0.35553273201244856,
+                        0.3860145807557681, 0.41382911408603934, 0.4350828309353251]
+            },
+            both: {
+                label: 'Response + Video + Behavior',
+                color: '#264653',
+                y: [0.32316179790954724, 0.3301416853843177, 0.3370157554564237,
+                        0.34511017213399336, 0.35614190594764233, 0.3729592154903486,
+                        0.3971362545332104, 0.421885365123087, 0.4411148424825703]
+            }
+        };
+        var seriesOrder = ['base', 'behavior', 'video', 'both'];
+
+        var vbW = 760, vbH = 440;
+        var margin = { top: 24, right: 28, bottom: 58, left: 72 };
+        var plotW = vbW - margin.left - margin.right;
+        var plotH = vbH - margin.top - margin.bottom;
+
+        var xMinLog = Math.log(4);
+        var xMaxLog = Math.log(2048);
+        var yMin = 0, yMax = 0.5;
+
+        function xPx(x) { return margin.left + (Math.log(x) - xMinLog) / (xMaxLog - xMinLog) * plotW; }
+        function yPx(y) { return margin.top + plotH - (y - yMin) / (yMax - yMin) * plotH; }
+
+        function makeEl(tag, attrs) {
+            var el = document.createElementNS(NS, tag);
+            if (attrs) {
+                for (var k in attrs) {
+                    if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
+                }
+            }
+            return el;
+        }
+
+        // --- Static chart (axes, gridlines, labels) ---
+        // y grid + ticks
+        var yTicks = [0, 0.1, 0.2, 0.3, 0.4, 0.5];
+        yTicks.forEach(function (y) {
+            svg.appendChild(makeEl('line', {
+                x1: margin.left, x2: margin.left + plotW,
+                y1: yPx(y), y2: yPx(y),
+                stroke: '#e5e5e5', 'stroke-width': 1,
+                'stroke-dasharray': y === 0 ? '0' : '3 4'
+            }));
+            var t = makeEl('text', {
+                x: margin.left - 10, y: yPx(y) + 4,
+                'text-anchor': 'end',
+                'font-family': 'Poppins, sans-serif',
+                'font-size': 11,
+                fill: '#555'
+            });
+            t.textContent = y.toFixed(1);
+            svg.appendChild(t);
+        });
+
+        // x ticks (labeled subset for readability)
+        var labeledTicks = [4, 16, 64, 256, 1024];
+        xValues.forEach(function (x) {
+            // minor tick marks
+            svg.appendChild(makeEl('line', {
+                x1: xPx(x), x2: xPx(x),
+                y1: margin.top + plotH, y2: margin.top + plotH + 4,
+                stroke: '#888', 'stroke-width': 1
+            }));
+        });
+        labeledTicks.forEach(function (x) {
+            var i = xValues.indexOf(x);
+            var t = makeEl('text', {
+                x: xPx(x), y: margin.top + plotH + 20,
+                'text-anchor': 'middle',
+                'font-family': 'Poppins, sans-serif',
+                'font-size': 11,
+                fill: '#555'
+            });
+            t.textContent = xLabels[i];
+            svg.appendChild(t);
+        });
+
+        // Axis labels
+        var xAxisLabel = makeEl('text', {
+            x: margin.left + plotW / 2,
+            y: vbH - 14,
+            'text-anchor': 'middle',
+            'font-family': 'Poppins, sans-serif',
+            'font-size': 12,
+            fill: '#333'
+        });
+        xAxisLabel.textContent = 'Number of neurons in context';
+        svg.appendChild(xAxisLabel);
+
+        var yAxisLabel = makeEl('text', {
+            x: -(margin.top + plotH / 2),
+            y: 18,
+            transform: 'rotate(-90)',
+            'text-anchor': 'middle',
+            'font-family': 'Poppins, sans-serif',
+            'font-size': 12,
+            fill: '#333'
+        });
+        yAxisLabel.textContent = 'Correlation';
+        svg.appendChild(yAxisLabel);
+
+        // Axis lines (left + bottom)
+        svg.appendChild(makeEl('line', {
+            x1: margin.left, x2: margin.left,
+            y1: margin.top, y2: margin.top + plotH,
+            stroke: '#333', 'stroke-width': 1
+        }));
+        svg.appendChild(makeEl('line', {
+            x1: margin.left, x2: margin.left + plotW,
+            y1: margin.top + plotH, y2: margin.top + plotH,
+            stroke: '#333', 'stroke-width': 1
+        }));
+
+        // --- Dynamic layer: lines, points, active marker, legend ---
+        var dynamicLayer = makeEl('g', { 'class': 'insilico-dynamic' });
+        svg.appendChild(dynamicLayer);
+
+        function currentKey(videoOn, behaviorOn) {
+            if (videoOn && behaviorOn) return 'both';
+            if (videoOn) return 'video';
+            if (behaviorOn) return 'behavior';
+            return 'base';
+        }
+
+        // Schematic (left panel) element handles
+        var schemBehBar = document.getElementById('schem-beh-bar');
+        var schemBehText = document.getElementById('schem-beh-text');
+        var schemVisBar = document.getElementById('schem-vis-bar');
+        var schemVisText = document.getElementById('schem-vis-text');
+        var schemCtxRect = document.getElementById('schem-ctx-rect');
+        var schemCtxText = document.getElementById('schem-ctx-text');
+        var schemCtxText2 = document.getElementById('schem-ctx-text2');
+
+        // Geometry for the population-context rectangle in the schematic.
+        // Max height (at 2048 neurons) spans from mid-line (y=231) to bottom (y=367).
+        var CTX_MAX_H = 136;
+        var CTX_BOTTOM_Y = 367;
+
+        function updateSchematic(videoOn, behaviorOn, count) {
+            // Behavior bar colour
+            if (schemBehBar) {
+                schemBehBar.setAttribute('fill', behaviorOn ? '#8B5CF6' : '#d8d8d8');
+                schemBehText.setAttribute('fill', behaviorOn ? '#ffffff' : '#777');
+            }
+            // Visual-stimulus bar colour
+            if (schemVisBar) {
+                schemVisBar.setAttribute('fill', videoOn ? '#2A9D8F' : '#d8d8d8');
+                schemVisText.setAttribute('fill', videoOn ? '#ffffff' : '#777');
+            }
+            // Population-context rectangle grows from the bottom upward
+            if (schemCtxRect) {
+                var h = Math.max(0, Math.min(1, count / 2048)) * CTX_MAX_H;
+                schemCtxRect.setAttribute('y', (CTX_BOTTOM_Y - h).toString());
+                schemCtxRect.setAttribute('height', h.toString());
+                var showLabel = h >= 48 ? '1' : '0';
+                if (schemCtxText) schemCtxText.setAttribute('opacity', showLabel);
+                if (schemCtxText2) schemCtxText2.setAttribute('opacity', showLabel);
+            }
+        }
+
+        function render() {
+            var videoOn = videoBtn.classList.contains('on');
+            var behaviorOn = behaviorBtn.classList.contains('on');
+            var activeKey = currentKey(videoOn, behaviorOn);
+            var sliderIdx = parseInt(slider.value, 10);
+            sliderValueLabel.textContent = xLabels[sliderIdx];
+
+            // xValues[0] is 4 but represents zero neurons in context
+            var count = xValues[sliderIdx] === 4 ? 0 : xValues[sliderIdx];
+            updateSchematic(videoOn, behaviorOn, count);
+
+            while (dynamicLayer.firstChild) dynamicLayer.removeChild(dynamicLayer.firstChild);
+
+            // Vertical guide at current slider x
+            var guideX = xPx(xValues[sliderIdx]);
+            dynamicLayer.appendChild(makeEl('line', {
+                x1: guideX, x2: guideX,
+                y1: margin.top, y2: margin.top + plotH,
+                stroke: '#bbb', 'stroke-width': 1,
+                'stroke-dasharray': '4 4'
+            }));
+
+            // Draw inactive lines first, active last (on top)
+            seriesOrder.forEach(function (key) {
+                if (key !== activeKey) drawSeries(key, false);
+            });
+            drawSeries(activeKey, true);
+
+            // Active marker at slider position on active line (if data exists)
+            var activeY = series[activeKey].y[sliderIdx];
+            if (activeY !== null && activeY !== undefined) {
+                var cx = xPx(xValues[sliderIdx]);
+                var cy = yPx(activeY);
+                var color = series[activeKey].color;
+                dynamicLayer.appendChild(makeEl('circle', {
+                    cx: cx, cy: cy, r: 11,
+                    fill: color, 'fill-opacity': 0.18,
+                    stroke: 'none'
+                }));
+                dynamicLayer.appendChild(makeEl('circle', {
+                    cx: cx, cy: cy, r: 6.5,
+                    fill: color, stroke: '#ffffff', 'stroke-width': 2
+                }));
+                var valText = makeEl('text', {
+                    x: cx, y: cy - 16,
+                    'text-anchor': 'middle',
+                    'font-family': 'Poppins, sans-serif',
+                    'font-size': 12,
+                    'font-weight': 600,
+                    fill: color
+                });
+                valText.textContent = activeY.toFixed(3);
+                dynamicLayer.appendChild(valText);
+            } else {
+                // Slider = 0 but the active condition has no data for zero context.
+                var cx2 = xPx(xValues[sliderIdx]);
+                var nt = makeEl('text', {
+                    x: cx2 + 8, y: margin.top + 18,
+                    'text-anchor': 'start',
+                    'font-family': 'Poppins, sans-serif',
+                    'font-size': 11,
+                    'font-style': 'italic',
+                    fill: '#999'
+                });
+                nt.textContent = 'needs \u22651 neuron of context';
+                dynamicLayer.appendChild(nt);
+            }
+
+            // Legend (top-left inside plot)
+            drawLegend(activeKey);
+        }
+
+        function drawSeries(key, isActive) {
+            var s = series[key];
+            var color = isActive ? s.color : '#d6d6d6';
+            var opacity = isActive ? 1 : 0.85;
+            var strokeWidth = isActive ? 2.6 : 1.6;
+            var pointRadius = isActive ? 3.5 : 2.5;
+
+            // Build path over non-null points
+            var pts = [];
+            for (var i = 0; i < xValues.length; i++) {
+                if (s.y[i] !== null && s.y[i] !== undefined) {
+                    pts.push({ x: xPx(xValues[i]), y: yPx(s.y[i]) });
+                }
+            }
+            if (pts.length > 1) {
+                var d = 'M' + pts[0].x + ',' + pts[0].y;
+                for (var j = 1; j < pts.length; j++) d += ' L' + pts[j].x + ',' + pts[j].y;
+                dynamicLayer.appendChild(makeEl('path', {
+                    d: d, fill: 'none', stroke: color,
+                    'stroke-width': strokeWidth,
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round',
+                    opacity: opacity
+                }));
+            }
+            pts.forEach(function (p) {
+                dynamicLayer.appendChild(makeEl('circle', {
+                    cx: p.x, cy: p.y, r: pointRadius,
+                    fill: color, opacity: opacity
+                }));
+            });
+        }
+
+        function drawLegend(activeKey) {
+            var x0 = margin.left + 14;
+            var y0 = margin.top + 10;
+            var lineH = 16;
+            seriesOrder.forEach(function (key, i) {
+                var s = series[key];
+                var isActive = key === activeKey;
+                var color = isActive ? s.color : '#c4c4c4';
+                var y = y0 + i * lineH;
+                dynamicLayer.appendChild(makeEl('line', {
+                    x1: x0, x2: x0 + 22,
+                    y1: y, y2: y,
+                    stroke: color,
+                    'stroke-width': isActive ? 3 : 2,
+                    'stroke-linecap': 'round'
+                }));
+                dynamicLayer.appendChild(makeEl('circle', {
+                    cx: x0 + 11, cy: y, r: isActive ? 3.5 : 2.5,
+                    fill: color
+                }));
+                var t = makeEl('text', {
+                    x: x0 + 30, y: y + 4,
+                    'font-family': 'Poppins, sans-serif',
+                    'font-size': 11,
+                    'font-weight': isActive ? 600 : 400,
+                    fill: isActive ? '#222' : '#999'
+                });
+                t.textContent = s.label;
+                dynamicLayer.appendChild(t);
+            });
+        }
+
+        function toggle(btn) {
+            var on = !btn.classList.contains('on');
+            btn.classList.toggle('on', on);
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            render();
+        }
+
+        videoBtn.addEventListener('click', function () { toggle(videoBtn); });
+        behaviorBtn.addEventListener('click', function () { toggle(behaviorBtn); });
+        slider.addEventListener('input', render);
+
+        render();
+    })();
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>

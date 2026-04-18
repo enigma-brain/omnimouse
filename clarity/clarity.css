@@ -403,4 +403,190 @@ div.container.blog p.text {
     transform: none !important;
   }
 }
+
+/* Interactive insilico viewer */
+.insilico-viewer {
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  --c-video: #2A9D8F;
+  --c-behavior: #8B5CF6;
+  --c-both: #264653;
+  --c-base: #808080;
+  --c-off: #c9c9c9;
+  --c-inactive-line: #dcdcdc;
+}
+
+.insilico-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px 32px;
+  margin-bottom: 18px;
+}
+
+.insilico-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--toggle-color, var(--c-off));
+  border-radius: 999px;
+  padding: 8px 18px 8px 14px;
+  color: var(--toggle-color, var(--c-off));
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  user-select: none;
+}
+
+.insilico-toggle .toggle-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--toggle-color, var(--c-off));
+  box-shadow: 0 0 0 2px #ffffff inset;
+  transition: background 0.18s ease;
+}
+
+.insilico-toggle.on {
+  background: var(--toggle-color);
+  color: #ffffff;
+  border-color: var(--toggle-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.insilico-toggle.on .toggle-dot {
+  background: #ffffff;
+  box-shadow: 0 0 0 2px var(--toggle-color) inset;
+}
+
+.insilico-toggle.video-toggle { --toggle-color: var(--c-video); }
+.insilico-toggle.behavior-toggle { --toggle-color: var(--c-behavior); }
+.insilico-toggle:not(.on) { --toggle-color: var(--c-off); color: #888; }
+.insilico-toggle:not(.on) .toggle-dot { background: var(--c-off); }
+
+.insilico-slider {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 320px;
+  flex: 1 1 360px;
+  max-width: 520px;
+}
+
+.insilico-slider-label {
+  font-size: 0.88rem;
+  color: #444;
+  text-align: center;
+}
+
+.insilico-slider-label .insilico-slider-value {
+  font-weight: 700;
+  color: #222;
+  font-variant-numeric: tabular-nums;
+}
+
+.insilico-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #d8d8d8;
+  border-radius: 999px;
+  outline: none;
+  margin: 6px 0 2px;
+}
+
+.insilico-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.insilico-slider input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.insilico-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #888;
+  font-variant-numeric: tabular-nums;
+  padding: 0 2px;
+}
+
+.insilico-figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 18px 28px;
+  margin-top: 6px;
+}
+
+.insilico-schematic-wrap {
+  flex: 0 1 340px;
+  max-width: 380px;
+  min-width: 260px;
+}
+
+.insilico-chart-wrap {
+  flex: 1 1 520px;
+  min-width: 320px;
+}
+
+.insilico-schematic {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.insilico-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+#schem-beh-bar,
+#schem-vis-bar,
+#schem-beh-text,
+#schem-vis-text {
+  transition: fill 0.22s ease;
+}
+
+#schem-ctx-rect {
+  transition: y 0.3s ease, height 0.3s ease;
+}
+
+#schem-ctx-text {
+  transition: opacity 0.3s ease;
+}
+
+.insilico-caption {
+  text-align: center;
+  color: #888;
+  font-size: 0.85em;
+  font-style: italic;
+  line-height: 1.5;
+  margin: 12px 0 0;
+}
 /*# sourceMappingURL=clarity.css.map */

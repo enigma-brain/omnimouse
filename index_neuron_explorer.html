@@ -24,6 +24,8 @@ body {
   display: flex; align-items: center; gap: 12px; padding: 8px 14px;
   background: #141414; border-bottom: 1px solid #2a2a2a;
   flex-shrink: 0; flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
 }
 #toolbar label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
 #toolbar select { background: #1e1e1e; border: 1px solid #333; color: #e0e0e0; padding: 3px 6px; font-family: inherit; font-size: 12px; border-radius: 3px; min-width: 70px; }
@@ -31,8 +33,31 @@ body {
 #toolbar button:hover { background: #3a3a3a; }
 .ctrl { display: flex; align-items: center; gap: 4px; }
 .sep { width: 1px; height: 22px; background: #333; flex-shrink: 0; }
-#node-count { font-size: 10px; color: #555; margin-left: auto; }
+#node-count { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #555; pointer-events: none; }
 #canvas-wrap { flex: 1; position: relative; overflow: hidden; background: #0a0a0a; }
+.hint {
+  position: absolute; z-index: 10;
+  background: linear-gradient(135deg, rgba(80,140,220,0.96), rgba(60,100,180,0.96));
+  color: #fff; padding: 9px 13px; border-radius: 7px;
+  font-size: 12px; line-height: 1.4; max-width: 260px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  pointer-events: none;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.hint.visible { opacity: 1; transform: translateY(0); animation: hintPulse 2.2s ease-in-out infinite; }
+.hint.dismissed { opacity: 0; transform: translateY(-6px); transition: opacity 0.35s ease, transform 0.35s ease; }
+.hint::before { content: ''; position: absolute; width: 0; height: 0; border-style: solid; }
+.hint-image { top: 14px; left: 18%; }
+.hint-image::before { top: -7px; left: 24px; border-width: 0 7px 7px 7px; border-color: transparent transparent rgba(80,140,220,0.96) transparent; }
+.hint-arrange { top: 14px; right: 18%; }
+.hint-arrange::before { top: -7px; right: 24px; border-width: 0 7px 7px 7px; border-color: transparent transparent rgba(80,140,220,0.96) transparent; }
+.hint-zoom { bottom: 14px; left: 50%; margin-left: -130px; }
+.hint-zoom::before { bottom: -7px; left: 50%; margin-left: -7px; border-width: 7px 7px 0 7px; border-color: rgba(60,100,180,0.96) transparent transparent transparent; }
+@keyframes hintPulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.5), 0 0 0 rgba(140,190,255,0); }
+  50% { box-shadow: 0 4px 16px rgba(0,0,0,0.55), 0 0 22px rgba(140,190,255,0.45); }
+}
 #mainCanvas { display: block; width: 100%; height: 100%; }
 #scale-bar { position: absolute; bottom: 16px; right: 20px; color: rgba(255,255,255,0.85); font-size: 11px; pointer-events: none; text-align: center; opacity: 0; transition: opacity 0.4s; }
 #scale-bar.visible { opacity: 1; }
@@ -53,11 +78,13 @@ body {
 <div id="loading">Loading manifest...</div>
 <div id="app">
   <div id="toolbar">
-    <div class="ctrl"><label>Animal</label><select id="sel-animal"></select></div>
-    <div class="ctrl"><label>Session</label><select id="sel-session"></select></div>
-    <div class="ctrl"><label>Scan</label><select id="sel-scan"></select></div>
-    <div class="ctrl"><label>Depth</label><select id="sel-depth"></select></div>
-    <div class="sep"></div>
+    <div class="ctrl"><label>Image</label>
+      <select id="sel-imgtype">
+        <option value="average">Average</option>
+        <option value="correlation" selected>Correlation</option>
+        <option value="mask">Masks</option>
+      </select>
+    </div>
     <div class="ctrl"><label>Arrange</label>
       <select id="sel-arrange">
         <option value="random">Random</option>
@@ -66,16 +93,10 @@ body {
         <option value="depth">By Depth</option>
       </select>
     </div>
-    <div class="ctrl"><label>Image</label>
-      <select id="sel-imgtype">
-        <option value="average">Average</option>
-        <option value="correlation" selected>Correlation</option>
-        <option value="mask">Masks</option>
-      </select>
-    </div>
     <div class="sep"></div>
     <button id="btn-random" title="Space">Random Scan</button>
     <button id="btn-fit" title="F">Fit All</button>
+    <button id="btn-home" title="Reset view">Back to Start</button>
     <span id="node-count"></span>
   </div>
   <div id="canvas-wrap">
@@ -85,6 +106,9 @@ body {
       <div id="scale-bar-line" style="width:80px"></div>
     </div>
     <div id="info-box">Click a scan or use controls to explore</div>
+    <div id="hint-image" class="hint hint-image">Click <b>Image</b> for different views of the window into the brain</div>
+    <div id="hint-arrange" class="hint hint-arrange">In <b>Arrange</b>, select &ldquo;By Animal&rdquo; to see all the recorded scans per animal</div>
+    <div id="hint-zoom" class="hint hint-zoom">Zoom in and out at the bottom of the screen</div>
   </div>
   <div id="zoom-bar">
     <label>Zoom</label>
@@ -268,6 +292,8 @@ let currentImgType = 'correlation';
 let currentTransform = d3.zoomIdentity;
 let canvas, ctx, cw, ch;
 let zoomBehavior;
+let startNode = null;
+let hintsReady = false;
 let K_1X = 60;
 let suppressClick = false;
 
@@ -572,16 +598,7 @@ function populateSelect(id, items, sel) {
   return el.value;
 }
 
-function syncDropdowns(node) {
-  if (!node) return;
-  const H = hier;
-  const a = String(node.animal_id), s = String(node.session);
-  const sc = String(node.scan_idx), d = String(node.depth_um);
-  populateSelect('sel-animal', Object.keys(H).sort((a, b) => a - b), a);
-  populateSelect('sel-session', Object.keys(H[a]).sort((a, b) => a - b), s);
-  populateSelect('sel-scan', Object.keys(H[a][s]).sort((a, b) => a - b), sc);
-  populateSelect('sel-depth', H[a][s][sc], d);
-}
+function syncDropdowns(node) { /* dropdowns removed */ }
 
 function nodeFromDropdowns() {
   const a = document.getElementById('sel-animal').value;
@@ -686,25 +703,23 @@ function setupCanvasEvents() {
 //  TOOLBAR
 // =============================================================
 function setupToolbar() {
-  document.getElementById('sel-animal').addEventListener('change', () => cascadeFrom(0));
-  document.getElementById('sel-session').addEventListener('change', () => cascadeFrom(1));
-  document.getElementById('sel-scan').addEventListener('change', () => cascadeFrom(2));
-  document.getElementById('sel-depth').addEventListener('change', () => cascadeFrom(3));
-
   document.getElementById('sel-arrange').addEventListener('change', e => {
     makeSimulation(allNodes, e.target.value);
     // Re-fit after positions reset
     setTimeout(() => fitAll(true), 120);
+    dismissHint('hint-arrange');
   });
 
   document.getElementById('sel-imgtype').addEventListener('change', e => {
     currentImgType = e.target.value;
+    dismissHint('hint-image');
   });
 
   document.getElementById('btn-random').addEventListener('click', () => {
     selectNode(allNodes[Math.floor(Math.random() * allNodes.length)]);
   });
   document.getElementById('btn-fit').addEventListener('click', () => fitAll(true));
+  document.getElementById('btn-home').addEventListener('click', () => backToStart());
 
   document.getElementById('zoom-slider').addEventListener('input', e => {
     const newK = sliderToK(parseFloat(e.target.value));
@@ -712,13 +727,53 @@ function setupToolbar() {
     const ratio = newK / t.k;
     d3.select(canvas).call(zoomBehavior.transform,
       d3.zoomIdentity.translate(cx - (cx - t.x) * ratio, cy - (cy - t.y) * ratio).scale(newK));
+    dismissHint('hint-zoom');
   });
+  canvas.addEventListener('wheel', () => dismissHint('hint-zoom'), { passive: true });
 
   window.addEventListener('keydown', e => {
     if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
     if (e.code === 'Space') { e.preventDefault(); document.getElementById('btn-random').click(); }
     if (e.code === 'KeyF') fitAll(true);
   });
+}
+
+// =============================================================
+//  HINTS
+// =============================================================
+function showHints() {
+  hintsReady = true;
+  ['hint-image', 'hint-arrange', 'hint-zoom'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) setTimeout(() => el.classList.add('visible'), 200 + i * 180);
+  });
+}
+function dismissHint(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('visible');
+  el.classList.add('dismissed');
+}
+function dismissAllHints() {
+  ['hint-image', 'hint-arrange', 'hint-zoom'].forEach(dismissHint);
+}
+
+// =============================================================
+//  BACK TO START
+// =============================================================
+function backToStart() {
+  if (!startNode) return;
+  document.getElementById('sel-arrange').value = 'random';
+  document.getElementById('sel-imgtype').value = 'correlation';
+  currentImgType = 'correlation';
+  allNodes.forEach(n => { n.fx = null; n.fy = null; });
+  makeSimulation(allNodes, 'random');
+  startNode.x = 0; startNode.y = 0;
+  startNode.fx = 0; startNode.fy = 0;
+  selectedNode = startNode;
+  updateInfo(startNode);
+  const t = d3.zoomIdentity.translate(cw / 2, ch / 2).scale(K_1X);
+  d3.select(canvas).transition().duration(500).call(zoomBehavior.transform, t);
 }
 
 // =============================================================
@@ -753,14 +808,20 @@ async function init() {
 
   makeSimulation(allNodes, 'random');
 
-  const startNode = allNodes[Math.floor(Math.random() * allNodes.length)];
-  syncDropdowns(startNode);
+  startNode =
+    allNodes.find(n => n.animal_id == 25830 && n.session == 3 && n.scan_idx == 8)
+    || allNodes[Math.floor(Math.random() * allNodes.length)];
   selectedNode = startNode;
   startNode.fx = 0; startNode.fy = 0;
   updateInfo(startNode);
 
   document.getElementById('loading').style.display = 'none';
-  setTimeout(() => fitAll(false), 80);
+  setTimeout(() => {
+    const t = d3.zoomIdentity.translate(cw / 2, ch / 2)
+      .scale(K_1X).translate(-startNode.x, -startNode.y);
+    d3.select(canvas).call(zoomBehavior.transform, t);
+    setTimeout(showHints, 400);
+  }, 80);
   requestAnimationFrame(render);
 }
 
