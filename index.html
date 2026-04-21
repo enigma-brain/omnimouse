@@ -155,6 +155,23 @@
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Interactive data and prediction viewer</h1>
+        <p class="text">
+            Step one level deeper and watch the model run. On the left, pick a masking configuration &mdash; toggle video and behavior as inputs, and choose how many samples of causal context and how many other population neurons the model sees. On the right, scrub through a 9-second clip and compare OmniMouse&rsquo;s predictions against the measured neural responses (or behavior traces) sample-by-sample.
+        </p>
+    </div>
+
+    <div class="container blog main extra-large" style="background-color: #ffffff; padding-top: 0; padding-bottom: 0;">
+        <iframe src="clarity/animations/prediction_interactive/viewer.html"
+                style="width: 100%; height: 92vh; min-height: 760px; border: none; border-radius: 10px; display: block;"
+                loading="lazy"
+                title="OmniMouse interactive data and prediction viewer"></iframe>
+        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
+            The schematic on the left reflects the current masking. On the right, the 2&nbsp;s chunk the model actually sees is drawn in black on top of 4&nbsp;s of surrounding ground truth (light gray); thin orange/purple lines show the model&rsquo;s predictions across the whole window, and the bold segment marks the portion the model actually has to reconstruct (1&nbsp;s for neural responses, 2&nbsp;s for behavior).
+        </p>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
         <h1>Results</h1>
         <p class="text">
             <b>State-of-the-art performance.</b> OmniMouse outperforms all specialized baselines across virtually all evaluation regimes &mdash; including neural forecasting, population prediction, stimulus-conditioned encoding, and behavioral decoding. Crucially, these advantages hold even in strict data-matched comparisons where OmniMouse and the baselines are trained on identical sessions, ruling out dataset size as a confound. The architecture itself &mdash; unified tokenization, flexible masking, and joint multi-task training &mdash; provides a consistent edge, independent of how much data is available.
@@ -457,22 +474,6 @@
         </div>
     </div>
 
-    <div class="container blog main" style="background-color: #ffffff;">
-        <h1>Interactive prediction viewer</h1>
-        <p class="text">
-            Step one level deeper and watch the model run. On the left, pick a masking configuration &mdash; toggle video and behavior as inputs, and choose how many samples of causal context and how many other population neurons the model sees. On the right, scrub through a 9-second clip and compare OmniMouse&rsquo;s predictions against the measured neural responses (or behavior traces) sample-by-sample.
-        </p>
-    </div>
-
-    <div class="container blog main extra-large" style="background-color: #ffffff; padding-top: 0; padding-bottom: 0;">
-        <iframe src="clarity/animations/prediction_interactive/viewer.html"
-                style="width: 100%; height: 92vh; min-height: 760px; border: none; border-radius: 10px; display: block;"
-                loading="lazy"
-                title="OmniMouse interactive prediction viewer"></iframe>
-        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
-            The schematic on the left reflects the current masking. On the right, the 2&nbsp;s chunk the model actually sees is drawn in black on top of 4&nbsp;s of surrounding ground truth (light gray); thin orange/purple lines show the model&rsquo;s predictions across the whole window, and the bold segment marks the portion the model actually has to reconstruct (1&nbsp;s for neural responses, 2&nbsp;s for behavior).
-        </p>
-    </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Conclusions</h1>
