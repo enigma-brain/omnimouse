@@ -458,6 +458,23 @@
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
+        <h1>Interactive prediction viewer</h1>
+        <p class="text">
+            Step one level deeper and watch the model run. On the left, pick a masking configuration &mdash; toggle video and behavior as inputs, and choose how many samples of causal context and how many other population neurons the model sees. On the right, scrub through a 9-second clip and compare OmniMouse&rsquo;s predictions against the measured neural responses (or behavior traces) sample-by-sample.
+        </p>
+    </div>
+
+    <div class="container blog main extra-large" style="background-color: #ffffff; padding-top: 0; padding-bottom: 0;">
+        <iframe src="clarity/animations/prediction_interactive/viewer.html"
+                style="width: 100%; height: 92vh; min-height: 760px; border: none; border-radius: 10px; display: block;"
+                loading="lazy"
+                title="OmniMouse interactive prediction viewer"></iframe>
+        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
+            The schematic on the left reflects the current masking. On the right, the 2&nbsp;s chunk the model actually sees is drawn in black on top of 4&nbsp;s of surrounding ground truth (light gray); thin orange/purple lines show the model&rsquo;s predictions across the whole window, and the bold segment marks the portion the model actually has to reconstruct (1&nbsp;s for neural responses, 2&nbsp;s for behavior).
+        </p>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
         <h1>Conclusions</h1>
         <p class="text">
             OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.

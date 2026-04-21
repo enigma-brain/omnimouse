@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OmniMouse prediction viewer</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --c-video: #2A9D8F;
+        --c-behavior: #8B5CF6;
+        --c-pred-resp: #E76F14;
+        --c-pred-beh: #8B5CF6;
+        --c-gt: #111;
+        --c-gt-outside: #c9c9c9;
+        --c-target: #F59E0B;
+        --c-context: #FCD5A5;
+        --c-off: #d8d8d8;
+        --c-off-text: #888;
+        --c-text: #222;
+        --c-muted: #666;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: var(--c-text);
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        height: 100%;
+    }
+
+    .root {
+        padding: 42px 22px 18px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        min-height: 100vh;
+    }
+
+    /* Top controls */
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 22px 32px;
+        padding: 10px 4px 16px;
+    }
+    .controls .group-divider {
+        width: 1px;
+        height: 36px;
+        background: #e0e0e0;
+    }
+
+    .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 7px 16px 7px 13px;
+        background: #fff;
+        border: 1.5px solid var(--tc, var(--c-off));
+        color: var(--tc, var(--c-off-text));
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .toggle .dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: var(--tc, var(--c-off));
+        box-shadow: 0 0 0 2px #fff inset;
+        transition: background 0.18s;
+    }
+    .toggle.on {
+        background: var(--tc);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .toggle.on .dot {
+        background: #fff;
+        box-shadow: 0 0 0 2px var(--tc) inset;
+    }
+    .toggle:not(.on) { --tc: var(--c-off); color: var(--c-off-text); }
+    .toggle.video { --tc: var(--c-video); }
+    .toggle.behavior { --tc: var(--c-behavior); }
+    .toggle.all-neurons { --tc: #444; }
+    .toggle.all-neurons.on { --tc: #444; }
+    .toggle.hidden { display: none; }
+
+    .slider-group.disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    .slider-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 180px;
+        max-width: 240px;
+    }
+    .slider-group .label {
+        font-size: 0.78rem;
+        color: var(--c-muted);
+        text-align: center;
+    }
+    .slider-group .label b {
+        color: var(--c-text);
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+    .slider-group input[type=range] {
+        -webkit-appearance: none; appearance: none;
+        width: 100%;
+        height: 4px;
+        background: #dcdcdc;
+        border-radius: 999px;
+        outline: none;
+    }
+    .slider-group input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+    .slider-group input[type=range]::-moz-range-thumb {
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+    .slider-group .tiny-ticks {
+        display: flex; justify-content: space-between;
+        font-size: 0.68rem; color: #888;
+    }
+
+    .mod-switch {
+        display: inline-flex;
+        border-radius: 999px;
+        background: #eee;
+        padding: 3px;
+    }
+    .mod-switch button {
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        color: #777;
+        transition: background 0.18s, color 0.18s;
+    }
+    .mod-switch button.active.response {
+        background: var(--c-pred-resp);
+        color: #fff;
+    }
+    .mod-switch button.active.behavior {
+        background: var(--c-pred-beh);
+        color: #fff;
+    }
+
+    /* Figures row */
+    .figures {
+        display: flex;
+        flex: 1;
+        gap: 20px;
+        align-items: stretch;
+        flex-wrap: wrap;
+        min-height: 0;
+    }
+    .schematic-wrap {
+        flex: 0 1 360px;
+        min-width: 280px;
+    }
+    .plot-wrap {
+        flex: 1 1 520px;
+        min-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    svg.schematic, svg.plot {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Schematic transitions */
+    #sc-beh-bar, #sc-vis-bar, #sc-beh-text, #sc-vis-text,
+    #sc-ctx-rect, #sc-ctx-label, #sc-ctx-label2,
+    #sc-causal-rect, #sc-target-rect, #sc-causal-label {
+        transition: fill 0.22s ease, y 0.3s ease, height 0.3s ease,
+                    x 0.3s ease, width 0.3s ease, opacity 0.25s ease;
+    }
+
+    /* Chunk slider strip */
+    .chunk-strip {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 4px 4px 0;
+    }
+    .chunk-strip-top {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.76rem;
+        color: var(--c-muted);
+    }
+    .chunk-strip input[type=range] {
+        -webkit-appearance: none; appearance: none;
+        width: 100%;
+        height: 4px;
+        background: #dcdcdc;
+        border-radius: 999px;
+        outline: none;
+        margin: 4px 0 0;
+    }
+    .chunk-strip input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+    .chunk-strip input[type=range]::-moz-range-thumb {
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+
+    .channel-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.84rem;
+        color: var(--c-muted);
+    }
+    .channel-row input[type=range] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 200px;
+        height: 4px;
+        background: #dcdcdc;
+        border-radius: 999px;
+        outline: none;
+    }
+    .channel-row input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 14px; height: 14px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+    .channel-row input[type=range]::-moz-range-thumb {
+        width: 14px; height: 14px; border-radius: 50%;
+        background: #222; border: 2px solid #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        cursor: pointer;
+    }
+    .channel-name {
+        font-weight: 600;
+        color: var(--c-text);
+        min-width: 140px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .status-banner {
+        font-size: 0.82rem;
+        color: #a05000;
+        text-align: center;
+        min-height: 18px;
+    }
+    .status-banner.info { color: var(--c-muted); }
+</style>
+</head>
+<body>
+<div class="root" id="root">
+    <div class="controls">
+        <button type="button" class="toggle video" id="t-video" aria-pressed="false">
+            <span class="dot"></span><span>Video</span>
+        </button>
+        <button type="button" class="toggle behavior" id="t-behavior" aria-pressed="false">
+            <span class="dot"></span><span>Behavior</span>
+        </button>
+        <div class="slider-group">
+            <div class="label">Causal prefix: <b id="lbl-causal">25 samples</b></div>
+            <input type="range" id="s-causal" min="0" max="4" step="1" value="4">
+            <div class="tiny-ticks">
+                <span>0</span><span>10</span><span>15</span><span>20</span><span>25</span>
+            </div>
+        </div>
+        <div class="slider-group">
+            <div class="label">Population context: <b id="lbl-pop">0</b></div>
+            <input type="range" id="s-pop" min="0" max="3" step="1" value="0">
+            <div class="tiny-ticks">
+                <span>0</span><span>64</span><span>256</span><span>1024</span>
+            </div>
+        </div>
+        <button type="button" class="toggle all-neurons hidden" id="t-allneurons" aria-pressed="false"
+                title="Use all 35 target neurons as context to predict behavior">
+            <span class="dot"></span><span>All neurons</span>
+        </button>
+        <div class="mod-switch" id="mod-switch">
+            <button type="button" class="response active" data-mod="response">Response</button>
+            <button type="button" class="behavior" data-mod="behavior">Behavior</button>
+        </div>
+    </div>
+
+    <div class="figures">
+        <div class="schematic-wrap">
+            <svg class="schematic" viewBox="0 0 340 440" preserveAspectRatio="xMidYMid meet" aria-label="Masking schematic">
+                <defs>
+                    <pattern id="sc-hatch" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)">
+                        <rect width="9" height="9" fill="#ececec"/>
+                        <line x1="0" y1="0" x2="0" y2="9" stroke="#9a9a9a" stroke-width="1.1"/>
+                        <line x1="4.5" y1="0" x2="4.5" y2="9" stroke="#9a9a9a" stroke-width="1.1"/>
+                    </pattern>
+                </defs>
+
+                <text x="-231" y="16" transform="rotate(-90)" text-anchor="middle"
+                      font-size="12" fill="#333">Neuronal population</text>
+
+                <!-- Behavior bar -->
+                <rect id="sc-beh-bar" x="40" y="14" width="286" height="28" rx="8" fill="#d8d8d8"/>
+                <text id="sc-beh-text" x="183" y="33" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#777">Behavior</text>
+
+                <!-- Visual Stimulus bar -->
+                <rect id="sc-vis-bar" x="40" y="50" width="286" height="28" rx="8" fill="#d8d8d8"/>
+                <text id="sc-vis-text" x="183" y="69" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#777">Visual Stimulus</text>
+
+                <!-- Population block background (hatched) -->
+                <rect x="40" y="90" width="286" height="282" rx="10" fill="url(#sc-hatch)"/>
+                <rect x="40" y="90" width="286" height="282" rx="10" fill="none" stroke="#bfbfbf" stroke-width="1"/>
+
+                <!-- Divider at 1.0s -->
+                <line x1="183" y1="90" x2="183" y2="372" stroke="#777" stroke-width="1"/>
+
+                <!-- Prediction target (right upper). x/width change with causal prefix -->
+                <rect id="sc-target-rect" x="188" y="95" width="133" height="130" rx="10" fill="#F59E0B"/>
+                <text id="sc-target-label" x="254.5" y="155" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#2a1d00">Prediction</text>
+                <text id="sc-target-label2" x="254.5" y="173" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#2a1d00">target</text>
+
+                <!-- Causal prefix strip (left edge of right half, grows with causal slider) -->
+                <rect id="sc-causal-rect" x="188" y="95" width="0" height="130" rx="6" fill="#FCD5A5"/>
+                <text id="sc-causal-label" x="188" y="245" text-anchor="start"
+                      font-size="10.5" font-style="italic" fill="#8a5a12" opacity="0">causal prefix</text>
+
+                <!-- Population context (right lower, dynamic height) -->
+                <rect id="sc-ctx-rect" x="188" y="367" width="133" height="0" rx="10" fill="#FCD5A5"/>
+                <text id="sc-ctx-label" x="254.5" y="325" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#6b4a12" opacity="0">Population</text>
+                <text id="sc-ctx-label2" x="254.5" y="343" text-anchor="middle"
+                      font-size="13" font-weight="600" fill="#6b4a12" opacity="0">context</text>
+
+                <!-- Time labels -->
+                <text x="40" y="392" text-anchor="middle" font-size="11" fill="#555">0.0 s</text>
+                <text x="183" y="392" text-anchor="middle" font-size="11" fill="#555">1.0 s</text>
+                <text x="326" y="392" text-anchor="middle" font-size="11" fill="#555">2.0 s</text>
+
+                <!-- Strategy name footer -->
+                <text id="sc-strategy" x="183" y="418" text-anchor="middle"
+                      font-size="10" fill="#999" font-family="monospace"></text>
+            </svg>
+        </div>
+
+        <div class="plot-wrap">
+            <div class="channel-row">
+                <label for="s-channel">Channel</label>
+                <input type="range" id="s-channel" min="0" max="34" step="1" value="0">
+                <span class="channel-name" id="lbl-channel">Neuron 1 &middot; id 5392</span>
+            </div>
+            <svg class="plot" viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet" aria-label="Ground truth and prediction"></svg>
+            <div class="chunk-strip">
+                <div class="chunk-strip-top">
+                    <span>Chunk <b id="lbl-chunk">0</b> / 70</span>
+                    <span id="lbl-chunk-time">window 0.0&ndash;2.0 s</span>
+                </div>
+                <input type="range" id="s-chunk" min="0" max="70" step="1" value="0">
+            </div>
+            <div class="status-banner" id="status"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+
+// ============================================================
+// Constants / data layout
+// ============================================================
+const DATA_ROOT = '.';                 // same directory as this page
+const N_CHUNKS = 71;
+const STRIDE_SAMPLES = 3;              // samples per chunk step @ 30 Hz
+const NEURAL_RATE = 30;                // Hz
+const BEHAVIOR_RATE = 20;              // Hz
+const SUFFIX_NEURAL = 30;              // 1 s @ 30 Hz
+const SUFFIX_BEHAVIOR = 20;            // 1 s @ 20 Hz
+const N_NEURONS = 35;
+const BEHAVIOR_CHANNELS = [
+    'Pupil size',
+    'Pupil size Δ',
+    'Pupil X',
+    'Pupil Y',
+    'Treadmill speed',
+];
+
+const CAUSAL_VALUES = [0, 10, 15, 20, 25];
+const POP_VALUES = [0, 64, 256, 1024];
+
+// ============================================================
+// NPY parser
+// ============================================================
+async function loadNpy(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('fetch failed: ' + url + ' ' + r.status);
+    const buf = await r.arrayBuffer();
+    const view = new DataView(buf);
+    // Magic: \x93NUMPY
+    const major = view.getUint8(6);
+    let headerLen, dataOffset;
+    if (major === 1) {
+        headerLen = view.getUint16(8, true);
+        dataOffset = 10 + headerLen;
+    } else {
+        headerLen = view.getUint32(8, true);
+        dataOffset = 12 + headerLen;
+    }
+    const headerBytes = new Uint8Array(buf, major === 1 ? 10 : 12, headerLen);
+    const header = new TextDecoder().decode(headerBytes);
+    const shapeMatch = header.match(/'shape'\s*:\s*\(([^)]*)\)/);
+    const shape = shapeMatch[1].split(',').map(s => s.trim()).filter(Boolean).map(Number);
+    const size = shape.reduce((a, b) => a * b, 1);
+    // Assume float32 '<f4'
+    const data = new Float32Array(buf.slice(dataOffset, dataOffset + size * 4));
+    return { shape, data };
+}
+
+// ============================================================
+// Data caches
+// ============================================================
+const gtResponseByChunk = new Array(N_CHUNKS);    // each: Float32Array of length 35*30
+const gtBehaviorByChunk = new Array(N_CHUNKS);    // each: Float32Array of length 5*20
+const predCache = new Map();  // key = strategy|modality|chunk -> Float32Array
+const predMissing = new Set(); // strategies that returned 404 for a given (modality)
+const strategyExists = new Set(); // populated from meta.csv
+const strategyChunkHas = new Map(); // "strategy|modality" -> Set(chunk_idx)
+
+async function preloadGroundTruth() {
+    // Fetch all 71 ground-truth chunks for both modalities.
+    const tasks = [];
+    for (let k = 0; k < N_CHUNKS; k++) {
+        tasks.push(loadNpy(`${DATA_ROOT}/ground_truth/chunk_${String(k).padStart(4, '0')}_response.npy`)
+            .then(a => { gtResponseByChunk[k] = a.data; }));
+        tasks.push(loadNpy(`${DATA_ROOT}/ground_truth/chunk_${String(k).padStart(4, '0')}_behavior.npy`)
+            .then(a => { gtBehaviorByChunk[k] = a.data; }));
+    }
+    await Promise.all(tasks);
+}
+
+async function loadMeta() {
+    const r = await fetch(`${DATA_ROOT}/meta.csv`);
+    const text = await r.text();
+    const lines = text.split(/\r?\n/);
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line) continue;
+        // strategy,modality,chunk_idx,path
+        const idxC1 = line.indexOf(',');
+        const idxC2 = line.indexOf(',', idxC1 + 1);
+        const idxC3 = line.indexOf(',', idxC2 + 1);
+        const strategy = line.slice(0, idxC1);
+        const modality = line.slice(idxC1 + 1, idxC2);
+        const chunk = parseInt(line.slice(idxC2 + 1, idxC3), 10);
+        if (strategy !== 'ground_truth') strategyExists.add(strategy);
+        const key = `${strategy}|${modality}`;
+        if (!strategyChunkHas.has(key)) strategyChunkHas.set(key, new Set());
+        strategyChunkHas.get(key).add(chunk);
+    }
+}
+
+async function getPrediction(strategy, modality, chunk) {
+    const key = `${strategy}|${modality}|${chunk}`;
+    if (predCache.has(key)) return predCache.get(key);
+    if (predMissing.has(key)) return null;
+    const tag = modality === 'behavior' ? 'behavior' : 'response';
+    const url = `${DATA_ROOT}/predictions/${strategy}/chunk_${String(chunk).padStart(4, '0')}_${tag}.npy`;
+    try {
+        const a = await loadNpy(url);
+        predCache.set(key, a.data);
+        return a.data;
+    } catch (e) {
+        predMissing.add(key);
+        return null;
+    }
+}
+
+// Promise-level cache so concurrent strategy loads share a single fetch batch.
+const strategyLoadPromises = new Map();
+function loadStrategyAllChunks(strategy, modality) {
+    const pKey = `${strategy}|${modality}`;
+    if (strategyLoadPromises.has(pKey)) return strategyLoadPromises.get(pKey);
+    const availableChunks = strategyChunkHas.get(pKey);
+    if (!availableChunks) {
+        const p = Promise.resolve();
+        strategyLoadPromises.set(pKey, p);
+        return p;
+    }
+    const tasks = [];
+    for (const c of availableChunks) tasks.push(getPrediction(strategy, modality, c));
+    const p = Promise.all(tasks).then(() => {});
+    strategyLoadPromises.set(pKey, p);
+    return p;
+}
+
+// Build a stitched prediction trace for (strategy, modality, channel).
+// Same time axis as the ground-truth trace: global sample index from `rate` onwards.
+function buildPredTrace(strategy, modality, channel) {
+    const rate = modality === 'response' ? NEURAL_RATE : BEHAVIOR_RATE;
+    const suffixLen = modality === 'response' ? SUFFIX_NEURAL : SUFFIX_BEHAVIOR;
+    const strideSamples = modality === 'response' ? 3 : 2;
+    const start = rate;
+    const end = rate + strideSamples * (N_CHUNKS - 1) + suffixLen - 1;
+    const trace = new Float32Array(end - start + 1);
+    trace.fill(NaN);
+    for (let k = 0; k < N_CHUNKS; k++) {
+        const pkey = `${strategy}|${modality}|${k}`;
+        if (!predCache.has(pkey)) continue;
+        const arr = predCache.get(pkey);
+        if (!arr) continue;
+        const base = rate + strideSamples * k;
+        for (let t = 0; t < suffixLen; t++) {
+            const g = base + t - start;
+            if (g < 0 || g >= trace.length) continue;
+            if (Number.isNaN(trace[g])) trace[g] = arr[channel * suffixLen + t];
+        }
+    }
+    return { trace, start, rate, strideSamples, suffixLen };
+}
+
+// Cached fixed y-range per (strategy, modality, channel).
+const yRangeCache = new Map();
+function getFixedYRange(strategy, modality, channel) {
+    const key = `${strategy || '_'}|${modality}|${channel}`;
+    if (yRangeCache.has(key)) return yRangeCache.get(key);
+    const gt = buildGtTrace(modality, channel);
+    let yMin = Infinity, yMax = -Infinity;
+    for (let i = 0; i < gt.trace.length; i++) {
+        const v = gt.trace[i];
+        if (Number.isFinite(v)) { if (v < yMin) yMin = v; if (v > yMax) yMax = v; }
+    }
+    if (strategy) {
+        const pred = buildPredTrace(strategy, modality, channel);
+        for (let i = 0; i < pred.trace.length; i++) {
+            const v = pred.trace[i];
+            if (Number.isFinite(v)) { if (v < yMin) yMin = v; if (v > yMax) yMax = v; }
+        }
+    }
+    if (!Number.isFinite(yMin) || !Number.isFinite(yMax)) { yMin = 0; yMax = 1; }
+    if (yMin === yMax) { yMin -= 0.5; yMax += 0.5; }
+    const pad = (yMax - yMin) * 0.08;
+    yMin -= pad; yMax += pad;
+    if (modality === 'response') yMin = Math.min(yMin, 0);
+    const out = { yMin, yMax };
+    yRangeCache.set(key, out);
+    return out;
+}
+
+// ============================================================
+// State
+// ============================================================
+const state = {
+    videoOn: false,
+    behaviorOn: false,
+    causalIdx: 4,      // index into CAUSAL_VALUES (25 samples)
+    popIdx: 0,         // index into POP_VALUES (0)
+    modality: 'response',
+    channel: 0,        // 0-based channel/neuron index
+    chunk: 0,
+    allNeurons: false, // behavior-only: use all 35 neurons as context
+};
+
+function resolveStrategy() {
+    // "All neurons" mode (behavior-only): strategy is `all_response_only` or `all_response_video`
+    if (state.allNeurons && state.modality === 'behavior' && !state.behaviorOn) {
+        return state.videoOn ? 'all_response_video' : 'all_response_only';
+    }
+
+    const causal = CAUSAL_VALUES[state.causalIdx];
+    const pop = POP_VALUES[state.popIdx];
+    let suffix = '';
+    if (state.behaviorOn) suffix += '_behavior';
+    if (state.videoOn) suffix += '_video';
+
+    if (pop === 0 && causal === 0) return null;
+
+    let base;
+    if (pop === 0) {
+        base = `causal_response_${causal}`;
+    } else if (causal === 0) {
+        base = `population_${pop}_response`;
+    } else {
+        base = `population_${pop}_causal_response_${causal}`;
+    }
+    return base + suffix;
+}
+
+function strategyValid(name) {
+    return name && strategyExists.has(name);
+}
+
+function modalityAvailableForStrategy(name, modality) {
+    if (!name) return false;
+    const key = `${name}|${modality}`;
+    return strategyChunkHas.has(key) && strategyChunkHas.get(key).size > 0;
+}
+
+// ============================================================
+// DOM references
+// ============================================================
+const tVideo = document.getElementById('t-video');
+const tBehavior = document.getElementById('t-behavior');
+const tAllNeurons = document.getElementById('t-allneurons');
+const sCausal = document.getElementById('s-causal');
+const sPop = document.getElementById('s-pop');
+const lblCausal = document.getElementById('lbl-causal');
+const lblPop = document.getElementById('lbl-pop');
+const causalGroup = sCausal.closest('.slider-group');
+const popGroup = sPop.closest('.slider-group');
+const modSwitch = document.getElementById('mod-switch');
+const sChannel = document.getElementById('s-channel');
+const lblChannel = document.getElementById('lbl-channel');
+const sChunk = document.getElementById('s-chunk');
+const lblChunk = document.getElementById('lbl-chunk');
+const lblChunkTime = document.getElementById('lbl-chunk-time');
+const statusBanner = document.getElementById('status');
+
+const scBehBar = document.getElementById('sc-beh-bar');
+const scBehText = document.getElementById('sc-beh-text');
+const scVisBar = document.getElementById('sc-vis-bar');
+const scVisText = document.getElementById('sc-vis-text');
+const scCtxRect = document.getElementById('sc-ctx-rect');
+const scCtxLabel = document.getElementById('sc-ctx-label');
+const scCtxLabel2 = document.getElementById('sc-ctx-label2');
+const scTargetRect = document.getElementById('sc-target-rect');
+const scCausalRect = document.getElementById('sc-causal-rect');
+const scCausalLabel = document.getElementById('sc-causal-label');
+const scStrategy = document.getElementById('sc-strategy');
+
+const plotSvg = document.querySelector('svg.plot');
+
+// ============================================================
+// Schematic update
+// ============================================================
+const SC_CTX_MAX_H = 136;         // max rect height from midline to bottom
+const SC_CTX_BOTTOM_Y = 367;
+const SC_TARGET_X = 188;
+const SC_TARGET_W = 133;
+const SC_TARGET_Y = 95;
+const SC_TARGET_H = 130;
+
+function updateSchematic() {
+    // Behavior toggle
+    scBehBar.setAttribute('fill', state.behaviorOn ? '#8B5CF6' : '#d8d8d8');
+    scBehText.setAttribute('fill', state.behaviorOn ? '#ffffff' : '#777');
+    // Visual stimulus toggle
+    scVisBar.setAttribute('fill', state.videoOn ? '#2A9D8F' : '#d8d8d8');
+    scVisText.setAttribute('fill', state.videoOn ? '#ffffff' : '#777');
+
+    if (state.allNeurons) {
+        // All 35 neurons are input context, nothing is reconstructed on the
+        // response side. Fill the whole right half with the context color and
+        // hide the causal prefix / prediction-target annotations.
+        scCtxRect.setAttribute('y', SC_TARGET_Y.toString());
+        scCtxRect.setAttribute('height', (SC_CTX_BOTTOM_Y - SC_TARGET_Y).toString());
+        scCtxLabel.setAttribute('opacity', '1');
+        scCtxLabel2.setAttribute('opacity', '1');
+        scTargetRect.setAttribute('x', SC_TARGET_X.toString());
+        scTargetRect.setAttribute('width', '0');
+        scCausalRect.setAttribute('x', SC_TARGET_X.toString());
+        scCausalRect.setAttribute('width', '0');
+        scCausalLabel.setAttribute('opacity', '0');
+    } else {
+        // Population context rect: grows upward based on popIdx
+        const popFrac = POP_VALUES[state.popIdx] / 2048;
+        const popH = Math.min(1, popFrac) * SC_CTX_MAX_H;
+        scCtxRect.setAttribute('y', (SC_CTX_BOTTOM_Y - popH).toString());
+        scCtxRect.setAttribute('height', popH.toString());
+        const showPopLabel = popH >= 48 ? '1' : '0';
+        scCtxLabel.setAttribute('opacity', showPopLabel);
+        scCtxLabel2.setAttribute('opacity', showPopLabel);
+
+        // Causal prefix rect: grows rightward in the target area
+        const causalSamples = CAUSAL_VALUES[state.causalIdx];
+        const causalFrac = causalSamples / 30;  // 30 samples = full 1 s suffix
+        const causalW = causalFrac * SC_TARGET_W;
+        scCausalRect.setAttribute('x', SC_TARGET_X.toString());
+        scCausalRect.setAttribute('width', causalW.toString());
+        // Prediction target rect: stays anchored right, shrinks as causal grows
+        scTargetRect.setAttribute('x', (SC_TARGET_X + causalW).toString());
+        scTargetRect.setAttribute('width', (SC_TARGET_W - causalW).toString());
+        // Causal label visible only when prefix is wide enough
+        scCausalLabel.setAttribute('opacity', causalW >= 30 ? '1' : '0');
+        scCausalLabel.setAttribute('x', (SC_TARGET_X + 4).toString());
+    }
+
+    // Strategy name footer
+    const name = resolveStrategy();
+    scStrategy.textContent = name || '(empty mask)';
+}
+
+// ============================================================
+// Plot update
+// ============================================================
+const plotW = 720, plotH = 360;
+const plotM = { top: 20, right: 24, bottom: 46, left: 52 };
+const plotAreaW = plotW - plotM.left - plotM.right;
+const plotAreaH = plotH - plotM.top - plotM.bottom;
+
+function svgEl(tag, attrs) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    if (attrs) for (const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+}
+
+// Build a continuous ground-truth trace for a given channel.
+// For response: index = neuron row; for behavior: index = channel row.
+// Returns a time-indexed array covering the full video in the native rate.
+function buildGtTrace(modality, channel) {
+    const rate = modality === 'response' ? NEURAL_RATE : BEHAVIOR_RATE;
+    const suffixLen = modality === 'response' ? SUFFIX_NEURAL : SUFFIX_BEHAVIOR;
+    const gtByChunk = modality === 'response' ? gtResponseByChunk : gtBehaviorByChunk;
+    const nRows = modality === 'response' ? N_NEURONS : 5;
+    // Stride in this rate:
+    // Neural stride=3 @ 30 Hz -> start_k = 0.1k s -> sample index = 3k
+    // Behavior stride=2 @ 20 Hz -> start_k = 0.1k s -> sample index = 2k
+    const strideSamples = modality === 'response' ? 3 : 2;
+    // Total length: last chunk suffix ends at sample (suffixLen + strideSamples*(N_CHUNKS-1))
+    // Actually the suffix covers samples [rate + strideSamples*k .. rate + strideSamples*k + suffixLen - 1]
+    // because prefix is 1 s = rate samples. The first available GT sample is index `rate`
+    // (i.e., time 1.0 s). So the global sample index space runs from `rate` to
+    // `rate + strideSamples*(N_CHUNKS-1) + suffixLen - 1`.
+    const start = rate;
+    const end = rate + strideSamples * (N_CHUNKS - 1) + suffixLen - 1;
+    const trace = new Float32Array(end - start + 1);
+    trace.fill(NaN);
+    for (let k = 0; k < N_CHUNKS; k++) {
+        const arr = gtByChunk[k];
+        if (!arr) continue;
+        const base = rate + strideSamples * k;  // global sample index of first suffix sample
+        for (let t = 0; t < suffixLen; t++) {
+            const g = base + t - start;
+            if (g < 0 || g >= trace.length) continue;
+            if (Number.isNaN(trace[g])) {
+                trace[g] = arr[channel * suffixLen + t];
+            }
+        }
+    }
+    return { trace, start, rate, strideSamples, suffixLen };
+}
+
+let renderToken = 0;
+
+async function renderPlot() {
+    const myToken = ++renderToken;
+    const modality = state.modality;
+    const channel = state.channel;
+    const chunk = state.chunk;
+    const rate = modality === 'response' ? NEURAL_RATE : BEHAVIOR_RATE;
+    const suffixLen = modality === 'response' ? SUFFIX_NEURAL : SUFFIX_BEHAVIOR;
+    const boldColor = modality === 'response' ? '#E76F14' : '#8B5CF6';
+    const thinColor = modality === 'response' ? '#F7BE94' : '#CAB8F3';
+
+    const strategy = resolveStrategy();
+    const modAvailable = strategyValid(strategy) && modalityAvailableForStrategy(strategy, modality);
+
+    // Preload all predictions for the current strategy+modality so the thin
+    // "always-on" line is filled out across the 4 s display.
+    if (modAvailable) {
+        await loadStrategyAllChunks(strategy, modality);
+        if (myToken !== renderToken) return;
+    }
+
+    while (plotSvg.firstChild) plotSvg.removeChild(plotSvg.firstChild);
+
+    // Active chunk window in seconds: [0.1*chunk, 0.1*chunk + 2]
+    const windowStartSec = 0.1 * chunk;
+    const windowEndSec = windowStartSec + 2;
+    // Display 4 s around the chunk, clamped to the video range.
+    const videoLen = 0.1 * (N_CHUNKS - 1) + 2; // = 9.0 s
+    let displayStartSec = windowStartSec - 1;
+    let displayEndSec = windowEndSec + 1;
+    if (displayStartSec < 0) { displayStartSec = 0; displayEndSec = 4; }
+    if (displayEndSec > videoLen) { displayEndSec = videoLen; displayStartSec = videoLen - 4; }
+
+    const xScale = t => plotM.left + (t - displayStartSec) / (displayEndSec - displayStartSec) * plotAreaW;
+
+    const gt = buildGtTrace(modality, channel);
+    const pred = modAvailable ? buildPredTrace(strategy, modality, channel) : null;
+
+    // Fixed y-range per (strategy, modality, channel).
+    const { yMin, yMax } = getFixedYRange(modAvailable ? strategy : null, modality, channel);
+    const yScale = v => plotM.top + plotAreaH - (v - yMin) / (yMax - yMin) * plotAreaH;
+
+    // "Bold" prediction window: 1 s for response, 2 s for behavior (whole chunk).
+    const boldStartSec = modality === 'response' ? windowStartSec + 1 : windowStartSec;
+    const boldEndSec = windowEndSec;
+
+    const displayStartSample = Math.round(displayStartSec * rate);
+    const displayEndSample = Math.round(displayEndSec * rate);
+
+    // ---- Draw background for the 2 s chunk window ----
+    const chunkXstart = xScale(windowStartSec);
+    const chunkXend = xScale(windowEndSec);
+    plotSvg.appendChild(svgEl('rect', {
+        x: chunkXstart, y: plotM.top,
+        width: chunkXend - chunkXstart, height: plotAreaH,
+        fill: '#f6f6f6',
+    }));
+
+    // ---- Gridlines (horizontal) ----
+    const nYTicks = 4;
+    for (let i = 0; i <= nYTicks; i++) {
+        const v = yMin + (yMax - yMin) * i / nYTicks;
+        const y = yScale(v);
+        plotSvg.appendChild(svgEl('line', {
+            x1: plotM.left, x2: plotM.left + plotAreaW,
+            y1: y, y2: y,
+            stroke: '#eaeaea', 'stroke-width': 1,
+        }));
+        const t = svgEl('text', {
+            x: plotM.left - 8, y: y + 4,
+            'text-anchor': 'end',
+            'font-size': 10, fill: '#777',
+        });
+        t.textContent = v.toFixed(2);
+        plotSvg.appendChild(t);
+    }
+
+    // ---- X ticks: mark every 0.5 s ----
+    for (let sec = Math.ceil(displayStartSec * 2) / 2; sec <= displayEndSec + 1e-9; sec += 0.5) {
+        const x = xScale(sec);
+        plotSvg.appendChild(svgEl('line', {
+            x1: x, x2: x,
+            y1: plotM.top + plotAreaH, y2: plotM.top + plotAreaH + 4,
+            stroke: '#888', 'stroke-width': 1,
+        }));
+        const t = svgEl('text', {
+            x: x, y: plotM.top + plotAreaH + 16,
+            'text-anchor': 'middle',
+            'font-size': 10, fill: '#555',
+        });
+        t.textContent = sec.toFixed(1) + ' s';
+        plotSvg.appendChild(t);
+    }
+
+    // ---- Chunk boundary lines ----
+    plotSvg.appendChild(svgEl('line', {
+        x1: chunkXstart, x2: chunkXstart,
+        y1: plotM.top, y2: plotM.top + plotAreaH,
+        stroke: '#bbb', 'stroke-width': 1, 'stroke-dasharray': '3 4',
+    }));
+    plotSvg.appendChild(svgEl('line', {
+        x1: chunkXend, x2: chunkXend,
+        y1: plotM.top, y2: plotM.top + plotAreaH,
+        stroke: '#bbb', 'stroke-width': 1, 'stroke-dasharray': '3 4',
+    }));
+    // Prefix/suffix split within the chunk (prediction window starts 1 s into the chunk)
+    const predXstart = xScale(windowStartSec + 1);
+    plotSvg.appendChild(svgEl('line', {
+        x1: predXstart, x2: predXstart,
+        y1: plotM.top, y2: plotM.top + plotAreaH,
+        stroke: '#ccc', 'stroke-width': 1, 'stroke-dasharray': '2 3',
+    }));
+
+    function drawLine(points, color, width) {
+        if (points.length < 2) return;
+        let d = 'M' + points[0].x + ',' + points[0].y;
+        for (let i = 1; i < points.length; i++) d += ' L' + points[i].x + ',' + points[i].y;
+        plotSvg.appendChild(svgEl('path', {
+            d: d, fill: 'none', stroke: color,
+            'stroke-width': width,
+            'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        }));
+    }
+
+    // ---- Prediction trace: thin line everywhere, bold inside the active window ----
+    if (pred) {
+        // Thin, light-colored line across the whole display (segmented by NaN gaps).
+        const thinSegments = [];
+        let curSeg = [];
+        for (let sample = displayStartSample; sample <= displayEndSample; sample++) {
+            const idx = sample - pred.start;
+            const v = (idx >= 0 && idx < pred.trace.length) ? pred.trace[idx] : NaN;
+            if (!Number.isFinite(v)) {
+                if (curSeg.length > 1) thinSegments.push(curSeg);
+                curSeg = [];
+                continue;
+            }
+            curSeg.push({ x: xScale(sample / rate), y: yScale(v) });
+        }
+        if (curSeg.length > 1) thinSegments.push(curSeg);
+        thinSegments.forEach(seg => drawLine(seg, thinColor, 1.3));
+
+        // Bold overlay: the "active prediction" window
+        // (1 s for response — second half of the 2 s chunk; 2 s for behavior — whole chunk).
+        const boldPts = [];
+        const boldStartSample = Math.ceil(boldStartSec * rate - 1e-9);
+        const boldEndSample = Math.floor(boldEndSec * rate + 1e-9);
+        for (let sample = boldStartSample; sample <= boldEndSample; sample++) {
+            const idx = sample - pred.start;
+            if (idx < 0 || idx >= pred.trace.length) continue;
+            const v = pred.trace[idx];
+            if (!Number.isFinite(v)) continue;
+            boldPts.push({ x: xScale(sample / rate), y: yScale(v) });
+        }
+        drawLine(boldPts, boldColor, 2.4);
+        boldPts.forEach(p => {
+            plotSvg.appendChild(svgEl('circle', {
+                cx: p.x, cy: p.y, r: 2.2, fill: boldColor,
+            }));
+        });
+    }
+
+    // ---- GT trace: draw outside chunk as light gray, inside chunk as black ----
+    const ptsOutsideLeft = [];
+    const ptsInside = [];
+    const ptsOutsideRight = [];
+    for (let sample = displayStartSample; sample <= displayEndSample; sample++) {
+        const tSec = sample / rate;
+        const idx = sample - gt.start;
+        if (idx < 0 || idx >= gt.trace.length) continue;
+        const v = gt.trace[idx];
+        if (!Number.isFinite(v)) continue;
+        const point = { x: xScale(tSec), y: yScale(v) };
+        if (tSec < windowStartSec) ptsOutsideLeft.push(point);
+        else if (tSec > windowEndSec) ptsOutsideRight.push(point);
+        else ptsInside.push(point);
+    }
+    // Bridge points so segments look continuous at the boundaries.
+    if (ptsOutsideLeft.length && ptsInside.length) ptsInside.unshift(ptsOutsideLeft[ptsOutsideLeft.length - 1]);
+    if (ptsInside.length && ptsOutsideRight.length) ptsOutsideRight.unshift(ptsInside[ptsInside.length - 1]);
+
+    drawLine(ptsOutsideLeft, '#c9c9c9', 1.4);
+    drawLine(ptsOutsideRight, '#c9c9c9', 1.4);
+    drawLine(ptsInside, '#111', 2);
+
+    // ---- Legend ----
+    const legItems = [
+        { color: '#c9c9c9', label: 'Ground truth (context)' },
+        { color: '#111', label: 'Ground truth (2 s chunk)' },
+    ];
+    if (pred) {
+        legItems.push({ color: thinColor, label: 'Prediction (context)' });
+        const boldLabel = modality === 'response'
+            ? 'Prediction (1 s reconstructed)'
+            : 'Prediction (2 s reconstructed)';
+        legItems.push({ color: boldColor, label: boldLabel });
+    }
+    const legX = plotM.left + 10;
+    let legY = plotM.top + 10;
+    legItems.forEach(item => {
+        plotSvg.appendChild(svgEl('line', {
+            x1: legX, x2: legX + 18, y1: legY, y2: legY,
+            stroke: item.color, 'stroke-width': 2.5, 'stroke-linecap': 'round',
+        }));
+        const t = svgEl('text', {
+            x: legX + 24, y: legY + 3.5,
+            'font-size': 10.5, fill: '#333',
+        });
+        t.textContent = item.label;
+        plotSvg.appendChild(t);
+        legY += 14;
+    });
+
+    // ---- Chunk annotation (small text above chunk) ----
+    const annText = svgEl('text', {
+        x: (chunkXstart + chunkXend) / 2, y: plotM.top - 6,
+        'text-anchor': 'middle',
+        'font-size': 10, fill: '#555',
+    });
+    annText.textContent = `2 s model window (prefix → prediction)`;
+    plotSvg.appendChild(annText);
+
+    // ---- Status banner update ----
+    updateStatus(strategy, modality, modAvailable);
+}
+
+function updateStatus(strategy, modality, modAvailable) {
+    if (!strategy) {
+        statusBanner.className = 'status-banner info';
+        statusBanner.textContent = 'Empty mask (pop=0, causal=0): no response strategy defined — increase one slider.';
+        return;
+    }
+    if (!strategyValid(strategy)) {
+        statusBanner.className = 'status-banner';
+        statusBanner.textContent = `Configuration ${strategy} was not produced in the eval run.`;
+        return;
+    }
+    if (!modAvailable) {
+        const reason = modality === 'behavior' && state.behaviorOn
+            ? 'behavior is being used as input, so it is not reconstructed here.'
+            : 'this modality is not reconstructed for this configuration.';
+        statusBanner.className = 'status-banner info';
+        statusBanner.textContent = `Showing ground truth only — ${reason}`;
+        return;
+    }
+    statusBanner.className = 'status-banner info';
+    statusBanner.textContent = '';
+}
+
+// ============================================================
+// Control bindings
+// ============================================================
+function setChannelSlider() {
+    if (state.modality === 'response') {
+        sChannel.min = '0';
+        sChannel.max = String(N_NEURONS - 1);
+        if (state.channel >= N_NEURONS) state.channel = 0;
+    } else {
+        sChannel.min = '0';
+        sChannel.max = String(BEHAVIOR_CHANNELS.length - 1);
+        if (state.channel >= BEHAVIOR_CHANNELS.length) state.channel = 0;
+    }
+    sChannel.value = String(state.channel);
+    updateChannelLabel();
+}
+
+let neuronIds = null;
+async function loadNeuronIds() {
+    const r = await fetch(`${DATA_ROOT}/neuron_index.csv`);
+    const text = await r.text();
+    const ids = [];
+    const lines = text.split(/\r?\n/);
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line) continue;
+        const parts = line.split(',');
+        ids.push(parseInt(parts[1], 10));
+    }
+    neuronIds = ids;
+}
+
+function updateChannelLabel() {
+    if (state.modality === 'response') {
+        const id = neuronIds ? neuronIds[state.channel] : '?';
+        lblChannel.textContent = `Neuron ${state.channel + 1} · id ${id}`;
+    } else {
+        lblChannel.textContent = BEHAVIOR_CHANNELS[state.channel];
+    }
+}
+
+function updateChunkLabels() {
+    lblChunk.textContent = state.chunk;
+    const startSec = 0.1 * state.chunk;
+    const endSec = startSec + 2;
+    lblChunkTime.textContent = `window ${startSec.toFixed(1)}–${endSec.toFixed(1)} s`;
+}
+
+function updateAllNeuronsUi() {
+    // "All neurons" only makes sense when predicting behavior and behavior is NOT
+    // being used as input (i.e. behavior is the reconstructed modality).
+    const eligible = state.modality === 'behavior' && !state.behaviorOn;
+    tAllNeurons.classList.toggle('hidden', !eligible);
+    if (!eligible && state.allNeurons) state.allNeurons = false;
+    tAllNeurons.classList.toggle('on', state.allNeurons);
+    tAllNeurons.setAttribute('aria-pressed', state.allNeurons);
+    // When "all neurons" is active, the strategy is fixed to `all_response_*`
+    // — the causal-prefix and population-context sliders no longer apply.
+    const lockSliders = state.allNeurons;
+    causalGroup.classList.toggle('disabled', lockSliders);
+    popGroup.classList.toggle('disabled', lockSliders);
+}
+
+function refresh() {
+    updateAllNeuronsUi();
+    updateSchematic();
+    renderPlot();
+}
+
+tVideo.addEventListener('click', () => {
+    state.videoOn = !state.videoOn;
+    tVideo.classList.toggle('on', state.videoOn);
+    tVideo.setAttribute('aria-pressed', state.videoOn);
+    refresh();
+});
+tBehavior.addEventListener('click', () => {
+    state.behaviorOn = !state.behaviorOn;
+    tBehavior.classList.toggle('on', state.behaviorOn);
+    tBehavior.setAttribute('aria-pressed', state.behaviorOn);
+    refresh();
+});
+sCausal.addEventListener('input', () => {
+    state.causalIdx = parseInt(sCausal.value, 10);
+    lblCausal.textContent = CAUSAL_VALUES[state.causalIdx] + ' samples';
+    refresh();
+});
+sPop.addEventListener('input', () => {
+    state.popIdx = parseInt(sPop.value, 10);
+    lblPop.textContent = String(POP_VALUES[state.popIdx]);
+    refresh();
+});
+modSwitch.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        state.modality = btn.dataset.mod;
+        modSwitch.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+        setChannelSlider();
+        refresh();
+    });
+});
+tAllNeurons.addEventListener('click', () => {
+    state.allNeurons = !state.allNeurons;
+    refresh();
+});
+sChannel.addEventListener('input', () => {
+    state.channel = parseInt(sChannel.value, 10);
+    updateChannelLabel();
+    renderPlot();
+});
+sChunk.addEventListener('input', () => {
+    state.chunk = parseInt(sChunk.value, 10);
+    updateChunkLabels();
+    renderPlot();
+});
+
+// ============================================================
+// Boot
+// ============================================================
+(async function init() {
+    statusBanner.textContent = 'Loading data…';
+    statusBanner.className = 'status-banner info';
+    try {
+        await Promise.all([loadMeta(), preloadGroundTruth(), loadNeuronIds()]);
+    } catch (e) {
+        statusBanner.className = 'status-banner';
+        statusBanner.textContent = 'Failed to load data: ' + e.message;
+        return;
+    }
+    setChannelSlider();
+    updateChunkLabels();
+    lblCausal.textContent = CAUSAL_VALUES[state.causalIdx] + ' samples';
+    lblPop.textContent = String(POP_VALUES[state.popIdx]);
+    refresh();
+})();
+</script>
+</body>
+</html>
