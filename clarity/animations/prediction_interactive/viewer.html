@@ -31,11 +31,11 @@
     }
 
     .root {
-        padding: 42px 22px 18px;
+        padding: 56px 22px 20px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 32px;
         min-height: 100vh;
     }
 
@@ -45,8 +45,8 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 22px 32px;
-        padding: 10px 4px 16px;
+        gap: 30px 44px;
+        padding: 16px 4px 24px;
     }
     .controls .group-divider {
         width: 1px;
@@ -165,6 +165,12 @@
         background: var(--c-pred-beh);
         color: #fff;
     }
+    .mod-switch.view-switch button.active {
+        background: #333;
+        color: #fff;
+    }
+    .mod-switch.view-switch.hidden { display: none; }
+    .channel-row.hidden { display: none; }
 
     /* Figures row */
     .figures {
@@ -195,8 +201,9 @@
 
     /* Schematic transitions */
     #sc-beh-bar, #sc-vis-bar, #sc-beh-text, #sc-vis-text,
-    #sc-ctx-rect, #sc-ctx-label, #sc-ctx-label2,
-    #sc-causal-rect, #sc-target-rect, #sc-causal-label {
+    #sc-ctx-rect, #sc-ctx-label,
+    #sc-causal-rect, #sc-target-rect, #sc-target-label, #sc-target-label2,
+    #sc-causal-label, #sc-all-rect, #sc-all-label {
         transition: fill 0.22s ease, y 0.3s ease, height 0.3s ease,
                     x 0.3s ease, width 0.3s ease, opacity 0.25s ease;
     }
@@ -293,7 +300,7 @@
             <span class="dot"></span><span>Behavior</span>
         </button>
         <div class="slider-group">
-            <div class="label">Causal prefix: <b id="lbl-causal">25 samples</b></div>
+            <div class="label">Causal context: <b id="lbl-causal">25 samples</b></div>
             <input type="range" id="s-causal" min="0" max="4" step="1" value="4">
             <div class="tiny-ticks">
                 <span>0</span><span>10</span><span>15</span><span>20</span><span>25</span>
@@ -313,6 +320,10 @@
         <div class="mod-switch" id="mod-switch">
             <button type="button" class="response active" data-mod="response">Response</button>
             <button type="button" class="behavior" data-mod="behavior">Behavior</button>
+        </div>
+        <div class="mod-switch view-switch" id="view-switch">
+            <button type="button" class="active" data-view="single">Single neuron</button>
+            <button type="button" data-view="population">Population</button>
         </div>
     </div>
 
@@ -347,24 +358,28 @@
                 <!-- Divider at 1.0s -->
                 <line x1="183" y1="90" x2="183" y2="372" stroke="#777" stroke-width="1"/>
 
-                <!-- Prediction target (right upper). x/width change with causal prefix -->
-                <rect id="sc-target-rect" x="188" y="95" width="133" height="130" rx="10" fill="#F59E0B"/>
-                <text id="sc-target-label" x="254.5" y="155" text-anchor="middle"
+                <!-- Prediction target (right upper). Height shrinks as population context grows. -->
+                <rect id="sc-target-rect" x="188" y="95" width="133" height="272" rx="10" fill="#F59E0B"/>
+                <text id="sc-target-label" x="254.5" y="226" text-anchor="middle"
                       font-size="13" font-weight="600" fill="#2a1d00">Prediction</text>
-                <text id="sc-target-label2" x="254.5" y="173" text-anchor="middle"
+                <text id="sc-target-label2" x="254.5" y="244" text-anchor="middle"
                       font-size="13" font-weight="600" fill="#2a1d00">target</text>
 
-                <!-- Causal prefix strip (left edge of right half, grows with causal slider) -->
-                <rect id="sc-causal-rect" x="188" y="95" width="0" height="130" rx="6" fill="#FCD5A5"/>
-                <text id="sc-causal-label" x="188" y="245" text-anchor="start"
-                      font-size="10.5" font-style="italic" fill="#8a5a12" opacity="0">causal prefix</text>
+                <!-- Causal context strip (left half of population block, grows from midline leftward) -->
+                <rect id="sc-causal-rect" x="183" y="95" width="0" height="272" rx="6" fill="#FCD5A5"/>
+                <text id="sc-causal-label" x="0" y="0" text-anchor="middle"
+                      font-size="11.5" font-weight="600" fill="#8a5a12" opacity="0"
+                      transform="rotate(-90)">causal context</text>
 
-                <!-- Population context (right lower, dynamic height) -->
+                <!-- Population context (right lower, contiguous with target above) -->
                 <rect id="sc-ctx-rect" x="188" y="367" width="133" height="0" rx="10" fill="#FCD5A5"/>
-                <text id="sc-ctx-label" x="254.5" y="325" text-anchor="middle"
-                      font-size="13" font-weight="600" fill="#6b4a12" opacity="0">Population</text>
-                <text id="sc-ctx-label2" x="254.5" y="343" text-anchor="middle"
-                      font-size="13" font-weight="600" fill="#6b4a12" opacity="0">context</text>
+                <text id="sc-ctx-label" x="254.5" y="340" text-anchor="middle"
+                      font-size="12" font-weight="600" fill="#6b4a12" opacity="0">context = 0</text>
+
+                <!-- All-neurons fill (covers the whole population block when active) -->
+                <rect id="sc-all-rect" x="45" y="95" width="276" height="272" rx="10" fill="#FCD5A5" opacity="0"/>
+                <text id="sc-all-label" x="183" y="235" text-anchor="middle"
+                      font-size="14" font-weight="600" fill="#6b4a12" opacity="0">all neurons as context</text>
 
                 <!-- Time labels -->
                 <text x="40" y="392" text-anchor="middle" font-size="11" fill="#555">0.0 s</text>
@@ -591,6 +606,7 @@ const state = {
     channel: 0,        // 0-based channel/neuron index
     chunk: 0,
     allNeurons: false, // behavior-only: use all 35 neurons as context
+    view: 'single',    // 'single' or 'population' (response only)
 };
 
 function resolveStrategy() {
@@ -654,67 +670,142 @@ const scVisBar = document.getElementById('sc-vis-bar');
 const scVisText = document.getElementById('sc-vis-text');
 const scCtxRect = document.getElementById('sc-ctx-rect');
 const scCtxLabel = document.getElementById('sc-ctx-label');
-const scCtxLabel2 = document.getElementById('sc-ctx-label2');
 const scTargetRect = document.getElementById('sc-target-rect');
+const scTargetLabel = document.getElementById('sc-target-label');
+const scTargetLabel2 = document.getElementById('sc-target-label2');
 const scCausalRect = document.getElementById('sc-causal-rect');
 const scCausalLabel = document.getElementById('sc-causal-label');
+const scAllRect = document.getElementById('sc-all-rect');
+const scAllLabel = document.getElementById('sc-all-label');
 const scStrategy = document.getElementById('sc-strategy');
+
+const viewSwitch = document.getElementById('view-switch');
+const channelRow = document.querySelector('.channel-row');
 
 const plotSvg = document.querySelector('svg.plot');
 
 // ============================================================
 // Schematic update
 // ============================================================
-const SC_CTX_MAX_H = 136;         // max rect height from midline to bottom
-const SC_CTX_BOTTOM_Y = 367;
+const SC_BLOCK_TOP = 95;          // inner top of the neuronal population block
+const SC_BLOCK_BOT = 367;         // inner bottom
+const SC_BLOCK_H = SC_BLOCK_BOT - SC_BLOCK_TOP;  // 272
+const SC_LEFT_X = 45;             // inner left edge of the block
+const SC_RIGHT_X = 321;           // inner right edge
+const SC_MID_X = 183;             // 1 s divider x
+const SC_HALF_W = SC_MID_X - SC_LEFT_X;     // 138 (one second wide)
+const SC_SAMPLE_W = SC_HALF_W / 30;         // 1 sample at 30 Hz in px
+const SC_CAUSAL_GAP = 5 * SC_SAMPLE_W;      // causal strip ends 5 samples before 1 s
 const SC_TARGET_X = 188;
-const SC_TARGET_W = 133;
-const SC_TARGET_Y = 95;
-const SC_TARGET_H = 130;
+const SC_TARGET_W = SC_RIGHT_X - SC_TARGET_X;  // 133
+const SC_TARGET_H_FIXED = Math.round(SC_BLOCK_H / 4);  // prediction target = top quarter
+const SC_CTX_MAX_H = SC_BLOCK_H - SC_TARGET_H_FIXED - 8; // leave a small gap
+
+// Log-ish height mapping for population context so that pop=64 is already
+// tall enough to show the "context = 64" label.
+function popContextHeight(pop) {
+    if (pop <= 0) return 0;
+    // log2(64)=6 -> 72px, log2(256)=8 -> 120px, log2(1024)=10 -> 168px
+    const h = 72 + (Math.log2(pop) - 6) * 24;
+    return Math.max(0, Math.min(SC_CTX_MAX_H, h));
+}
 
 function updateSchematic() {
-    // Behavior toggle
-    scBehBar.setAttribute('fill', state.behaviorOn ? '#8B5CF6' : '#d8d8d8');
-    scBehText.setAttribute('fill', state.behaviorOn ? '#ffffff' : '#777');
+    // When the model is predicting behavior (and behavior isn't also being used
+    // as input), the behavior bar itself IS the prediction target.
+    const behaviorIsTarget = state.modality === 'behavior' && !state.behaviorOn;
+
+    // Behavior bar: input (purple), prediction target (amber), or off (gray).
+    if (state.behaviorOn) {
+        scBehBar.setAttribute('fill', '#8B5CF6');
+        scBehText.setAttribute('fill', '#ffffff');
+        scBehText.textContent = 'Behavior';
+    } else if (behaviorIsTarget) {
+        scBehBar.setAttribute('fill', '#CAB8F3');
+        scBehText.setAttribute('fill', '#3d2373');
+        scBehText.textContent = 'Prediction target';
+    } else {
+        scBehBar.setAttribute('fill', '#d8d8d8');
+        scBehText.setAttribute('fill', '#777');
+        scBehText.textContent = 'Behavior';
+    }
     // Visual stimulus toggle
     scVisBar.setAttribute('fill', state.videoOn ? '#2A9D8F' : '#d8d8d8');
     scVisText.setAttribute('fill', state.videoOn ? '#ffffff' : '#777');
 
     if (state.allNeurons) {
         // All 35 neurons are input context, nothing is reconstructed on the
-        // response side. Fill the whole right half with the context color and
-        // hide the causal prefix / prediction-target annotations.
-        scCtxRect.setAttribute('y', SC_TARGET_Y.toString());
-        scCtxRect.setAttribute('height', (SC_CTX_BOTTOM_Y - SC_TARGET_Y).toString());
-        scCtxLabel.setAttribute('opacity', '1');
-        scCtxLabel2.setAttribute('opacity', '1');
-        scTargetRect.setAttribute('x', SC_TARGET_X.toString());
+        // response side. Fill the *entire* population block (both halves) and
+        // hide the target / causal / population-context annotations.
+        scAllRect.setAttribute('opacity', '1');
+        scAllLabel.setAttribute('opacity', '1');
+
         scTargetRect.setAttribute('width', '0');
-        scCausalRect.setAttribute('x', SC_TARGET_X.toString());
+        scTargetLabel.setAttribute('opacity', '0');
+        scTargetLabel2.setAttribute('opacity', '0');
+
         scCausalRect.setAttribute('width', '0');
         scCausalLabel.setAttribute('opacity', '0');
-    } else {
-        // Population context rect: grows upward based on popIdx
-        const popFrac = POP_VALUES[state.popIdx] / 2048;
-        const popH = Math.min(1, popFrac) * SC_CTX_MAX_H;
-        scCtxRect.setAttribute('y', (SC_CTX_BOTTOM_Y - popH).toString());
-        scCtxRect.setAttribute('height', popH.toString());
-        const showPopLabel = popH >= 48 ? '1' : '0';
-        scCtxLabel.setAttribute('opacity', showPopLabel);
-        scCtxLabel2.setAttribute('opacity', showPopLabel);
 
-        // Causal prefix rect: grows rightward in the target area
+        scCtxRect.setAttribute('height', '0');
+        scCtxLabel.setAttribute('opacity', '0');
+    } else {
+        scAllRect.setAttribute('opacity', '0');
+        scAllLabel.setAttribute('opacity', '0');
+
+        // Population context rect (right half, grows from the bottom up).
+        // Prediction target rect sits above it and shrinks accordingly.
+        const pop = POP_VALUES[state.popIdx];
+        const ctxH = popContextHeight(pop);
+        const ctxY = SC_BLOCK_BOT - ctxH;
+        scCtxRect.setAttribute('x', SC_TARGET_X.toString());
+        scCtxRect.setAttribute('width', SC_TARGET_W.toString());
+        scCtxRect.setAttribute('y', ctxY.toString());
+        scCtxRect.setAttribute('height', ctxH.toString());
+        const showCtxLabel = ctxH >= 26 ? '1' : '0';
+        scCtxLabel.setAttribute('opacity', showCtxLabel);
+        scCtxLabel.setAttribute('y', (ctxY + 22).toString());
+        scCtxLabel.textContent = `context = ${pop}`;
+
+        // Prediction target: only shown when predicting responses — if behavior
+        // is the target, the behavior bar above stands in for it.
+        if (behaviorIsTarget) {
+            scTargetRect.setAttribute('width', '0');
+            scTargetLabel.setAttribute('opacity', '0');
+            scTargetLabel2.setAttribute('opacity', '0');
+        } else {
+            scTargetRect.setAttribute('x', SC_TARGET_X.toString());
+            scTargetRect.setAttribute('width', SC_TARGET_W.toString());
+            scTargetRect.setAttribute('y', SC_BLOCK_TOP.toString());
+            scTargetRect.setAttribute('height', SC_TARGET_H_FIXED.toString());
+            scTargetLabel.setAttribute('opacity', '1');
+            scTargetLabel2.setAttribute('opacity', '1');
+            const tMid = SC_BLOCK_TOP + SC_TARGET_H_FIXED / 2;
+            scTargetLabel.setAttribute('y', (tMid - 4).toString());
+            scTargetLabel2.setAttribute('y', (tMid + 14).toString());
+        }
+
+        // Causal context rect: sits in the LEFT half (0–1 s input window),
+        // grows leftward, but its right edge ends 5 samples before the 1 s
+        // divider (the last few samples of the input window aren't used).
         const causalSamples = CAUSAL_VALUES[state.causalIdx];
-        const causalFrac = causalSamples / 30;  // 30 samples = full 1 s suffix
-        const causalW = causalFrac * SC_TARGET_W;
-        scCausalRect.setAttribute('x', SC_TARGET_X.toString());
+        const causalW = (causalSamples / 30) * SC_HALF_W;
+        const causalRightX = SC_MID_X - SC_CAUSAL_GAP;
+        const causalX = causalRightX - causalW;
+        scCausalRect.setAttribute('x', causalX.toString());
         scCausalRect.setAttribute('width', causalW.toString());
-        // Prediction target rect: stays anchored right, shrinks as causal grows
-        scTargetRect.setAttribute('x', (SC_TARGET_X + causalW).toString());
-        scTargetRect.setAttribute('width', (SC_TARGET_W - causalW).toString());
-        // Causal label visible only when prefix is wide enough
-        scCausalLabel.setAttribute('opacity', causalW >= 30 ? '1' : '0');
-        scCausalLabel.setAttribute('x', (SC_TARGET_X + 4).toString());
+        scCausalRect.setAttribute('y', SC_BLOCK_TOP.toString());
+        scCausalRect.setAttribute('height', SC_BLOCK_H.toString());
+        // Vertical label, centered in the causal strip. Rotate around the anchor
+        // point so the text is centered on (lblCx, lblCy) with middle alignment.
+        const showCausalLabel = causalW >= 28 ? '1' : '0';
+        scCausalLabel.setAttribute('opacity', showCausalLabel);
+        const lblCx = causalX + causalW / 2;
+        const lblCy = SC_BLOCK_TOP + SC_BLOCK_H / 2;
+        scCausalLabel.setAttribute('transform',
+            `rotate(-90 ${lblCx} ${lblCy})`);
+        scCausalLabel.setAttribute('x', lblCx.toString());
+        scCausalLabel.setAttribute('y', lblCy.toString());
     }
 
     // Strategy name footer
@@ -774,16 +865,88 @@ function buildGtTrace(modality, channel) {
 
 let renderToken = 0;
 
+// ---- Pearson correlation helpers ----
+function pearsonCorr(a, b) {
+    const n = Math.min(a.length, b.length);
+    let sa = 0, sb = 0, saa = 0, sbb = 0, sab = 0, k = 0;
+    for (let i = 0; i < n; i++) {
+        const va = a[i], vb = b[i];
+        if (!Number.isFinite(va) || !Number.isFinite(vb)) continue;
+        sa += va; sb += vb;
+        saa += va * va; sbb += vb * vb;
+        sab += va * vb;
+        k++;
+    }
+    if (k < 2) return NaN;
+    const ma = sa / k, mb = sb / k;
+    const vAB = sab / k - ma * mb;
+    const vA = saa / k - ma * ma;
+    const vB = sbb / k - mb * mb;
+    const denom = Math.sqrt(Math.max(0, vA) * Math.max(0, vB));
+    return denom < 1e-12 ? NaN : vAB / denom;
+}
+function correlationSingle(strategy, modality, channel) {
+    if (!strategy) return NaN;
+    const pred = buildPredTrace(strategy, modality, channel);
+    const gt = buildGtTrace(modality, channel);
+    return pearsonCorr(gt.trace, pred.trace);
+}
+function correlationPopulation(strategy, modality) {
+    if (!strategy) return NaN;
+    const nRows = modality === 'response' ? N_NEURONS : 5;
+    let sum = 0, cnt = 0;
+    for (let i = 0; i < nRows; i++) {
+        const c = correlationSingle(strategy, modality, i);
+        if (Number.isFinite(c)) { sum += c; cnt++; }
+    }
+    return cnt > 0 ? sum / cnt : NaN;
+}
+
+function drawCorrBadge(x, y, corrValue, anchor, size) {
+    const fontSize = size || 14;
+    const g = svgEl('g', {});
+    if (Number.isFinite(corrValue)) {
+        const labelText = svgEl('text', {
+            x: x, y: y,
+            'text-anchor': anchor || 'end',
+            'font-size': fontSize, fill: '#333',
+        });
+        const lab = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        lab.textContent = 'corr = ';
+        labelText.appendChild(lab);
+        const num = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        num.setAttribute('font-weight', '700');
+        num.setAttribute('fill', '#000');
+        num.textContent = corrValue.toFixed(2);
+        labelText.appendChild(num);
+        g.appendChild(labelText);
+    } else {
+        const t = svgEl('text', {
+            x: x, y: y,
+            'text-anchor': anchor || 'end',
+            'font-size': fontSize, fill: '#999',
+        });
+        t.textContent = 'corr = –';
+        g.appendChild(t);
+    }
+    plotSvg.appendChild(g);
+}
+
+// ---- Small helpers shared by both views ----
+function chunkWindow(chunk) {
+    const windowStartSec = 0.1 * chunk;
+    const windowEndSec = windowStartSec + 2;
+    const videoLen = 0.1 * (N_CHUNKS - 1) + 2; // 9.0 s
+    let displayStartSec = windowStartSec - 1;
+    let displayEndSec = windowEndSec + 1;
+    if (displayStartSec < 0) { displayStartSec = 0; displayEndSec = 4; }
+    if (displayEndSec > videoLen) { displayEndSec = videoLen; displayStartSec = videoLen - 4; }
+    return { windowStartSec, windowEndSec, displayStartSec, displayEndSec };
+}
+
 async function renderPlot() {
     const myToken = ++renderToken;
     const modality = state.modality;
-    const channel = state.channel;
-    const chunk = state.chunk;
-    const rate = modality === 'response' ? NEURAL_RATE : BEHAVIOR_RATE;
-    const suffixLen = modality === 'response' ? SUFFIX_NEURAL : SUFFIX_BEHAVIOR;
-    const boldColor = modality === 'response' ? '#E76F14' : '#8B5CF6';
-    const thinColor = modality === 'response' ? '#F7BE94' : '#CAB8F3';
-
     const strategy = resolveStrategy();
     const modAvailable = strategyValid(strategy) && modalityAvailableForStrategy(strategy, modality);
 
@@ -795,27 +958,31 @@ async function renderPlot() {
     }
 
     while (plotSvg.firstChild) plotSvg.removeChild(plotSvg.firstChild);
+    updateStatus(strategy, modality, modAvailable);
 
-    // Active chunk window in seconds: [0.1*chunk, 0.1*chunk + 2]
-    const windowStartSec = 0.1 * chunk;
-    const windowEndSec = windowStartSec + 2;
-    // Display 4 s around the chunk, clamped to the video range.
-    const videoLen = 0.1 * (N_CHUNKS - 1) + 2; // = 9.0 s
-    let displayStartSec = windowStartSec - 1;
-    let displayEndSec = windowEndSec + 1;
-    if (displayStartSec < 0) { displayStartSec = 0; displayEndSec = 4; }
-    if (displayEndSec > videoLen) { displayEndSec = videoLen; displayStartSec = videoLen - 4; }
+    if (state.view === 'population' && modality === 'response') {
+        renderPopulationView(strategy, modAvailable);
+    } else {
+        renderSingleChannelView(strategy, modality, modAvailable);
+    }
+}
 
+function renderSingleChannelView(strategy, modality, modAvailable) {
+    const channel = state.channel;
+    const chunk = state.chunk;
+    const rate = modality === 'response' ? NEURAL_RATE : BEHAVIOR_RATE;
+    const boldColor = modality === 'response' ? '#E76F14' : '#8B5CF6';
+    const thinColor = modality === 'response' ? '#F7BE94' : '#CAB8F3';
+
+    const { windowStartSec, windowEndSec, displayStartSec, displayEndSec } = chunkWindow(chunk);
     const xScale = t => plotM.left + (t - displayStartSec) / (displayEndSec - displayStartSec) * plotAreaW;
 
     const gt = buildGtTrace(modality, channel);
     const pred = modAvailable ? buildPredTrace(strategy, modality, channel) : null;
 
-    // Fixed y-range per (strategy, modality, channel).
     const { yMin, yMax } = getFixedYRange(modAvailable ? strategy : null, modality, channel);
     const yScale = v => plotM.top + plotAreaH - (v - yMin) / (yMax - yMin) * plotAreaH;
 
-    // "Bold" prediction window: 1 s for response, 2 s for behavior (whole chunk).
     const boldStartSec = modality === 'response' ? windowStartSec + 1 : windowStartSec;
     const boldEndSec = windowEndSec;
 
@@ -995,8 +1162,188 @@ async function renderPlot() {
     annText.textContent = `2 s model window (prefix → prediction)`;
     plotSvg.appendChild(annText);
 
-    // ---- Status banner update ----
-    updateStatus(strategy, modality, modAvailable);
+    // ---- Correlation badge (top-right) ----
+    const corr = modAvailable ? correlationSingle(strategy, modality, channel) : NaN;
+    drawCorrBadge(plotM.left + plotAreaW - 4, plotM.top + 12, corr, 'end', 13);
+}
+
+function renderPopulationView(strategy, modAvailable) {
+    // Response-only: grid of 35 neurons × time, offset stagger.
+    const modality = 'response';
+    const rate = NEURAL_RATE;
+    const chunk = state.chunk;
+    const boldColor = '#E76F14';
+    const thinColor = '#F7BE94';
+    const gtColorOutside = '#c9c9c9';
+    const gtColorInside = '#111';
+
+    const { windowStartSec, windowEndSec, displayStartSec, displayEndSec } = chunkWindow(chunk);
+
+    // Neuron layout: bottom = neuron 0, top = neuron N-1.
+    // Upper neurons are shifted noticeably to the right (pseudo-perspective).
+    const leftMargin = plotM.left + 8;
+    const rightMargin = plotM.right + 110;       // room for the x-stagger
+    const topMargin = plotM.top + 4;
+    const bottomMargin = plotM.bottom;
+    const areaH = plotH - topMargin - bottomMargin;
+    const areaW = plotW - leftMargin - rightMargin;
+
+    const xStagger = 3.0;                         // px per neuron index
+    const yOffset = areaH / (N_NEURONS + 2);      // spacing between neuron baselines
+    const amp = 7 * yOffset;                      // visual range per neuron
+
+    const xScale = t => leftMargin + (t - displayStartSec) / (displayEndSec - displayStartSec)
+                        * (areaW - (N_NEURONS - 1) * xStagger);
+
+    const displayStartSample = Math.round(displayStartSec * rate);
+    const displayEndSample = Math.round(displayEndSec * rate);
+
+    // ---- X ticks (every 0.5 s) along the bottom ----
+    for (let sec = Math.ceil(displayStartSec * 2) / 2; sec <= displayEndSec + 1e-9; sec += 0.5) {
+        const x = xScale(sec);
+        plotSvg.appendChild(svgEl('line', {
+            x1: x, x2: x,
+            y1: topMargin + areaH, y2: topMargin + areaH + 4,
+            stroke: '#888', 'stroke-width': 1,
+        }));
+        const t = svgEl('text', {
+            x: x, y: topMargin + areaH + 16,
+            'text-anchor': 'middle',
+            'font-size': 10, fill: '#555',
+        });
+        t.textContent = sec.toFixed(1) + ' s';
+        plotSvg.appendChild(t);
+    }
+
+    function drawLine(points, color, width) {
+        if (points.length < 2) return;
+        let d = 'M' + points[0].x + ',' + points[0].y;
+        for (let i = 1; i < points.length; i++) d += ' L' + points[i].x + ',' + points[i].y;
+        plotSvg.appendChild(svgEl('path', {
+            d: d, fill: 'none', stroke: color,
+            'stroke-width': width,
+            'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        }));
+    }
+
+    // ---- Draw per-neuron traces, bottom to top so upper lines paint on top ----
+    for (let i = 0; i < N_NEURONS; i++) {
+        const baseY = topMargin + areaH - (i + 1) * yOffset;
+        const xShift = i * xStagger;
+        const { yMin, yMax } = getFixedYRange(modAvailable ? strategy : null, modality, i);
+        const mid = (yMax + yMin) / 2;
+        const range = Math.max(1e-9, yMax - yMin);
+        const yOf = v => baseY - (v - mid) / range * amp;
+
+        const gt = buildGtTrace(modality, i);
+        const pred = modAvailable ? buildPredTrace(strategy, modality, i) : null;
+
+        // Predictions (thin everywhere, bold inside chunk window).
+        if (pred) {
+            const thinSegs = [];
+            let cur = [];
+            for (let s = displayStartSample; s <= displayEndSample; s++) {
+                const idx = s - pred.start;
+                const v = (idx >= 0 && idx < pred.trace.length) ? pred.trace[idx] : NaN;
+                if (!Number.isFinite(v)) { if (cur.length > 1) thinSegs.push(cur); cur = []; continue; }
+                cur.push({ x: xScale(s / rate) + xShift, y: yOf(v) });
+            }
+            if (cur.length > 1) thinSegs.push(cur);
+            thinSegs.forEach(seg => drawLine(seg, thinColor, 1.0));
+
+            const boldPts = [];
+            const boldStartSec = windowStartSec + 1;
+            const boldStart = Math.ceil(boldStartSec * rate - 1e-9);
+            const boldEnd = Math.floor(windowEndSec * rate + 1e-9);
+            for (let s = boldStart; s <= boldEnd; s++) {
+                const idx = s - pred.start;
+                if (idx < 0 || idx >= pred.trace.length) continue;
+                const v = pred.trace[idx];
+                if (!Number.isFinite(v)) continue;
+                boldPts.push({ x: xScale(s / rate) + xShift, y: yOf(v) });
+            }
+            drawLine(boldPts, boldColor, 1.6);
+        }
+
+        // Ground truth (light outside, dark within the chunk).
+        const gtLeft = [], gtMid = [], gtRight = [];
+        for (let s = displayStartSample; s <= displayEndSample; s++) {
+            const tSec = s / rate;
+            const idx = s - gt.start;
+            if (idx < 0 || idx >= gt.trace.length) continue;
+            const v = gt.trace[idx];
+            if (!Number.isFinite(v)) continue;
+            const p = { x: xScale(tSec) + xShift, y: yOf(v) };
+            if (tSec < windowStartSec) gtLeft.push(p);
+            else if (tSec > windowEndSec) gtRight.push(p);
+            else gtMid.push(p);
+        }
+        if (gtLeft.length && gtMid.length) gtMid.unshift(gtLeft[gtLeft.length - 1]);
+        if (gtMid.length && gtRight.length) gtRight.unshift(gtMid[gtMid.length - 1]);
+        drawLine(gtLeft, gtColorOutside, 0.9);
+        drawLine(gtRight, gtColorOutside, 0.9);
+        drawLine(gtMid, gtColorInside, 1.1);
+    }
+
+    // ---- Angled "current time" indicator (dotted).
+    // Sits at the end of the prediction window (last reconstructed sample),
+    // and tilts because upper neurons are shifted right.
+    const cursorSec = windowEndSec;
+    const cursorX0 = xScale(cursorSec);
+    const cursorY0 = topMargin + areaH - yOffset;                     // neuron 0 baseline
+    const cursorX1 = xScale(cursorSec) + (N_NEURONS - 1) * xStagger;
+    const cursorY1 = topMargin + areaH - N_NEURONS * yOffset;          // neuron N-1 baseline
+    plotSvg.appendChild(svgEl('line', {
+        x1: cursorX0, y1: cursorY0 + yOffset * 0.4,
+        x2: cursorX1, y2: cursorY1 - yOffset * 0.4,
+        stroke: '#444', 'stroke-width': 1, 'stroke-dasharray': '3 3',
+    }));
+    const tCur = svgEl('text', {
+        x: cursorX1 + 4, y: cursorY1 - yOffset * 0.4 - 2,
+        'text-anchor': 'start',
+        'font-size': 10, fill: '#444',
+    });
+    tCur.textContent = `t = ${cursorSec.toFixed(1)} s`;
+    plotSvg.appendChild(tCur);
+
+    // ---- Y axis label ("neurons 1 → N, bottom → top") ----
+    const yLabel = svgEl('text', {
+        x: leftMargin - 36, y: topMargin + areaH / 2,
+        'text-anchor': 'middle',
+        'font-size': 10.5, fill: '#666',
+        transform: `rotate(-90 ${leftMargin - 36} ${topMargin + areaH / 2})`,
+    });
+    yLabel.textContent = 'neuron index (low → high)';
+    plotSvg.appendChild(yLabel);
+
+    // ---- Legend (top-left) ----
+    const legItems = [
+        { color: gtColorOutside, label: 'Ground truth (context)' },
+        { color: gtColorInside, label: 'Ground truth (chunk)' },
+    ];
+    if (modAvailable) {
+        legItems.push({ color: thinColor, label: 'Prediction (context)' });
+        legItems.push({ color: boldColor, label: 'Prediction (1 s reconstructed)' });
+    }
+    let legY = topMargin + 6;
+    const legX = leftMargin + 8;
+    legItems.forEach(item => {
+        plotSvg.appendChild(svgEl('line', {
+            x1: legX, x2: legX + 16, y1: legY, y2: legY,
+            stroke: item.color, 'stroke-width': 2.2, 'stroke-linecap': 'round',
+        }));
+        const t = svgEl('text', {
+            x: legX + 22, y: legY + 3.4,
+            'font-size': 10, fill: '#333',
+        });
+        t.textContent = item.label;
+        plotSvg.appendChild(t);
+        legY += 13;
+    });
+
+    // ---- Correlation badge (bottom-right, below the x-axis) ----
+    const corr = modAvailable ? correlationPopulation(strategy, modality) : NaN;
+    drawCorrBadge(plotW - 12, topMargin + areaH + 34, corr, 'end', 15);
 }
 
 function updateStatus(strategy, modality, modAvailable) {
@@ -1079,14 +1426,27 @@ function updateAllNeuronsUi() {
     tAllNeurons.classList.toggle('on', state.allNeurons);
     tAllNeurons.setAttribute('aria-pressed', state.allNeurons);
     // When "all neurons" is active, the strategy is fixed to `all_response_*`
-    // — the causal-prefix and population-context sliders no longer apply.
+    // — the causal-context and population-context sliders no longer apply.
     const lockSliders = state.allNeurons;
     causalGroup.classList.toggle('disabled', lockSliders);
     popGroup.classList.toggle('disabled', lockSliders);
 }
 
+function updateViewSwitchUi() {
+    // Population/single toggle is only relevant for response view.
+    const eligible = state.modality === 'response';
+    viewSwitch.classList.toggle('hidden', !eligible);
+    if (!eligible && state.view === 'population') state.view = 'single';
+    viewSwitch.querySelectorAll('button').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === state.view);
+    });
+    // Hide the channel row when viewing the whole population.
+    channelRow.classList.toggle('hidden', state.view === 'population');
+}
+
 function refresh() {
     updateAllNeuronsUi();
+    updateViewSwitchUi();
     updateSchematic();
     renderPlot();
 }
@@ -1124,6 +1484,12 @@ modSwitch.querySelectorAll('button').forEach(btn => {
 tAllNeurons.addEventListener('click', () => {
     state.allNeurons = !state.allNeurons;
     refresh();
+});
+viewSwitch.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        state.view = btn.dataset.view;
+        refresh();
+    });
 });
 sChannel.addEventListener('input', () => {
     state.channel = parseInt(sChannel.value, 10);
