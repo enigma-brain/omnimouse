@@ -230,7 +230,8 @@
         display: flex;
         flex-direction: column;
         gap: 3px;
-        padding: 4px 4px 0;
+        padding: 14px 4px 0;
+        margin-top: 6px;
     }
     .chunk-strip-top {
         display: flex;
@@ -618,15 +619,15 @@ function getFixedYRange(strategy, modality, channel) {
 // State
 // ============================================================
 const state = {
-    videoOn: true,
-    behaviorOn: true,
+    videoOn: false,
+    behaviorOn: false,
     causalIdx: 4,      // index into CAUSAL_VALUES (25 samples)
     popIdx: 3,         // index into POP_VALUES (1024)
     modality: 'response',
     channel: 0,        // 0-based channel/neuron index
     chunk: 0,
     allNeurons: false, // behavior-only: use all 35 neurons as context
-    view: 'single',    // 'single' or 'population' (response only)
+    view: 'population', // 'single' or 'population' (response only)
 };
 
 function resolveStrategy() {
@@ -1198,12 +1199,15 @@ function renderPopulationView(strategy, modAvailable) {
     const leftMargin = plotM.left + 8;
     const rightMargin = plotM.right + 110;       // room for the x-stagger
     const topMargin = plotM.top + 4;
-    const bottomMargin = plotM.bottom;
+    const bottomMargin = plotM.bottom + 14;      // extra room for the x-axis label
     const areaH = plotH - topMargin - bottomMargin;
     const areaW = plotW - leftMargin - rightMargin;
 
     const xStagger = 3.0;                         // px per neuron index
-    const yOffset = areaH / (N_NEURONS + 2);      // spacing between neuron baselines
+    // Fit the whole neuron stack inside areaH: total span = amp + (N-1)*yOffset ≤ areaH,
+    // with amp = 7*yOffset → yOffset ≤ areaH / (N + 6). Use N + 7 for a small top/bottom
+    // buffer so traces never overlap the x-axis at the bottom.
+    const yOffset = areaH / (N_NEURONS + 7);
     const amp = 7 * yOffset;                      // visual range per neuron
 
     const xScale = t => leftMargin + (t - displayStartSec) / (displayEndSec - displayStartSec)
@@ -1241,8 +1245,10 @@ function renderPopulationView(strategy, modAvailable) {
     }
 
     // ---- Draw per-neuron traces, bottom to top so upper lines paint on top ----
+    // Anchor neuron 0 so its lowest trace sample aligns with the x-axis line
+    // (topMargin + areaH), with each higher-index neuron stacked above.
     for (let i = 0; i < N_NEURONS; i++) {
-        const baseY = topMargin + areaH - (i + 1) * yOffset;
+        const baseY = topMargin + areaH - amp / 2 - i * yOffset;
         const xShift = i * xStagger;
         const { yMin, yMax } = getFixedYRange(modAvailable ? strategy : null, modality, i);
         const mid = (yMax + yMin) / 2;
@@ -1293,9 +1299,9 @@ function renderPopulationView(strategy, modAvailable) {
     // and tilts because upper neurons are shifted right.
     const cursorSec = windowEndSec;
     const cursorX0 = xScale(cursorSec);
-    const cursorY0 = topMargin + areaH - yOffset;                     // neuron 0 baseline
+    const cursorY0 = topMargin + areaH - amp / 2;                      // neuron 0 baseline
     const cursorX1 = xScale(cursorSec) + (N_NEURONS - 1) * xStagger;
-    const cursorY1 = topMargin + areaH - N_NEURONS * yOffset;          // neuron N-1 baseline
+    const cursorY1 = topMargin + areaH - amp / 2 - (N_NEURONS - 1) * yOffset; // neuron N-1 baseline
     plotSvg.appendChild(svgEl('line', {
         x1: cursorX0, y1: cursorY0 + yOffset * 0.4,
         x2: cursorX1, y2: cursorY1 - yOffset * 0.4,
@@ -1476,7 +1482,13 @@ sPop.addEventListener('input', () => {
 });
 modSwitch.querySelectorAll('button').forEach(btn => {
     btn.addEventListener('click', () => {
+        const prevModality = state.modality;
         state.modality = btn.dataset.mod;
+        if (state.modality !== prevModality) {
+            // Default to "Treadmill speed" (index 4) when switching to behavior.
+            if (state.modality === 'behavior') state.channel = BEHAVIOR_CHANNELS.length - 1;
+            else state.channel = 0;
+        }
         modSwitch.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
         setChannelSlider();
         refresh();

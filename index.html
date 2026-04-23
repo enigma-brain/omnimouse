@@ -83,7 +83,7 @@
     <div class="container blog main first" id="blog-main" style="background-color: #ffffff;">
         <h1>Data Explorer</h1>
         <p class="text">
-            OmniMouse is trained on one of the largest single-neuron datasets ever assembled: 2,282 imaging planes from 78 animals and 328 sessions, containing 3.1 million segmented neurons. Recordings are of excitatory neurons in visual cortex, acquired with wide-field two-photon calcium imaging at 6&ndash;14&nbsp;Hz in awake, head-fixed, behaving mice, with spiking activity extracted by CaImAn. The explorer below lets you browse the full collection. Filter by animal, session, or cortical depth, and switch between average images, correlation maps, and segmentation masks.
+            OmniMouse is trained on one of the largest single-neuron datasets ever assembled: 2,282 imaging planes from 78 animals and 328 sessions, containing 3.1 million segmented neurons, collected from the lab of <a href="https://toliaslab.org/">Prof. Andreas Tolias</a>. Recordings are of excitatory neurons in visual cortex, acquired with wide-field two-photon calcium imaging at 6&ndash;14&nbsp;Hz in awake, head-fixed, behaving mice. The explorer below lets you browse the full collection. Filter by animal, session, or cortical depth, and switch between average images, correlation maps, and segmentation masks.
         </p>
     </div>
 
@@ -128,8 +128,8 @@
         <p class="text">
             After tokenization, we process the multi-modal embeddings in three stages. (1) A cross-attention encoder with learned latent queries compresses unmasked neuronal and behavioral tokens into a fixed-length latent sequence, using local sliding-window attention with global register tokens to preserve long-range information flow. (2) A multi-modal fusion stack integrates these latents with Hiera video features through transformer layers that interleave sliding-window and global self-attention at a 5:1 ratio. (3) A shared cross-attention decoder reconstructs target neuronal responses and behavioral traces from the fused representation. All transformer layers use 1D-RoPE computed from each token's timestamp, encoding relative timing both within and across modalities.
         </p>
-        <p class="text">
-            We train with 119 structured masking configurations, including our core evaluation tasks (forecasting, population prediction, stimulus encoding, and behavioral decoding) as well as numerous systematic variations that reduce or combine context across modalities. The same model therefore handles all tasks without task-specific heads. At evaluation time we can also probe mask combinations the model has never seen, turning the viewer below into a small in-silico experiment.
+        <p class="text">turning the
+            We train with 119 structured masking configurations, including our core evaluation tasks (forecasting, population prediction, stimulus encoding, and behavioral decoding) as well as numerous systematic variations that reduce or combine context across modalities. The same model therefore handles all tasks without task-specific heads. At evaluation time we can also probe mask combinations the model has never seen.
         </p>
     </div>
 
@@ -180,7 +180,7 @@
                 loading="lazy"
                 title="OmniMouse interactive data and prediction viewer"></iframe>
         <p style="color: #666; font-size: 0.88em; line-height: 1.55; text-align: left; max-width: 960px; margin: 14px auto 0; font-style: italic; padding: 0 16px;">
-            <b>Figure 4. Interactive prediction viewer.</b> The schematic on the left reflects the current masking configuration: light-purple bars mark modalities used as input, orange marks the reconstruction target, and the hatched block represents the full neuronal population with its causal and population context regions. The plot on the right shows one 9-second clip for the selected neuron or behavior channel: gray traces are ground truth outside the active 2&nbsp;s window, black traces are ground truth inside it, and the bold orange/purple line is the OmniMouse prediction over the reconstructed window (1&nbsp;s for responses, 2&nbsp;s for behavior). The top-right badge reports the Pearson correlation of prediction against ground truth. Switch to the <i>Population</i> view on the response side to see all 35 target neurons stacked in a time-offset layout, or toggle <i>All neurons</i> when predicting behavior to use the full neuronal population as context. Every combination reruns against the stored OmniMouse-80M predictions, so you can see directly how stimulus, behavior, and population size each contribute to performance.
+            <b>Figure 4. Interactive prediction viewer.</b> The schematic on the left reflects the current masking configuration for neuronal responses, beahvior, and visual stimulus. For each masking configuration, the same neurons are the reconstruction target. The hatched block represents the full neuronal population with its causal and population context regions. The plot on the right shows one 9-second clip for the selected neuron or behavior channel: gray traces are ground truth outside the active 2&nbsp;s window, black traces are ground truth inside it, and the bold orange/purple line is the OmniMouse prediction over the reconstructed window (1&nbsp;s for responses, 2&nbsp;s for behavior). The bottom-right badge reports the Pearson correlation of prediction against ground truth. Switch to the <i>Population</i> view on the response side to see all 35 target neurons stacked in a time-offset layout, or toggle <i>All neurons</i> when predicting behavior to use the full neuronal population as context. Every combination reruns against the stored OmniMouse-80M predictions, so you can see directly how stimulus, behavior, and population size each contribute to performance.
         </p>
     </div>
 
@@ -420,17 +420,17 @@
             <div class="interactive-bar">
                 <span class="interactive-bar-label">(interactive demo)</span>
                 <div class="insilico-controls">
-                    <button type="button" class="insilico-toggle video-toggle" aria-pressed="false">
+                    <button type="button" class="insilico-toggle video-toggle on" aria-pressed="true">
                         <span class="toggle-dot"></span>
                         <span class="toggle-label">Video</span>
                     </button>
-                    <button type="button" class="insilico-toggle behavior-toggle" aria-pressed="false">
+                    <button type="button" class="insilico-toggle behavior-toggle on" aria-pressed="true">
                         <span class="toggle-dot"></span>
                         <span class="toggle-label">Behavior</span>
                     </button>
                     <div class="insilico-slider">
-                        <div class="insilico-slider-label">Neurons in context: <span class="insilico-slider-value">0</span></div>
-                        <input type="range" min="0" max="8" step="1" value="0" aria-label="Number of neurons in context">
+                        <div class="insilico-slider-label">Neurons in context: <span class="insilico-slider-value">2048</span></div>
+                        <input type="range" min="0" max="8" step="1" value="8" aria-label="Number of neurons in context">
                         <div class="insilico-slider-ticks">
                             <span>0</span><span>16</span><span>32</span><span>64</span><span>128</span><span>256</span><span>512</span><span>1024</span><span>2048</span>
                         </div>
@@ -923,6 +923,13 @@ url={https://openreview.net/forum?id=mEw4lhAn0F}
         videoBtn.addEventListener('click', function () { toggle(videoBtn); });
         behaviorBtn.addEventListener('click', function () { toggle(behaviorBtn); });
         slider.addEventListener('input', render);
+
+        // Default state: video on, behavior on, slider at the max (all neurons).
+        videoBtn.classList.add('on');
+        videoBtn.setAttribute('aria-pressed', 'true');
+        behaviorBtn.classList.add('on');
+        behaviorBtn.setAttribute('aria-pressed', 'true');
+        slider.value = String(xValues.length - 1);
 
         render();
     })();
