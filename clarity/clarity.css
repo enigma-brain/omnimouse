@@ -284,7 +284,7 @@ div.container.blog#first-content div.blog-title .blog-cover img.foreground,
 div.container.blog#first-content div.blog-title .blog-cover video.foreground {
   position: absolute;
   top: 5%;
-  left: 35%;
+  left: 40%;
   transform: translateX(-50%);
   height: 90%;
   width: auto;
