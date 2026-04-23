@@ -1,0 +1,40 @@
+name: ${COMPOSE_NAME:-${USER}-omnimouse}
+
+services:
+  omnimouse-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.new
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+        USERNAME: ${USERNAME}
+      secrets:
+        - github_token
+    user: "${USER_ID}:${GROUP_ID}"
+    image: ${IMAGE_NAME:-${USER}-omnimouse}:latest
+    container_name: ${CONTAINER_NAME:-${USER}-omnimouse}
+    command: sleep infinity
+    labels:
+      project: "omnimouse"
+      environment: "development"
+    ports:
+      - "${HOST_PORT:-10317}:8888"
+    volumes:
+      - .:/src/omnimouse
+      - omnimouse-venv:/src/omnimouse/.venv
+      - $SSH_AUTH_SOCK:/ssh-agent
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - SSH_AUTH_SOCK=/ssh-agent
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+    runtime: nvidia
+    shm_size: 1024g
+
+volumes:
+  omnimouse-venv:
+    name: ${USER}-omnimouse-venv
+
+secrets:
+  github_token:
+    environment: GITHUB_TOKEN

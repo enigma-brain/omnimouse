@@ -1,0 +1,74 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: experanto
+  - model: omnimouse
+  - trainer: default
+  - paths: default
+  - extras: default
+  - hydra: default
+  - evaluation: default
+  - distributed: default
+
+  # experiment configs allow for version control of specific hyperparameters
+  # e.g. best hyperparameters for given model and datamodule
+  - experiment: null
+
+  # config for hyperparameter optimization
+  - hparams_search: null
+
+  - eval_experiment: null
+
+  # optional local config for machine/user specific settings
+  # it's optional since it doesn't need to exist and is excluded from version control
+  - optional local: default
+
+  # debugging config (enable through command line, e.g. `python train.py debug=default)
+  - debug: null
+
+
+task_name: "eval"
+
+tags: ["eval"]
+# Enables additional tags to be passed from command line
+cli_tags: []
+
+seed: 42
+use_seed_per_rank: False
+fix_eval_rng_state: True
+
+# passing checkpoint path is necessary for evaluation
+ckpt_path: ???
+
+# Set strict loading to False to allow partial loading of checkpoint
+ckpt_loading:
+  strict: true
+  load_random_states: true
+  load_compile_cache: true
+  load_weights_only: false
+
+# TODO: Support loading from checkpoint config
+# # If checkpoint config is provided, it will be used to instantiate the model and dataset
+# ckpt_cfg: null
+
+# TODO: Find way to avoid specifying each attribute to override here with a separate parameter
+# If `True` and checkpoint config is provided, the sessions from the checkpoint config will
+# be overridden by the sessions passed to hydra.
+session_info: null
+
+eval_datasets:
+  - validation
+  - test
+
+
+# NOTE: Some loggers (e.g. WandB) have built in artifact linking to connect runs which
+#  use checkpoints with the previous runs that generated them. These parameters are a hack
+#  to manually track this linkage for loggers that don't support it. We require this for
+#  running evaluation.
+# Name of the previous experiment within which the checkpoint was produced
+linked_experiment_name: null
+# Name of the previous training run that produced the checkpoint
+linked_run_name: null
+
+all_neurons_override: true

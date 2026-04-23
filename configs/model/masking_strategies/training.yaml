@@ -1,0 +1,2102 @@
+# ==================== 60 response samples | O video samples ======================
+
+# ==================== Population masking | behavior encoded ======================
+
+# ================================== 1024 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 256 neurons ==================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 64 neurons ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================== Population masking | behavior reconstructed ====================
+
+# ================================== 4096 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 0
+  suffix_start_idx: 0
+  suffix_len: 0
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ================================== 1024 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# =================================== 256 neurons ==================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# =================================== 64 neurons ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ======================= Causal masking | behavior encoded ========================
+
+# =================================== 10 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 15 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 25 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================= Population + Causal masking | behavior encoded ===================
+
+# ============================== 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============== Inverse Population + Causal masking | behavior encoded ==============
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =========== Inverse Population + Causal masking | behavior reconstructed ===========
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================ 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================= 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ============================== 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 60
+  full_population_prefix_len: 25
+  response_context_start_idx: 0
+  max_response_context_samples: 60
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 0
+  behavior_encoded: false
+  behavior_reconstructed: true
+  weight: 1.0
+
+# ==================== 50 response samples | 1O video samples =====================
+
+# ==================== Population masking | behavior encoded ======================
+
+# ================================== 1024 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================== 256 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================== 64 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ====================== Causal masking | behavior encoded =======================
+
+# ================================== 5 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================= 15 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================= 25 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================= Population + Causal masking | behavior encoded ====================
+
+# ============================== 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============== Inverse Population + Causal masking | behavior encoded ==============
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples ==============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 45
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 50
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 50
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 50
+  n_visible_frames: 10
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ==================== 40 response samples | 2O video samples =====================
+
+# ==================== Population masking | behavior encoded ======================
+
+# ================================== 1024 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 20
+  prefix_len: 40
+  full_population_prefix_len: 0
+  response_context_start_idx: 20
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================== 256 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 20
+  prefix_len: 40
+  full_population_prefix_len: 0
+  response_context_start_idx: 20
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================== 64 neurons =================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 20
+  prefix_len: 40
+  full_population_prefix_len: 0
+  response_context_start_idx: 20
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ====================== Causal masking | behavior encoded =======================
+
+# ================================== 10 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================= 15 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================================= 25 samples ===================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================= Population + Causal masking | behavior encoded ====================
+
+# ============================== 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================== 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============== Inverse Population + Causal masking | behavior encoded ==============
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 35
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 40
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 35
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 40
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 35
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 40
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 40
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 40
+  n_visible_frames: 20
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ==================== 30 response samples | 30 video samples =====================
+
+# ====================== Population masking | behavior encoded ========================
+
+# =================================== 1024 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 30
+  prefix_len: 30
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 256 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 30
+  prefix_len: 30
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 64 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 30
+  prefix_len: 30
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ====================== Causal masking | behavior encoded ========================
+
+# =================================== 10 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 15 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 25 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================== Population + Causal masking | behavior encoded ==================
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 25 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 0
+  prefix_len: 25
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =============== Inverse Population + Causal masking | behavior encoded ===============
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 25
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 30
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 25
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 30
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 25
+  full_population_prefix_len: 10
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 30
+  full_population_prefix_len: 15
+  response_context_start_idx: 10
+  max_response_context_samples: 30
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 30
+  n_visible_frames: 30
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ==================== 20 response samples | 40 video samples =====================
+
+# ====================== Population masking | behavior encoded ========================
+
+# =================================== 1024 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 30
+  prefix_len: 20
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 256 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 30
+  prefix_len: 20
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 64 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 30
+  prefix_len: 20
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ====================== Causal masking | behavior encoded ========================
+
+# =================================== 10 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 15 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================== Population + Causal masking | behavior encoded ==================
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 1024 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 15
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 15 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 15
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 20
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 20
+  n_visible_frames: 40
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# # NOTE: Only difference from pop-causal is last 5 samples before suffix
+# # =============== Inverse Population + Causal masking | behavior encoded ==============
+
+# ==================== 10 response samples | 50 video samples =====================
+
+# ====================== Population masking | behavior encoded ========================
+
+# =================================== 1024 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 30
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 256 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 30
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# =================================== 64 neurons ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 30
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 30
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ====================== Causal masking | behavior encoded ========================
+
+# =================================== 10 samples ====================================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 4096
+  prefix_start_idx: 10
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ================== Population + Causal masking | behavior encoded ==================
+
+# ============================= 1024 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 1024
+  prefix_start_idx: 10
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 256 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 256
+  prefix_start_idx: 10
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ============================= 64 neurons + 10 samples =============================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 64
+  prefix_start_idx: 10
+  prefix_len: 10
+  full_population_prefix_len: 0
+  response_context_start_idx: 10
+  max_response_context_samples: 10
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 10
+  n_visible_frames: 50
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ==================== 0 response samples | 60 video samples | +behavior =====================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 0
+  prefix_start_idx: 0
+  prefix_len: 0
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 0
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 60
+  behavior_encoded: true
+  behavior_reconstructed: false
+  weight: 1.0
+
+# ==================== 0 response samples | 60 video samples | NO behavior =====================
+- _target_: omnimouse.masking.MaskingStrategy
+  n_visible_neurons: 0
+  prefix_start_idx: 0
+  prefix_len: 0
+  full_population_prefix_len: 0
+  response_context_start_idx: 0
+  max_response_context_samples: 0
+  max_n_reconstructed_neurons: 3072
+  suffix_start_idx: 30
+  suffix_len: 30
+  n_visible_frames_start_idx: 0
+  n_visible_frames: 60
+  behavior_encoded: false
+  behavior_reconstructed: false
+  weight: 1.0

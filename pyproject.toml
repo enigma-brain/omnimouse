@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omnimouse"
+version = "0.1.0"
+description = "Multi-modal, multi-task modeling of the mouse visual cortex"
+requires-python = ">=3.12"
+dependencies = [
+    "cvxpy>=1.5.2",
+    "debugpy>=1.8.17",
+    "einops>=0.8.0",
+    "experanto",
+    "huggingface-hub>=1.11.0",
+    "hydra-colorlog==1.2.0",
+    "hydra-core==1.3.2",
+    "hydra-optuna-sweeper==1.2.0",
+    "ipykernel>=7.0.1",
+    "ipywidgets>=8.1.5",
+    "jaxtyping>=0.2.30",
+    "jupyter>=1.1.1",
+    "liger-kernel>=0.3.1",
+    "lightning-thunder>=0.2.3",
+    "lightning[pytorch-extra]>=2.3.0",
+    "mlflow>=2.17.1",
+    "numpy==1.26.4",
+    "nvidia-ml-py>=13.580.82",
+    "opencv-python==4.8.0.74",
+    "optree>=0.13.0",
+    "pandas>=2.2.3",
+    "plotly>=5.22.0",
+    "psutil>=7.1.0",
+    "random-word>=1.0.11",
+    "rootutils>=1.0.7",
+    "scikit-learn>=1.5.1",
+    "scipy>=1.13.1",
+    "torchmetrics==1.7.0",
+    "torchtnt==0.2.4",
+    "torchvision>=0.24.0",
+    "torchviz>=0.0.2",
+    "wandb>=0.17.0",
+]
+
+[project.scripts]
+train = "omnimouse.main:train"
+eval = "omnimouse.main:eval"
+
+[tool.setuptools.packages.find]
+include = ["omnimouse*", "hydra_plugins*"]
+
+[tool.uv.sources]
+experanto = { git = "https://github.com/sensorium-competition/experanto.git", rev = "foundation_model" }

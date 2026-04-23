@@ -1,0 +1,29 @@
+# @package _global_
+
+defaults:
+  - /experiment/omnimouse_80M
+  - _self_
+
+finetuning: true
+seed: ??? # must specify from cli (to enable ensembling multiple seeds)
+
+paths:
+  run_name: sensorium_probe_80M_seed0
+  experiment_name: omnimouse_probe
+
+data:
+  dataset_collection: "sensorium_2023_test_set"
+  pretraining_datasets: "scaling_laws_pretraining"
+  validation_datasets: "sensorium_2023_test_set"
+  train_dataset:
+    shuffle_train_val_split: true
+    validation_fraction: 0.05
+  validation_dataset:
+    shuffle_train_val_split: true
+    validation_fraction: 0.05
+    modality_config:
+      screen:
+        sample_stride: 30
+
+trainer:
+  val_every_n_steps: 5000

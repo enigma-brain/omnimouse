@@ -1,0 +1,5 @@
+defaults:
+  # Load "validation" strategies to apply on train and validation splits during val step
+  - masking_strategies@train_masking_strategies: validation
+  - masking_strategies@validation_masking_strategies: validation
+  - _self_

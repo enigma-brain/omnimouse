@@ -1,0 +1,8 @@
+backend: "nccl"
+datasets_per_rank: 4
+sync_epochs: True
+max_val_sessions_per_rank: null
+init_sleep_time_per_rank: 2
+compile_sleep_time_per_rank: 2
+build_val_dataloader: True
+gradient_bucket_size_mb: 64

@@ -1,0 +1,89 @@
+{
+  "name": "${localEnv:USER}-omnimouse",
+  "dockerComposeFile": "../docker-compose.new.yaml",
+  "service": "omnimouse-dev",
+  "runServices": ["omnimouse-dev"],
+  "workspaceFolder": "/src/omnimouse",
+
+  // Persist command history and Claude config across container rebuilds
+  "mounts": [
+    "source=omnimouse-bash-history-${localEnv:USER},target=/home/${localEnv:USER}/.commandhistory,type=volume",
+    "source=omnimouse-claude-${localEnv:USER},target=/home/${localEnv:USER}/.claude,type=volume"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-python.debugpy",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "ms-toolsai.jupyter-renderers",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/src/omnimouse/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          }
+        },
+        "[json]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[yaml]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "ruff.nativeServer": "on",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.autoImportCompletions": true,
+        "editor.formatOnSave": true,
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/*.pyc": true,
+          "**/.pytest_cache": true
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          },
+          "zsh": {
+            "path": "zsh",
+            "icon": "terminal"
+          }
+        },
+        "terminal.integrated.env.linux": {
+          "SSH_AUTH_SOCK": "/ssh-agent"
+        }
+      }
+    }
+  },
+
+  // Environment variables for the container
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent",
+    "NVIDIA_DRIVER_CAPABILITIES": "compute,utility,video",
+    "HISTFILE": "/home/${localEnv:USER}/.commandhistory/.bash_history",
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true"
+  },
+
+  // Don't override the command from docker-compose
+  "overrideCommand": false,
+  "remoteUser": "${localEnv:USER}",
+  "postCreateCommand": "echo 'Devcontainer ready!'"
+}

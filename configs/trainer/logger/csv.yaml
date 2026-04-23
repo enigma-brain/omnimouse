@@ -1,0 +1,5 @@
+_target_: lightning.pytorch.loggers.csv_logs.CSVLogger
+name: csv_metrics
+version: null
+save_dir: "${paths.output_dir}"
+flush_logs_every_n_steps: 1000

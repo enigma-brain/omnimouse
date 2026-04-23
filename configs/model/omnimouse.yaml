@@ -1,0 +1,88 @@
+defaults:
+  - _self_
+
+_target_: omnimouse.modeling.model.OmniMouseArgs
+model_tags: ["omnimouse",]
+max_population_size: 4096
+num_samples_per_s: 30
+num_samples_per_block: 60
+skip_n_samples: 5
+interpolation_buffer: 5
+d_embedding: 256
+d_model: 256
+per_modality_decoders: false
+always_use_animal_embeddings: true
+add_meta_to_embeddings: true
+add_meta_to_latents: true
+add_meta_to_video_feats: false
+add_exp_time_embedding: false
+response_window_size_samples: 10
+response_stride_samples: 5
+response_query_lookback_samples: 0
+response_query_lookahead_samples: null
+num_response_latent_groups: 640
+response_latent_window_size_samples: 10
+response_latent_window_stride_samples: 10
+response_poisson_loss_eps: 1e-5
+num_global_latents: 256
+rope_use_radians: true
+rope_base: null
+rotate_values: false
+num_heads: 2
+num_kv_heads: null
+num_blocks: 1
+num_self_attends_per_block: 6
+ffn_hidden_mult: 2.67
+decoder_ffn_hidden_mult: 4
+ffn_activation: 'silu'
+norm_type: 'rms'
+use_pre_norm: true
+use_qk_norm: true
+use_post_norm: false
+norm_eps: 1.e-5
+drop_path_rate: 0.0
+drop_path_depth_decay: true
+local_to_global_ratio: [5, 1]
+local_global_layout: 'interleaved'
+use_global_nope: false
+response_output_activation:
+  _target_: torch.nn.Softplus
+  beta: 1.e-1
+response_criteria: null
+response_loss_clamp_value: 100.
+init_std: null
+init_depth_scaling: null
+response_proj_init_std: 0.02 # NOTE: This is to maintain legacy behavior. Takes precedence over `init_std`
+behavior_as_channels: false
+num_frames_per_s: 30
+num_frames_per_block: ${convert_samples_to_frames:${.num_samples_per_s},${.num_samples_per_block},${.num_frames_per_s}}
+# TODO: These should be set by the data loader
+video_channels: 1
+behavior_channels: 5
+num_behavior_samples_per_s: 20
+num_behavior_samples_per_block: ${convert_samples_to_frames:${.num_samples_per_s},${.num_samples_per_block},${.num_behavior_samples_per_s}}
+behavior_output_activation: null
+behavior_criteria: null
+behavior_loss_clamp_value: 10.0
+behavior_loss_factor: 1.e-1
+per_channel_behavior_readout: true
+decode_behavior: true
+hiera_num_heads: 2
+hiera_embed_dim: 128
+hiera_stages: [2, 8]
+hiera_q_pool: 1
+hiera_q_stride: [1, 2, 2]
+hiera_mask_unit_size: [1, 8, 8]
+hiera_patch_kernel: [6, 7, 7]
+hiera_patch_stride: [2, 2, 2]
+hiera_patch_padding: [2, 1, 3]
+hiera_sep_pos_embed: true
+hiera_drop_path_rate: 0.25
+hiera_mlp_ratio: 2.67
+flex_attn_block_size: 128
+flex_attention_compile_config:
+  fullgraph: false
+  dynamic: false
+  mode: null
+masking_strategies: ???
+enable_fallback_sensorium_behavior: false

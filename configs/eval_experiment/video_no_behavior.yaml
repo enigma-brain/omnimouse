@@ -1,0 +1,70 @@
+# @package _global_
+
+defaults:
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_masking_strategies: video_behavior_investigation
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test_1: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_1_masking_strategies: video_behavior_investigation
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test_2: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_2_masking_strategies: video_behavior_investigation
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test_3: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_3_masking_strategies: video_behavior_investigation
+  - _self_
+
+
+# Clear the default (legacy) masking strategies
+evaluation:
+  validation_masking_strategies: null
+  test_masking_strategies: null
+
+data:
+  # Clear the default (legacy) dataset configs
+  validation_datasets: null
+  validation_dataset: null
+  test_datasets: null
+  test_dataset: null
+  # Set the dataset collection to use for evaluation (and minimize train loader time)
+  dataset_collection: foundation_evaluation_7
+  # Add new dataset configs in `addition_validation_dataset` dictionaries (see `omnimouse.tasks.task_utils.setup_common`)
+  additional_validation_dataset_sets:
+    final_test: foundation_evaluation_7
+    final_test_1: foundation_evaluation_7
+    final_test_2: foundation_evaluation_7
+    final_test_3: foundation_evaluation_7
+  additional_validation_dataset_cfgs:
+    final_test:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test
+    final_test_1:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test_1
+    final_test_2:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test_2
+    final_test_3:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test_3
+
+all_neurons_override: true
+
+eval_datasets:
+  - final_test
+  - final_test_1
+  - final_test_2
+  - final_test_3

@@ -1,0 +1,2 @@
+# Empty config for no masking strategy, i.e. everything visible
+_target_: omnimouse.masking.MaskingStrategy

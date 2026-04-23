@@ -1,0 +1,12 @@
+# https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.ModelCheckpoint.html
+_target_: omnimouse.utils.model_checkpoint.ModelCheckpoint
+dirpath: ${paths.output_dir}/checkpoints # directory to save the model file
+checkpoint_dirname: "epoch{epoch}-step{step}" # checkpoint filename
+monitor: null # name of the logged metric which determines when model is improving
+verbose: false # verbosity mode
+save_last: true # additionally always save an exact copy of the last checkpoint to a file last.ckpt
+save_top_k: -1 # save k best models (determined by above metric)
+save_weights_only: False # if True, then only the model’s weights will be saved
+mode: "max" # "max" means higher metric value is better, can be also "min"
+random_state_saving_enabled: true # whether to save random states
+compile_cache_saving_enabled: false # whether to save PyTorch compile cache artifacts

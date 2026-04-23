@@ -1,0 +1,90 @@
+defaults:
+  - checkpointer: model_checkpoint
+  - logger: mlflow
+  - optimizer: adamw
+  - _self_
+
+# Rank-specific overrides (null = use same value as global config)
+rank_lr: 3e-3             # Set to 1e-3 to override
+rank_weight_decay: 0.001  # Set to 1e-4 to override
+rank_betas: null          # Set to [0.95, 0.99] to override
+rank_eps: null            # Set to 1.e-6 to override
+
+# End at whichever comes first:
+max_epochs: 6
+max_steps: null
+
+# Should correspond to `torch.device`
+accelerator: cuda
+
+# update the progress bar every `n` training steps
+pbar_enabled: true
+pbar_every_n_steps: 1
+# log metrics every `n` training steps
+log_every_n_steps: 500
+# perform a validation loop every `interval` training steps
+val_every_n_steps: 20000
+# perform a validation loop at the end of every `n` training epochs
+val_every_n_epochs: 5
+# save checkpoint every `n` training steps
+ckpt_every_n_steps: 5000
+# save checkpoint every `n` training epochs
+ckpt_every_n_epochs: 1
+# sync parameters every `n` training steps to prevent divergence
+sync_params_every_n_steps: null
+# sync optimizers every `n` training steps
+sync_optimizers_every_n_steps: null
+# calculate divergence every `n` training steps
+calc_divergence_every_n_steps: null
+# divergence threshold/mode for logging
+divergence_threshold: 1e-8
+divergence_mode: max
+
+# log task every `n` training steps
+log_task_every_n_steps: null
+
+# set True to to ensure deterministic results
+# makes training slower but gives more reproducibility
+#  than just setting seeds
+deterministic: null
+benchmark: null
+
+# gradient clipping
+gradient_clip_val: 1.
+gradient_clip_algorithm: norm
+
+# gradient accumulation settings
+gradient_accumulation_steps: 1  # Number of microbatches to accumulate before optimizer step
+global_batch_size: -1  # If > 0, automatically calculate accumulation steps from global_batch_size / (local_batch_size * world_size)
+
+# whether to enable automatic mixed precision (i.e. bfloat16),
+#  and appropriate gradient scaling
+amp: true
+grad_scaling: false
+
+# whether to compile the model
+compile:
+  enabled: true
+  dynamo_cache_size_limit: 4096
+  accumulated_cache_size_limit: 4096
+  fullgraph: false
+  dynamic: false
+  mode: null # "max-autotune-no-cudagraphs"
+  triton_cudagraphs: False
+  shape_padding: False
+  memory_planning: False
+  memory_pool: "combined"
+  b2b_gemm_pass: False
+  coordinate_descent_tuning: true
+  prologue_fusion: true
+  epilogue_fusion: true
+  max_autotune: true
+
+
+enable_cudnn_sdp: True
+
+# scheduler settings
+scheduler_warmup_steps: 20000
+eta_min: 5e-5
+warmup_start_lr: 1e-7
+disable_cosine_annealing: true

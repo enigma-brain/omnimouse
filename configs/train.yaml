@@ -1,0 +1,74 @@
+# @package _global_
+
+# specify here default configuration
+# order of defaults determines the order in which configs override each other
+defaults:
+  - _self_
+  - data: experanto
+  - model: omnimouse
+  - trainer: default
+  - paths: default
+  - extras: default
+  - hydra: default
+  - evaluation: default
+  - distributed: default
+
+  # experiment configs allow for version control of specific hyperparameters
+  # e.g. best hyperparameters for given model and datamodule
+  - experiment: null
+
+  # config for hyperparameter optimization
+  - hparams_search: null
+
+  # optional local config for machine/user specific settings
+  # it's optional since it doesn't need to exist and is excluded from version control
+  - optional local: default
+
+  # debugging config (enable through command line, e.g. `python train.py debug=default)
+  - debug: null
+
+# task name, determines output directory path
+task_name: "train"
+
+# tags to help you identify your experiments
+# you can overwrite this in experiment configs
+# overwrite from command line with `python train.py tags="[first_tag, second_tag]"`
+tags: ["dev"]
+
+# Enables additional tags to be passed from command line
+cli_tags: []
+
+# evaluate on test set, using best model weights achieved during training
+# lightning chooses best weights based on the metric specified in checkpoint callback
+test: False
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: 42
+use_seed_per_rank: False
+fix_eval_rng_state: True
+
+# simply provide checkpoint path to resume training
+ckpt_path: null
+
+# Set strict loading to False to allow partial loading of checkpoint
+resume_training: null
+finetuning: null
+ckpt_loading:
+  strict: true
+  load_random_states: true
+  load_compile_cache: true
+  load_weights_only: false
+freeze_core: null
+# Set to a final step number, and linearly decaying schedulers will replace checkpoint's existing schedulers
+lr_linear_decay_until_step: null
+lr_linear_decay_poly_power: 1.0
+
+# NOTE: Some loggers (e.g. WandB) have built in artifact linking to connect runs which
+#  use checkpoints with the previous runs that generated them. These parameters are a hack
+#  to manually track this linkage for loggers that don't support it.
+# Name of the previous experiment within which the checkpoint was produced
+linked_experiment_name: null
+# Name of the previous training run that produced the checkpoint
+linked_run_name: null
+
+all_neurons_override: false

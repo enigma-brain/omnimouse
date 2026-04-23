@@ -1,0 +1,9 @@
+_target_: torch.optim.Adam
+_partial_: True
+lr: 7.e-4
+betas:
+  - 0.95
+  - 0.999
+eps: 1.e-8
+weight_decay: 0.
+fused: null 

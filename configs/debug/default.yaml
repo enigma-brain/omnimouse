@@ -1,0 +1,49 @@
+# @package _global_
+
+# default debugging setup, runs 1 full epoch
+# other debugging configs can inherit from this one
+
+# overwrite task name so debugging logs are stored in separate folder
+task_name: "debug"
+
+tags:
+  - debug
+
+# disable callbacks and loggers during debugging
+# callbacks: null
+# logger: null
+
+extras:
+  ignore_warnings: False
+  enforce_tags: False
+
+# sets level of all command line loggers to 'DEBUG'
+# https://hydra.cc/docs/tutorials/basic/running_your_app/logging/
+hydra:
+  job_logging:
+    root:
+      level: DEBUG
+
+  # use this to also set hydra loggers to 'DEBUG'
+  # verbose: True
+
+trainer:
+  max_epochs: 1
+  limit_train_batches: 1  # use only 1% of the training data and 5% of validation/test data
+  limit_val_batches: 1
+  # limit_test_batches: 0.05
+  overfit_batches: 1  # limit to only 3 batches from training set
+  log_every_n_steps: 1
+  check_val_every_n_epoch: 15
+  # accelerator: cpu # debuggers don't like gpus
+  devices: 1 # debuggers don't like multiprocessing
+  detect_anomaly: true # raise exception if NaN or +/-inf is detected in any tensor
+  # fast_dev_run: true  # runs 1 train, 1 validation and 1 test step
+  # profiler: "simple"  # enable time profiling
+  # profiler: "advanced"
+  # profiler: "pytorch"
+
+data:
+  batch_size: 1
+  num_workers: 0 # debuggers don't like multiprocessing
+  # pin_memory: False # disable gpu memory pin

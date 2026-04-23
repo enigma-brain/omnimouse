@@ -1,0 +1,27 @@
+defaults:
+  - /data/datasets/experanto_chunk_dataset@train_dataset
+  - /data/datasets/experanto_chunk_dataset@validation_dataset
+  - dataloader: default
+  - _self_
+
+# references the names in "unraveling.experiments.scaling_laws"
+dataset_collection: "initial_32"
+pretraining_datasets: "colossus"
+validation_datasets: null
+
+train_dataset:
+  modality_config:
+    screen:
+      valid_condition:
+        - tier: train
+
+validation_dataset:
+  modality_config:
+    screen:
+      sample_stride: ${.chunk_size}
+      include_blanks: false
+      valid_condition:
+        - tier: validation
+
+additional_validation_dataset_cfgs: null
+additional_validation_dataset_sets: null

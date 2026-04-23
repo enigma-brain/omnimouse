@@ -1,0 +1,42 @@
+# @package _global_
+
+defaults:
+  - /model/masking_strategies: training
+  - _self_
+
+paths:
+  run_name: omnimouse_20M
+  experiment_name: scaling_laws
+
+data:
+  dataset_collection: "colossus_scaling_rank_48"
+  pretraining_datasets: "scaling_laws_pretraining"
+  validation_datasets: "scaling_laws_8"
+  test_datasets: "scaling_laws_8"
+  train_dataset:
+    modality_config:
+      screen:
+        sample_stride: 1
+        valid_condition:
+          - tier: train
+  validation_dataset:
+    modality_config:
+      screen:
+        sample_stride: 60
+        include_blanks: true
+        valid_condition:
+          - tier: validation
+          - tier: oracle
+  dataloader:
+    batch_size: 8
+
+model:
+  num_self_attends_per_block: 6
+  d_model: 512
+  num_heads: 8
+  hiera_stages: [2, 8]
+  local_to_global_ratio: [5, 1]
+
+trainer:
+  max_steps: 1000000
+  max_epochs: 5

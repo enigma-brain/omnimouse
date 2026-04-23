@@ -1,0 +1,69 @@
+# @package _global_
+
+defaults:
+  - /data/datasets@data.additional_validation_dataset_cfgs.live_test_main: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.live_test_main_masking_strategies: test
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test_main: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_main_masking_strategies: test
+  - /data/datasets@data.additional_validation_dataset_cfgs.final_test_bonus: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.final_test_bonus_masking_strategies: test
+  - /data/datasets@data.additional_validation_dataset_cfgs.live_test_bonus: experanto_chunk_dataset
+  - /evaluation/masking_strategies@evaluation.live_test_bonus_masking_strategies: test
+  - _self_
+
+# Clear the default (legacy) masking strategies
+evaluation:
+  validation_masking_strategies: null
+  test_masking_strategies: null
+
+data:
+  # Clear the default (legacy) dataset configs
+  validation_datasets: null
+  validation_dataset: null
+  test_datasets: null
+  test_dataset: null
+  # Set the dataset collection to use for evaluation (and minimize train loader time)
+  dataset_collection: sensorium_2023_test_set
+  # Add new dataset configs in `addition_validation_dataset` dictionaries (see `omnimouse.tasks.task_utils.setup_common`)
+  additional_validation_dataset_sets:
+    live_test_main: sensorium_2023_test_set
+    final_test_main: sensorium_2023_test_set
+    final_test_bonus: sensorium_2023_test_set
+    live_test_bonus: sensorium_2023_test_set
+  additional_validation_dataset_cfgs:
+    live_test_main:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: live_test_main
+    final_test_main:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test_main
+    final_test_bonus:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: final_test_bonus
+    live_test_bonus:
+      modality_config:
+        screen:
+          sample_stride: 30
+          include_blanks: true
+          valid_condition:
+            - tier: live_test_bonus
+
+all_neurons_override: true
+
+eval_datasets:
+  - live_test_main
+  - final_test_main
+  - final_test_bonus
+  - live_test_bonus

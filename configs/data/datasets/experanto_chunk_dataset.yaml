@@ -1,0 +1,62 @@
+global_sampling_rate: null
+global_chunk_size: null
+add_behavior_as_channels: ${model.behavior_as_channels}
+replace_nans_with_means: False
+out_keys: null
+cache_data: False
+seed: null
+shuffle_train_val_split: null
+validation_fraction: null
+modality_config:
+  screen:
+    keep_nans : false
+    sampling_rate: ${model.num_frames_per_s}
+    chunk_size: ${model.num_frames_per_block}
+    valid_condition:
+      - tier: "train"
+    offset: 0
+    sample_stride: 1
+    include_blanks: true
+    transforms:
+      normalization:
+        means: [113.0]
+        stds: [59.0]
+    interpolation:
+      rescale: False
+  responses:
+    keep_nans : false
+    sampling_rate: ${model.num_samples_per_s}
+    chunk_size: ${model.num_samples_per_block}
+    offset: 0. # in seconds
+    transforms:
+      normalization: "standardize"
+    interpolation:
+      interpolation_mode: "nearest_neighbor"
+  eye_tracker:
+    keep_nans : false
+    sampling_rate: ${model.num_behavior_samples_per_s}
+    chunk_size: ${model.num_behavior_samples_per_block}
+    offset: 0
+    transforms:
+      normalization: "normalize"
+    interpolation:
+      interpolation_mode: "nearest_neighbor"
+    filters:
+      nan_filter:
+        __target__: experanto.filters.common_filters.nan_filter
+        __partial__: True
+        vicinity: 0.05
+  treadmill:
+    keep_nans : false
+    sampling_rate: ${model.num_behavior_samples_per_s}
+    chunk_size: ${model.num_behavior_samples_per_block}
+    offset: 0
+    transforms:
+      normalization: "normalize"
+    interpolation:
+      interpolation_mode: "nearest_neighbor"
+    filters:
+      nan_filter:
+        __target__: experanto.filters.common_filters.nan_filter
+        __partial__: True
+        vicinity: 0.05
