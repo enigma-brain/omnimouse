@@ -37,15 +37,36 @@
         gap: 22px;
     }
 
-    /* Top controls */
+    /* Interactive-demo wrapper */
+    .interactive-bar {
+        background: #f3f3f3;
+        border-radius: 10px;
+        padding: 10px 18px 14px;
+    }
+    .interactive-bar .interactive-bar-label {
+        display: block;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8a8a8a;
+        font-style: italic;
+        margin-bottom: 6px;
+    }
+
+    /* Top controls: one row, no wrap (prevents plot jump when items toggle) */
     .controls {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: center;
         justify-content: center;
-        gap: 30px 44px;
-        padding: 16px 4px 24px;
+        gap: 14px;
+        padding: 4px 2px;
+        overflow-x: auto;
+        white-space: nowrap;
     }
+    .controls > * { flex-shrink: 0; }
     .controls .group-divider {
         width: 1px;
         height: 36px;
@@ -98,8 +119,8 @@
         display: flex;
         flex-direction: column;
         gap: 2px;
-        min-width: 180px;
-        max-width: 240px;
+        min-width: 150px;
+        max-width: 200px;
     }
     .slider-group .label {
         font-size: 0.78rem;
@@ -288,7 +309,9 @@
 </head>
 <body>
 <div class="root" id="root">
-    <div class="controls">
+    <div class="interactive-bar">
+        <span class="interactive-bar-label">(interactive demo)</span>
+        <div class="controls">
         <button type="button" class="toggle video" id="t-video" aria-pressed="false">
             <span class="dot"></span><span>Video</span>
         </button>
@@ -314,12 +337,13 @@
             <span class="dot"></span><span>All neurons</span>
         </button>
         <div class="mod-switch" id="mod-switch">
-            <button type="button" class="response active" data-mod="response">Response</button>
+            <button type="button" class="response active" data-mod="response">Neurons</button>
             <button type="button" class="behavior" data-mod="behavior">Behavior</button>
         </div>
         <div class="mod-switch view-switch" id="view-switch">
-            <button type="button" class="active" data-view="single">Single neuron</button>
+            <button type="button" class="active" data-view="single">Single</button>
             <button type="button" data-view="population">Population</button>
+        </div>
         </div>
     </div>
 
@@ -1123,15 +1147,10 @@ function renderSingleChannelView(strategy, modality, modAvailable) {
 
     // ---- Legend ----
     const legItems = [
-        { color: '#c9c9c9', label: 'Ground truth (context)' },
-        { color: '#111', label: 'Ground truth (2 s chunk)' },
+        { color: '#111', label: 'Ground truth' },
     ];
     if (pred) {
-        legItems.push({ color: thinColor, label: 'Prediction (context)' });
-        const boldLabel = modality === 'response'
-            ? 'Prediction (1 s reconstructed)'
-            : 'Prediction (2 s reconstructed)';
-        legItems.push({ color: boldColor, label: boldLabel });
+        legItems.push({ color: boldColor, label: 'Prediction' });
     }
     const legX = plotM.left + 10;
     let legY = plotM.top + 10;
@@ -1297,16 +1316,15 @@ function renderPopulationView(strategy, modAvailable) {
         'font-size': 10.5, fill: '#666',
         transform: `rotate(-90 ${leftMargin - 36} ${topMargin + areaH / 2})`,
     });
-    yLabel.textContent = 'neuron index (low → high)';
+    yLabel.textContent = '32 example neurons';
     plotSvg.appendChild(yLabel);
 
     // ---- Legend (top-left) ----
     const legItems = [
-        { color: gtColorOutside, label: 'Ground truth (context)' },
-        { color: gtColorInside, label: 'Ground truth (chunk)' },
+        { color: gtColorInside, label: 'Ground truth' },
     ];
     if (modAvailable) {
-        legItems.push({ color: boldColor, label: 'Prediction (1 s reconstructed)' });
+        legItems.push({ color: boldColor, label: 'Prediction' });
     }
     let legY = topMargin + 6;
     const legX = leftMargin + 8;

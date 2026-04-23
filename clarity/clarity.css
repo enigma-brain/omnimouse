@@ -295,6 +295,30 @@ table tbody tr:nth-child(2n+1) {
   background-color: #ffffff !important;
 }
 
+/* Interactive-demo top bar wrapper */
+.interactive-bar {
+  background: #f3f3f3;
+  border-radius: 10px;
+  padding: 12px 18px 14px;
+  margin-bottom: 18px;
+  position: relative;
+}
+.interactive-bar .interactive-bar-label {
+  display: block;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.interactive-bar > .masking-selector,
+.interactive-bar > .insilico-controls {
+  margin-bottom: 0;
+}
+
 /* Masking overview tabs */
 .masking-selector {
   margin-bottom: 20px;
