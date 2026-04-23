@@ -65,9 +65,9 @@
                         <div style="display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
                             <a href="https://arxiv.org/abs/2604.18827" class="button icon" style="background-color: #999; color: #222;"> Paper <i class="fa-solid fa-book-open"></i></a>
                             <a href="https://github.com/enigma-brain/omnimouse/" class="button icon" style="background-color: #999; color: #222;">Code <i class="fa-brands fa-github"></i></a>
-                            <a href="#" class="button icon" style="background-color: #999; color: #222;">Model &#129303;</a>
-                            <a href="https://data.sensorium-competition.net/" class="button icon" style="background-color: #999; color: #222;">Data &#129303;</a>
-                            <a href="#" class="button icon" style="background-color: #999; color: #222;">Data Release Blog <i class="fa-solid fa-house"></i></a>
+                            <a href="https://huggingface.co/the-enigma-project/omnimouse" class="button icon" style="background-color: #999; color: #222;">Model &#129303;</a>
+                            <a href="https://huggingface.co/datasets/the-enigma-project/omnimouse-dataset" class="button icon" style="background-color: #999; color: #222;">Data &#129303;</a>
+                            <a href="https://enigma-brain.github.io/omnimouse-data-release/" class="button icon" style="background-color: #999; color: #222;">Data Release Blog <i class="fa-solid fa-house"></i></a>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
     <div class="container blog main first" id="blog-main" style="background-color: #ffffff;">
         <h1>Data Explorer</h1>
         <p class="text">
-            OmniMouse is trained on one of the largest single-neuron datasets ever assembled: 2,282 imaging planes spanning 78 animals, 328 scanning sessions, and 3.1 million segmented neurons. Use the interactive explorer below to browse the full dataset. Zoom into individual fields of view, filter by animal, session, or cortical depth, and switch between average images, correlation maps, and segmentation masks.
+            OmniMouse is trained on one of the largest single-neuron datasets ever assembled: 2,282 imaging planes from 78 animals, 328 sessions, and 3.1 million segmented neurons, acquired with wide-field two-photon calcium imaging at 6&ndash;14&nbsp;Hz and extracted with CaImAn. The explorer below lets you browse the full collection &mdash; filter by animal, session, or depth, and switch between average images, correlation maps, and segmentation masks.
         </p>
     </div>
 
@@ -92,41 +92,44 @@
                 style="width: 100%; height: 80vh; border: none; border-radius: 10px; display: block;"
                 loading="lazy"
                 title="OmniMouse Dataset Explorer"></iframe>
-        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
-            Each tile is one scanning plane from the dataset. Use <b>Image</b> to toggle between average images, correlation maps, and segmentation masks. Use <b>Arrange</b> to cluster tiles by animal, scan, or cortical depth. Zoom in to inspect a single field of view, or fit all 2,282 planes at once.
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 1.</b> Dataset explorer. Each tile is one scanning plane. Toggle between average images, correlation maps, and segmentation masks; arrange by animal, scan, or cortical depth; or zoom into a single field of view.
         </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Motivation</h1>
         <p class="text">
-            Scaling data and models has driven the AI revolution. Large language models, vision transformers, and multi-modal systems all follow a simple recipe: more data and more parameters yield better performance. But does the same hold for modeling the brain?
+            Scaling data and neural networks has transformed AI: more data and more parameters reliably yield better performance in language and vision. Whether the same principle applies to modeling brain activity is an open question &mdash; and one with very different constraints, because neural recordings are costly, comparatively small, and heterogeneous across labs.
         </p>
         <p class="text">
-            The mouse visual cortex offers a natural testbed. Large-scale neural datasets now exist, standardized benchmarks are in place, and the system is well-characterized. Yet compared to internet-scale corpora, neural data remains small, fragmented, and expensive to collect. Prior models have been restricted to single modalities, single tasks, or single sessions &mdash; making it impossible to study scaling systematically.
+            The mouse visual cortex is a natural testbed: large-scale datasets exist, standardized benchmarks are in place, and the circuitry is comparatively well-characterized. Yet most brain models target a single modality, task, or session, so the field has intuitions about scaling but little direct evidence of how data size, model size, and task coverage interact at realistic scales.
         </p>
         <p class="text">
-            We set out to change this. OmniMouse is the first model to unify neural prediction, behavioral decoding, and neural forecasting in a single architecture &mdash; trained on one of the largest single-neuron datasets ever assembled.
+            OmniMouse is a multi-modal, multi-task transformer that unifies neural prediction, behavioral decoding, and forecasting in a single architecture, trained on one of the largest single-neuron corpora to date. Flexible masking lets the same model handle arbitrary combinations of these tasks, which makes it possible to ask, for the first time at this scale, how performance depends jointly on data, model, and task structure.
         </p>
     </div>
 
     <div class="container blog main extra-large" style="background-color: #ffffff;">
         <img src="clarity/images/1_summary/fig1_overview.png">
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 2.</b> Overview. OmniMouse unifies neural prediction, behavior decoding, and forecasting into one model. Scaling model size on 150B+ neural tokens shows saturation; scaling data size, in contrast, continues to improve performance across model sizes.
+        </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>The OmniMouse Model</h1>
         <p class="text">
-            OmniMouse is a multi-modal, multi-task transformer that processes three streams of information simultaneously: single-neuron calcium traces from visual cortex, video stimuli shown to the mouse, and behavioral variables (gaze, pupil size, running speed).
+            OmniMouse processes three time-aligned streams simultaneously: single-neuron calcium traces from visual cortex, the video stimulus shown to the mouse, and five behavioral variables (pupil <i>x</i>/<i>y</i>, pupil size and its derivative, running speed). Each input chunk carries a masking configuration that specifies which samples are visible to the model and which are reconstruction targets, so training and evaluation share the same interface.
         </p>
         <p class="text">
-            Each neuron's activity is tokenized individually via strided 1D convolutions and augmented with learned identity embeddings for neuron, session, and animal. Video frames are encoded with a Hiera vision transformer. Behavioral traces are projected through a shared linear layer with channel-specific embeddings.
+            Each neuron is tokenized individually via a strided 1D convolution along time, with learned identity embeddings for its neuron, session, and animal; per-neuron embeddings have fixed dimension and a shared projection, so per-neuron parameter count is decoupled from model size. Video frames are encoded with the first ten layers of a Hiera vision transformer, and behavior is provided either as one compact input token per channel or masked and predicted.
         </p>
         <p class="text">
-            The architecture follows an encode&ndash;fuse&ndash;decode design. A cross-attention encoder compresses variable-length neural and behavioral tokens into a fixed-length latent sequence. A multi-modal fusion stack integrates these latents with video features via sliding-window and global self-attention layers. A shared cross-attention decoder then reconstructs target neural responses and behavioral traces.
+            The architecture follows an encode&ndash;fuse&ndash;decode design. A cross-attention encoder with learned latent queries compresses unmasked neural and behavioral tokens into a fixed-length latent sequence, using local sliding-window attention plus a few global "register" tokens. A fusion stack then integrates these latents with video features through transformer layers that interleave sliding-window and global self-attention at a 5:1 ratio. All attention blocks use 1D RoPE derived from each token's timestamp, and a shared cross-attention decoder reads out neuronal and behavioral targets from the fused representation.
         </p>
         <p class="text">
-            The key design choice is flexible masking. We train with 119 structured masking configurations, enabling the model to handle any combination of forecasting, stimulus-conditioned prediction, sub-population prediction, and behavioral decoding &mdash; all within a single model.
+            The key design choice is flexible masking. We train with 119 structured configurations varying causal context, population context, and stimulus/behavior availability. The same model therefore handles forecasting, stimulus-conditioned prediction, sub-population prediction, and behavioral decoding without task-specific heads &mdash; and at evaluation time we can probe mask combinations the model has never seen, turning the viewer below into a small experiment rather than a replay.
         </p>
     </div>
 
@@ -145,69 +148,85 @@
             <img class="masking-panel" data-panel="behavior" src="clarity/images/2_model_schema/2_behavior_masking.png">
             <img class="masking-panel" data-panel="visual" src="clarity/images/2_model_schema/3_stimulus_masking.png">
         </div>
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 3.</b> Model and masking. Single-neuron, single-time-chunk tokenization feeds a cross-attention encoder, a multi-modal fusion stack with Hiera video features, and a shared cross-attention decoder. Response, behavior, and stimulus masks define which samples are inputs versus reconstruction targets.
+        </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Dataset</h1>
         <p class="text">
-            We compiled one of the largest single-neuron datasets to date: 3.1 million neurons from the visual cortex of 73 mice across 323 recording sessions, totaling over 150 billion neural tokens. The mice viewed naturalistic movies, ImageNet images, and parametric stimuli (Gabors, random dot kinematograms, pink noise) while running on a wheel. Behavioral variables &mdash; pupil position, pupil dilation, and running speed &mdash; were recorded simultaneously.
+            We compiled one of the largest single-neuron datasets to date: more than 3 million neurons from the visual cortex of 73 mice across 323 sessions, totaling over 150 billion neural tokens. Mice viewed naturalistic movies (cinematic clips, Sports-1M), ImageNet images, and parametric stimuli (Gabors, random dot kinematograms, pink noise, model-generated stimuli) while running on a wheel. Pupil position, pupil dilation and its derivative, and running speed were recorded throughout every session.
+        </p>
+        <p class="text">
+            For training we reconstruct the full experimental timeline, including blank periods between stimulus blocks, so the model sees a continuous stream rather than isolated trials. Behavior is downsampled to 20&nbsp;Hz, stimuli to 30&nbsp;Hz, and calcium traces are linearly upsampled to 30&nbsp;Hz to match SENSORIUM&nbsp;2023; token counts refer to samples before upsampling, so the headline dataset size isn't inflated by interpolation.
         </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Interactive data and prediction viewer</h1>
         <p class="text">
-            Step one level deeper and watch the model run. On the left, pick a masking configuration &mdash; toggle video and behavior as inputs, and choose how many samples of causal context and how many other population neurons the model sees. On the right, scrub through a 9-second clip and compare OmniMouse&rsquo;s predictions against the measured neural responses (or behavior traces) sample-by-sample.
+            Step one level deeper and watch the model run. On the left, pick a masking configuration &mdash; toggle video and behavior as inputs, and choose how many samples of causal context and how many other population neurons the model can see. On the right, scrub through a 9-second clip and compare OmniMouse&rsquo;s predictions against the measured responses (or behavior) sample-by-sample. The same OmniMouse-80M checkpoint is used for every configuration, so sweeping the sliders is a genuine in-silico experiment.
         </p>
     </div>
 
     <div class="container blog main extra-large" style="background-color: #ffffff; padding-top: 0; padding-bottom: 0;">
-        <iframe src="clarity/animations/prediction_interactive/viewer.html"
-                style="width: 100%; height: 92vh; min-height: 760px; border: none; border-radius: 10px; display: block;"
+        <iframe id="prediction-viewer-iframe"
+                src="clarity/animations/prediction_interactive/viewer.html"
+                style="width: 100%; height: 640px; border: none; border-radius: 10px; display: block;"
                 loading="lazy"
                 title="OmniMouse interactive data and prediction viewer"></iframe>
-        <p style="color: #888; font-size: 0.85em; line-height: 1.5; text-align: center; margin: 10px 0 0; font-style: italic;">
-            The schematic on the left reflects the current masking. On the right, the 2&nbsp;s chunk the model actually sees is drawn in black on top of 4&nbsp;s of surrounding ground truth (light gray); thin orange/purple lines show the model&rsquo;s predictions across the whole window, and the bold segment marks the portion the model actually has to reconstruct (1&nbsp;s for neural responses, 2&nbsp;s for behavior).
+        <p style="color: #666; font-size: 0.88em; line-height: 1.55; text-align: left; max-width: 960px; margin: 14px auto 0; font-style: italic; padding: 0 16px;">
+            <b>Figure 4. Interactive prediction viewer.</b> The schematic on the left reflects the current masking configuration: light-purple bars mark modalities the model uses as input, orange marks the reconstruction target, and the hatched block represents the full neuronal population with its causal and population context regions. The plot on the right shows one 9-second clip for the selected neuron or behavior channel: gray traces are ground truth outside the active 2&nbsp;s window, black traces are ground truth inside it, and the bold orange/purple line is the OmniMouse prediction over the reconstructed window (1&nbsp;s for responses, 2&nbsp;s for behavior). The top-right badge reports the Pearson correlation of prediction against ground truth. Switch to the <i>Population</i> view on the response side to see all 35 target neurons stacked in a time-offset layout, or toggle <i>All neurons</i> when predicting behavior to use the full neuronal population as context. Every combination reruns against the stored OmniMouse-80M predictions &mdash; so you can see directly how stimulus, behavior, and population size each contribute to performance.
         </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Results</h1>
         <p class="text">
-            <b>State-of-the-art performance.</b> OmniMouse outperforms all specialized baselines across virtually all evaluation regimes &mdash; including neural forecasting, population prediction, stimulus-conditioned encoding, and behavioral decoding. Crucially, these advantages hold even in strict data-matched comparisons where OmniMouse and the baselines are trained on identical sessions, ruling out dataset size as a confound. The architecture itself &mdash; unified tokenization, flexible masking, and joint multi-task training &mdash; provides a consistent edge, independent of how much data is available.
+            <b>State-of-the-art performance.</b> OmniMouse outperforms strong specialized baselines across virtually all evaluation regimes &mdash; neural forecasting, population prediction, stimulus-conditioned encoding, and behavioral decoding &mdash; and sets a new state of the art on the SENSORIUM 2022 and 2023 competitions. These advantages hold in strict data-matched comparisons, where every model sees identical sessions: the unified tokenization, flexible masking, and multi-task training give a consistent edge independent of data scale. The only task where a specialized baseline stays ahead in the data-matched regime is decoding of running speed.
         </p>
         <p class="text">
-            <b>Model scaling saturates.</b> We trained OmniMouse at five parameter counts &mdash; 1M, 5M, 20M, 80M, and 300M &mdash; on the full corpus of 323 sessions. Neural prediction performance improved steadily up to roughly 80M parameters and then plateaued: scaling from 80M to 300M produced no measurable gain on forecasting or stimulus-conditioned population prediction, and this held across both data-matched and full-data regimes. The lack of further improvement, despite a near-4&times; increase in capacity, indicates that brain models at this data scale are not bottlenecked by parameters or compute &mdash; the architecture already has sufficient capacity to absorb the signal present in the recordings.
+            <b>Model scaling saturates.</b> We trained OmniMouse at five sizes &mdash; 1M, 5M, 20M, 80M, and 300M &mdash; on the full 323-session corpus, tracking test loss and single-trial correlation against model FLOPs for each of five response masking strategies. Performance improved steadily up to ~80M parameters and then plateaued: scaling from 80M to 300M produced essentially no gain, and this held in both data-matched and full-data regimes. Despite a near-4&times; increase in capacity, brain models at this data scale are not bottlenecked by parameters or compute &mdash; the architecture already has enough room for the signal the recordings carry.
         </p>
     </div>
 
     <div class="container blog main large" style="background-color: #ffffff;">
         <img src="clarity/images/3_scaling_responses/response_scaling.png">
-    </div>
-
-    <div class="container blog main" style="background-color: #ffffff;">
-        <p class="text">
-            <b>Data scaling works.</b> Scaling the dataset tells the opposite story. We trained models on nested subsets of 8, 16, 32, 64, and 323 sessions, holding architecture and compute otherwise fixed. Across every task and every model size, additional sessions produced monotonic gains, with no sign of saturation at the largest scales we could reach. The gains are disproportionately larger for bigger models: the performance gap between small and large networks widens as the dataset grows &mdash; a signature of a system that is data-limited rather than capacity-limited. Extrapolating the observed trends, current recordings still fall well short of the regime where further parameter scaling would pay off.
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 5.</b> Task-specific performance gains with model scaling. Top: mask per task. Middle/bottom: test loss and single-trial correlation as a function of compute. Gains level off once models pass ~80M parameters.
         </p>
     </div>
 
-    <div class="container blog main large" style="background-color: #ffffff; text-align: center;">
-        <img src="clarity/images/4_scaling_data/data_Scaling.png" style="width: 50%;">
-    </div>
-
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            <b>Behavior decoding scales the most.</b> Among the tasks we studied, behavioral decoding exhibited the cleanest scaling dynamics. Unlike neural prediction, decoding of gaze position, pupil dilation, and running speed improved smoothly along both axes: larger models and larger datasets each yielded consistent gains, together resembling the power-law behavior familiar from language and vision models. Neither axis saturated at the largest scales we tested, suggesting that behavior decoding carries a richer and more structured signal than single-neuron prediction &mdash; and that the same architecture, trained on more data with more parameters, would continue to improve well beyond the range we explored.
+            <b>Behavior decoding scales the most.</b> Among our tasks, behavioral decoding showed the cleanest scaling dynamics. Decoding of gaze, pupil dilation, and running speed improved smoothly along both axes, with larger models and larger datasets each yielding consistent gains &mdash; reminiscent of the power-law behavior familiar from language and vision. Neither axis saturated at the scales we tested, and the behavioral objective had not fully converged even for the 300M model. Behavior carries a richer and more structured signal than single-neuron prediction, and the same architecture trained on more data at larger scale would likely continue to improve beyond the range we explored.
         </p>
     </div>
 
     <div class="container blog main large" style="background-color: #ffffff;">
         <img src="clarity/images/5_scaling_behavior/behavior_scaling.png">
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 6.</b> Behavior decoding scales with model size. Per-variable performance for gaze, pupil size, and running speed continues to improve across the full compute range we tested, with no clear saturation.
+        </p>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            <b>An inverted scaling story.</b> Taken together, these results invert the standard AI narrative. In language and vision, massive datasets have made parameter scaling the primary driver of progress. In brain modeling &mdash; even for the mouse visual cortex, a comparatively simple and well-characterized system &mdash; models remain data-limited despite vast recordings. The bottleneck is not compute. It is data.
+            <b>Data scaling works.</b> Scaling the dataset tells the opposite story. We trained 5M, 20M, and 80M models on nested collections of 8, 16, 32, 64, and 323 sessions &mdash; larger collections strict supersets of smaller ones, all evaluated on the same held-out test set. Across every task and every model size, additional sessions produced monotonic gains with no sign of saturation. The gains are disproportionately larger for bigger models: the gap between small and large networks widens as the dataset grows &mdash; the signature of a data-limited rather than capacity-limited system.
+        </p>
+    </div>
+
+    <div class="container blog main large" style="background-color: #ffffff; text-align: center;">
+        <img src="clarity/images/4_scaling_data/data_Scaling.png" style="width: 50%;">
+        <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+            <b>Figure 7.</b> Data scaling. Nested training collections from 8 to 323 sessions. Performance improves monotonically for every task and every model size, and larger models pull further ahead as the dataset grows.
+        </p>
+    </div>
+
+    <div class="container blog main" style="background-color: #ffffff;">
+        <p class="text">
+            <b>An inverted scaling story.</b> Together, these results invert the standard AI narrative. In language and vision, massive datasets made parameter scaling the primary driver of progress. In brain modeling &mdash; even for the mouse visual cortex &mdash; models remain data-limited despite vast recordings. The bottleneck is not compute; it is data: more diverse stimuli, more varied tasks, more animals, richer behavior.
         </p>
     </div>
 
@@ -380,13 +399,16 @@
                 </tbody>
             </table>
             <p style="text-align: center; font-size: 78%; color: #999; margin-top: 8px; font-family: 'Poppins', sans-serif;"><span style="color: #bbb; font-size: 115%;">&times;</span>&ensp;Model does not natively support this task</p>
+            <p style="color: #888; font-size: 0.82em; line-height: 1.4; text-align: center; margin: 6px 0 0; font-style: italic;">
+                <b>Table 1.</b> Baseline comparisons. Single-trial correlation on the same held-out evaluation mice. <b>Bold</b> marks the best score per task within the data-matched block (top, 8 sessions) or the full-data block (bottom, 323 sessions). <span style="color: #bbb;">&times;</span> indicates that a baseline does not natively support that task.
+            </p>
         </div>
     </div>
 
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Interactive result viewer</h1>
         <p class="text">
-            Explore how OmniMouse&rsquo;s neural prediction changes with the inputs it receives. Toggle whether the model sees the visual stimulus and/or behavior, and use the slider to vary how many other neurons from the same population are provided as context. The highlighted curve and point show the selected configuration; the remaining conditions stay in view for comparison.
+            OmniMouse learns representations that can be probed with mask configurations never seen during training. Toggle whether the model sees the visual stimulus and/or behavior, and vary how many other neurons from the same population are provided as context. The highlighted curve shows the selected configuration; the remaining conditions stay in view so you can read off how much each source of information contributes at any population size.
         </p>
     </div>
 
@@ -469,7 +491,7 @@
                 </div>
             </div>
             <p class="insilico-caption">
-                Left: the model input masking that defines each condition. Right: correlation between predicted and measured neural responses as a function of population context size, for the four combinations of available model inputs.
+                <b>Figure 8.</b> Left: model input masking that defines each condition. Right: single-trial correlation between predicted and measured neural responses as a function of population context size, for the four combinations of available model inputs. The same OmniMouse-80M checkpoint is used for every point; performance scales smoothly with added context along every axis.
             </p>
         </div>
     </div>
@@ -478,10 +500,13 @@
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Conclusions</h1>
         <p class="text">
-            OmniMouse demonstrates that a single unified model can match or exceed specialized methods across neural prediction, forecasting, and behavioral decoding. Scaling analysis reveals a clear message: brain models need more data, not bigger architectures. Performance scales reliably with dataset size, but gains from increasing model parameters saturate early.
+            OmniMouse shows that a single unified model can match or exceed strong specialized methods across neural prediction, forecasting, and behavioral decoding &mdash; trained on one of the largest single-neuron corpora to date. Its breadth makes it possible to ask, for the first time at this scale, how much remaining headroom comes from better architectures versus simply more and richer data.
         </p>
         <p class="text">
-            This finding has practical implications. If brain models are to become foundation models for neuroscience, the field must invest in richer, more diverse experiments &mdash; more stimuli, more tasks, more behavioral paradigms. In language modeling, seemingly small improvements from scaling unlocked phase transitions to qualitatively new capabilities. By analogy, richer neural data may similarly unlock new capabilities in brain models, revealing deeper principles of neural computation.
+            The scaling analysis offers a clear answer: with current data, brain models are not compute- or capacity-limited. Performance scales reliably with dataset size, but gains from model size saturate around 80M for neural prediction. Even the relatively simple mouse visual system is still hungry for more diverse stimuli, richer behavior, and larger-scale recordings.
+        </p>
+        <p class="text">
+            If brain models are to become foundation models for neuroscience, the field must invest in richer experiments &mdash; more stimuli, more tasks, more behavioral paradigms, more animals and areas. In language modeling, small improvements from scaling eventually unlocked phase transitions to qualitatively new capabilities; by analogy, richer neuroscience data may unlock new capabilities in brain models and reveal deeper principles of neural computation. OmniMouse's unified, maskable design is one step toward that regime.
         </p>
     </div>
 
@@ -534,6 +559,16 @@ url={https://openreview.net/forum?id=mEw4lhAn0F}
             this.classList.add('active');
             document.querySelector('.masking-panel[data-panel="' + target + '"]').classList.add('active');
         });
+    });
+
+    // Auto-resize the prediction-viewer iframe to the height its content
+    // reports, so there is no empty box between the viewer and the caption.
+    window.addEventListener('message', function(event) {
+        if (!event.data || event.data.type !== 'omni-viewer-size') return;
+        var iframe = document.getElementById('prediction-viewer-iframe');
+        if (!iframe) return;
+        var h = Math.max(480, Math.min(1400, event.data.height));
+        iframe.style.height = h + 'px';
     });
     </script>
 

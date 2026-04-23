@@ -27,16 +27,14 @@
         color: var(--c-text);
         font-family: 'Poppins', sans-serif;
         font-size: 14px;
-        height: 100%;
     }
 
     .root {
-        padding: 56px 22px 20px;
+        padding: 40px 22px 20px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        gap: 32px;
-        min-height: 100vh;
+        gap: 22px;
     }
 
     /* Top controls */
@@ -175,11 +173,9 @@
     /* Figures row */
     .figures {
         display: flex;
-        flex: 1;
         gap: 20px;
-        align-items: stretch;
+        align-items: flex-start;
         flex-wrap: wrap;
-        min-height: 0;
     }
     .schematic-wrap {
         flex: 0 1 360px;
@@ -598,10 +594,10 @@ function getFixedYRange(strategy, modality, channel) {
 // State
 // ============================================================
 const state = {
-    videoOn: false,
-    behaviorOn: false,
+    videoOn: true,
+    behaviorOn: true,
     causalIdx: 4,      // index into CAUSAL_VALUES (25 samples)
-    popIdx: 0,         // index into POP_VALUES (0)
+    popIdx: 3,         // index into POP_VALUES (1024)
     modality: 'response',
     channel: 0,        // 0-based channel/neuron index
     chunk: 0,
@@ -1173,7 +1169,6 @@ function renderPopulationView(strategy, modAvailable) {
     const rate = NEURAL_RATE;
     const chunk = state.chunk;
     const boldColor = '#E76F14';
-    const thinColor = '#F7BE94';
     const gtColorOutside = '#c9c9c9';
     const gtColorInside = '#111';
 
@@ -1238,19 +1233,8 @@ function renderPopulationView(strategy, modAvailable) {
         const gt = buildGtTrace(modality, i);
         const pred = modAvailable ? buildPredTrace(strategy, modality, i) : null;
 
-        // Predictions (thin everywhere, bold inside chunk window).
+        // Prediction: only draw inside the active chunk's reconstructed window.
         if (pred) {
-            const thinSegs = [];
-            let cur = [];
-            for (let s = displayStartSample; s <= displayEndSample; s++) {
-                const idx = s - pred.start;
-                const v = (idx >= 0 && idx < pred.trace.length) ? pred.trace[idx] : NaN;
-                if (!Number.isFinite(v)) { if (cur.length > 1) thinSegs.push(cur); cur = []; continue; }
-                cur.push({ x: xScale(s / rate) + xShift, y: yOf(v) });
-            }
-            if (cur.length > 1) thinSegs.push(cur);
-            thinSegs.forEach(seg => drawLine(seg, thinColor, 1.0));
-
             const boldPts = [];
             const boldStartSec = windowStartSec + 1;
             const boldStart = Math.ceil(boldStartSec * rate - 1e-9);
@@ -1322,7 +1306,6 @@ function renderPopulationView(strategy, modAvailable) {
         { color: gtColorInside, label: 'Ground truth (chunk)' },
     ];
     if (modAvailable) {
-        legItems.push({ color: thinColor, label: 'Prediction (context)' });
         legItems.push({ color: boldColor, label: 'Prediction (1 s reconstructed)' });
     }
     let legY = topMargin + 6;
@@ -1517,9 +1500,31 @@ sChunk.addEventListener('input', () => {
     }
     setChannelSlider();
     updateChunkLabels();
+    // Sync the slider positions and toggle visuals to the default state.
+    sCausal.value = String(state.causalIdx);
+    sPop.value = String(state.popIdx);
+    tVideo.classList.toggle('on', state.videoOn);
+    tVideo.setAttribute('aria-pressed', state.videoOn);
+    tBehavior.classList.toggle('on', state.behaviorOn);
+    tBehavior.setAttribute('aria-pressed', state.behaviorOn);
     lblCausal.textContent = CAUSAL_VALUES[state.causalIdx] + ' samples';
     lblPop.textContent = String(POP_VALUES[state.popIdx]);
     refresh();
+})();
+
+// Tell the embedding page how tall we actually are, so the iframe can hug
+// its content instead of showing a big empty box below the visualisation.
+(function reportSizeToParent() {
+    if (window.parent === window) return;
+    function post() {
+        const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+        window.parent.postMessage({ type: 'omni-viewer-size', height: h }, '*');
+    }
+    window.addEventListener('load', post);
+    window.addEventListener('resize', post);
+    if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(post).observe(document.documentElement);
+    }
 })();
 </script>
 </body>
