@@ -159,7 +159,7 @@
     <div class="container blog main" style="background-color: #ffffff;">
         <h1>Dataset</h1>
         <p class="text">
-            We compiled one of the largest single-neuron datasets to date: more than 3 million neurons from the visual cortex of 73 mice across 323 sessions, totaling over 150 billion neural tokens. The mice were presented with naturalistic images sampled from ImageNet, videos sampled from cinematic movies and the Sports-1M dataset, and parametric stimuli including static and drifting Gabors, directional pink noise, flashing Gaussian dots, random dot kinematograms, and model-generated stimuli. We recorded five behavior variables throughout every session: running speed, pupil <i>x</i> and <i>y</i> position, pupil dilation, and its derivative.
+            We train OmniMouse on more than 3 million neurons from the visual cortex of 73 mice across 323 sessions, totaling over 150 billion neural tokens. The mice were presented with naturalistic images sampled from ImageNet, videos sampled from cinematic movies and the Sports-1M dataset, and parametric stimuli including static and drifting Gabors, directional pink noise, flashing Gaussian dots, random dot kinematograms, and model-generated stimuli. We recorded five behavior variables throughout every session: running speed, pupil <i>x</i> and <i>y</i> position, pupil dilation, and its derivative.
         </p>
         <p class="text">
             For training we reconstruct the visual stimulus presented throughout the entire recording, including blank periods between stimulus blocks, so the model sees a continuous stream rather than isolated trials. We downsample behavior to 20&nbsp;Hz, visual stimuli to 30&nbsp;Hz, and linearly upsample neuronal responses to 30&nbsp;Hz to be comparable to the SENSORIUM&nbsp;2023 benchmark. All token counts refer to the number of samples before upsampling, to avoid artificially inflating the dataset size.
@@ -203,7 +203,7 @@
 
     <div class="container blog main" style="background-color: #ffffff;">
         <p class="text">
-            <b>Behavior decoding scales the most.</b> Across decoding of gaze position, pupil size, and running speed, performance improved smoothly with compute budget, reminiscent of classic scaling-law behavior. Larger models consistently achieved higher single-trial correlations, with only a faint indication of saturation at the largest scale tested. The models had not yet fully converged for the behavioral decoding task, and longer training could have improved performance further, even on the largest model. Behavioral prediction continues to improve with model scaling and may benefit from further increases in capacity.
+            <b>Behavior decoding scales the most.</b> Across decoding of gaze position, pupil size, and running speed, performance improved smoothly with compute budget, reminiscent of classic scaling-law behavior. Larger models consistently achieved higher single-trial correlations, with only a faint indication of saturation at the largest scale tested.
         </p>
     </div>
 
