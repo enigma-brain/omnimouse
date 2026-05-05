@@ -22,7 +22,7 @@ Scaling model size on the full corpus saturates around 80M parameters; scaling d
 
 ## Abstract
 
-Scaling data and models has transformed AI. Does the same hold for brain modeling? We train multi-modal, multi-task models on 3.1 million neurons from 73 mice (150B+ neural tokens), flexibly supporting neural prediction, behavioral decoding, and neural forecasting. OmniMouse achieves state-of-the-art performance, outperforming specialized baselines across virtually all regimes. Yet performance scales with more data while gains from larger models saturate — inverting the standard AI scaling story: brain models remain data-limited even with vast recordings.
+Scaling data and models has transformed AI. Does the same hold for brain modeling? We train multi-modal, multi-task models on 2.3 million neurons from 73 mice (150B+ neural tokens), flexibly supporting neural prediction, behavioral decoding, and neural forecasting. OmniMouse achieves state-of-the-art performance, outperforming specialized baselines across virtually all regimes. Yet performance scales with more data while gains from larger models saturate — inverting the standard AI scaling story: brain models remain data-limited even with vast recordings.
 
 **Authors:** Konstantin F. Willeke\*, Polina Turishcheva\*, Alex Gilbert\*, Goirik Chakrabarty, Hasan A. Bedel, Paul G. Fahey, Yongrong Qiu, Marissa A. Weis, Michaela Vystrčilová, Taliah Muhammad, Lydia Ntanavara, Rachel E. Froebe, Kayla Ponder, Zheng Huan Tan, Emin Orhan, Erick Cobos, Sophia Sanborn, Katrin Franke, Fabian H. Sinz†, Alexander S. Ecker†, Andreas S. Tolias† — Stanford University, University of Göttingen, and collaborators. See the [paper](https://arxiv.org/abs/2604.18827) for full affiliations.
 
@@ -98,7 +98,7 @@ For containerised environments (Docker, Apptainer/Singularity on HPC), see [`doc
 
 ## Data Preparation
 
-OmniMouse trains on the [OmniMouse Dataset](https://huggingface.co/datasets/the-enigma-project/omnimouse-dataset) — 3.1M segmented neurons from 73 mice across 323 sessions of wide-field two-photon calcium imaging, paired with video stimuli and behavioral variables (pupil x/y, pupil size + derivative, running speed). Sessions are distributed as per-experiment `.tar` archives under `experiments/` on the Hub.
+OmniMouse trains on the [OmniMouse Dataset](https://huggingface.co/datasets/the-enigma-project/omnimouse-dataset) — 2.3M segmented neurons from 73 mice across 323 sessions of wide-field two-photon calcium imaging, paired with video stimuli and behavioral variables (pupil x/y, pupil size + derivative, running speed). Sessions are distributed as per-experiment `.tar` archives under `experiments/` on the Hub.
 
 The dataset is gated. Request access on the Hub, then export a token with read permission:
 
