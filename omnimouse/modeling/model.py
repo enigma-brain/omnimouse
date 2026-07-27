@@ -448,6 +448,10 @@ class HieraFeatureExtractor(nn.Module):
     Wrapper for Hiera model from `Ryali et al.<https://github.com/facebookresearch/hiera/tree/main>`__.
     """
 
+    def _make_backbone(self, *args, **kwargs):
+        """Build the video backbone. Subclasses override this to swap encoders."""
+        return Hiera(*args, **kwargs)
+
     def __init__(
         self,
         *args,
@@ -456,11 +460,12 @@ class HieraFeatureExtractor(nn.Module):
         **kwargs,
     ):
         super().__init__()
-        # Initialize Hiera model as backbone
-        self.backbone = Hiera(*args, **kwargs)
-        # Validate that Hiera is a video model (and supports timestamp patchifying)
+        # Initialize backbone (Hiera by default; subclasses override `_make_backbone`
+        # to swap in an alternative video encoder, e.g. ConvNeXtV2).
+        self.backbone = self._make_backbone(*args, **kwargs)
+        # Validate that the backbone is a video model (and supports timestamp patchifying)
         assert len(self.backbone.tokens_spatial_shape) == 3, (
-            "VideoHiera only valid for temporal inputs (i.e. videos)!"
+            "Video feature extractor only valid for temporal inputs (i.e. videos)!"
         )
 
         # Construct projection from final intermediate features
@@ -808,6 +813,9 @@ class OmniMouseArgs(ModelArgs):
     hiera_sep_pos_embed: bool = True
     hiera_drop_path_rate: float = 0.1
     hiera_mlp_ratio: float = 4.0
+    # Video backbone selector: "hiera" (default) or "convnextv2" (drop-in alternative
+    # sharing the same Conv3d patch-embed geometry -> identical token grid).
+    video_backbone: str = "hiera"
 
     # flex attention configs
     flex_attention_compile_config: Optional[Dict[str, Any]] = None
@@ -1035,8 +1043,10 @@ class OmniMouseModel(Model):
 
         # ------------------------- Video feature extractor -------------------------
 
-        # Hiera video processing backbone
-        self.hiera = HieraFeatureExtractor(
+        # Video processing backbone. Shared kwargs; ConvNeXtV2 ignores Hiera-only ones.
+        # NOTE: attribute kept as `self.hiera` for backward-compat with the rest of the
+        #  model / checkpoints, even when the ConvNeXtV2 backbone is selected.
+        _backbone_kwargs = dict(
             input_size=(config.num_frames_per_block, *config.video_resolution),
             num_heads=config.hiera_num_heads,
             embed_dim=config.hiera_embed_dim,
@@ -1058,6 +1068,18 @@ class OmniMouseModel(Model):
             feature_dim=config.d_model,
             norm_eps=config.norm_eps,
         )
+        if config.video_backbone == "hiera":
+            self.hiera = HieraFeatureExtractor(**_backbone_kwargs)
+        elif config.video_backbone == "convnextv2":
+            from omnimouse.modeling.convnextv2_encoder import (
+                build_convnextv2_feature_extractor,
+            )
+            self.hiera = build_convnextv2_feature_extractor(**_backbone_kwargs)
+        else:
+            raise ValueError(
+                f"Unknown video_backbone '{config.video_backbone}' "
+                f"(expected 'hiera' or 'convnextv2')"
+            )
 
         # ------------------- Behavior feature extractor / readout ----------------------
 
